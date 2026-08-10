@@ -15,6 +15,7 @@ export default tseslint.config(
       '**/.turbo/**',
       '**/coverage/**',
       '**/*.config.*',
+      '**/next-env.d.ts',
       'reference/**',
       'services/api/prisma/generated/**',
     ],

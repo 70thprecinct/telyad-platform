@@ -1,5 +1,5 @@
 'use client';
-import { createContext, useCallback, useContext, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useRef, useState, type ReactNode } from 'react';
 import { cx } from './primitives';
 
 interface ToastItem {
@@ -16,9 +16,9 @@ const ToastContext = createContext<ToastApi | null>(null);
 
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<ToastItem[]>([]);
-  let counter = 0;
+  const counter = useRef(0);
   const toast = useCallback<ToastApi['toast']>((title, message, tone = 'default') => {
-    const id = Date.now() + counter++;
+    const id = Date.now() + counter.current++;
     setItems((prev) => [...prev, { id, title, message, tone }]);
     setTimeout(() => setItems((prev) => prev.filter((t) => t.id !== id)), 4200);
   }, []);
