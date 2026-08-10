@@ -1,0 +1,25 @@
+{
+  "name": "@telyad/demo-data",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Deterministic demonstration data for the TelyAd platform",
+  "type": "module",
+  "exports": { ".": "./src/index.ts" },
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run --passWithNoTests",
+    "clean": "rm -rf dist .turbo"
+  },
+  "dependencies": {
+    "@telyad/audience": "workspace:*",
+    "@telyad/types": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}
