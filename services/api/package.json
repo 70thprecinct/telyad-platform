@@ -1,0 +1,46 @@
+{
+  "name": "@telyad/api",
+  "version": "0.1.0",
+  "private": true,
+  "description": "TelyAd shared API — cross-app persistence, auth, campaign lifecycle",
+  "type": "module",
+  "main": "./src/server.ts",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "prisma generate && tsup",
+    "start": "node dist/server.js",
+    "typecheck": "prisma generate && tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run --passWithNoTests",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:reset": "prisma db push --force-reset && pnpm db:seed",
+    "db:seed": "tsx src/seed.ts",
+    "clean": "rm -rf dist .turbo prisma/generated"
+  },
+  "dependencies": {
+    "@fastify/cors": "^10.0.1",
+    "@prisma/client": "^6.1.0",
+    "@telyad/ad-formats": "workspace:*",
+    "@telyad/audience": "workspace:*",
+    "@telyad/auth": "workspace:*",
+    "@telyad/campaign-engine": "workspace:*",
+    "@telyad/demo-data": "workspace:*",
+    "@telyad/types": "workspace:*",
+    "bcryptjs": "^2.4.3",
+    "fastify": "^5.2.0",
+    "jsonwebtoken": "^9.0.2",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/node": "^22.10.2",
+    "prisma": "^6.1.0",
+    "tsup": "^8.3.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}
