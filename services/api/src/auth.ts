@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import type { AuthTokenPayload } from '@telyad/auth';
-import { env } from './env.js';
+import { env } from './env';
 
 export function hashPassword(plain: string): string {
   return bcrypt.hashSync(plain, 10);

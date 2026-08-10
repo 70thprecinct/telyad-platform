@@ -1,6 +1,6 @@
 'use client';
 import { createContext, useCallback, useContext, useState, type ReactNode } from 'react';
-import { cx } from './primitives.js';
+import { cx } from './primitives';
 
 interface ToastItem {
   id: number;

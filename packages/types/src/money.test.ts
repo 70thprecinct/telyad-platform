@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { addMoney, formatMoney, fromMajor, isValidMinor, money, shareOf } from './money.js';
-import { budgetSchema } from './dto.js';
+import { addMoney, formatMoney, fromMajor, isValidMinor, money, shareOf } from './money';
+import { budgetSchema } from './dto';
 
 describe('money (integer minor units)', () => {
   it('rejects non-integer / negative minor amounts', () => {

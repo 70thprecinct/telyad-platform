@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { audienceDefinitionSchema } from './audience.js';
-import { AD_FORMAT_IDS, CAMPAIGN_OBJECTIVES, PRICING_MODELS } from './enums.js';
-import { CURRENCIES } from './money.js';
+import { audienceDefinitionSchema } from './audience';
+import { AD_FORMAT_IDS, CAMPAIGN_OBJECTIVES, PRICING_MODELS } from './enums';
+import { CURRENCIES } from './money';
 
 // ── Auth ─────────────────────────────────────────────────────────────────────
 export const loginRequestSchema = z.object({

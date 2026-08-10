@@ -1,10 +1,10 @@
-import type { Store } from './store.js';
-import { MemoryStore } from './memory-store.js';
-import { hashPassword } from '../auth.js';
-import { env } from '../env.js';
+import type { Store } from './store';
+import { MemoryStore } from './memory-store';
+import { hashPassword } from '../auth';
+import { env } from '../env';
 
-export * from './store.js';
-export { MemoryStore } from './memory-store.js';
+export * from './store';
+export { MemoryStore } from './memory-store';
 
 /**
  * Selects the runtime store. Defaults to the seeded in-memory store so the demo
@@ -14,7 +14,7 @@ export { MemoryStore } from './memory-store.js';
 export async function createStore(): Promise<Store> {
   if (process.env.STORE === 'prisma') {
     const { PrismaClient } = await import('@prisma/client');
-    const { PrismaStore } = await import('./prisma-store.js');
+    const { PrismaStore } = await import('./prisma-store');
     return new PrismaStore(new PrismaClient());
   }
   return new MemoryStore(hashPassword(env.demoPassword));

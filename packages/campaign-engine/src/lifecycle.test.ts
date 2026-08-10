@@ -6,7 +6,7 @@ import {
   InvalidTransitionError,
   isTerminal,
   nextStatus,
-} from './lifecycle.js';
+} from './lifecycle';
 
 describe('campaign lifecycle state machine', () => {
   it('drives the Wednesday demo path: DRAFT → PENDING_TELCO_APPROVAL → APPROVED', () => {

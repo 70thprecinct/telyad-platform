@@ -13,8 +13,8 @@ import type {
   Realm,
   RiskLevel,
   TelcoStatus,
-} from './enums.js';
-import type { CurrencyCode, Money } from './money.js';
+} from './enums';
+import type { CurrencyCode, Money } from './money';
 import type {
   AdvertiserId,
   ApprovalId,
@@ -27,8 +27,8 @@ import type {
   TelcoId,
   UserId,
   WalletId,
-} from './ids.js';
-import type { AudienceDefinition } from './audience.js';
+} from './ids';
+import type { AudienceDefinition } from './audience';
 
 /** Every telco-owned resource carries a telcoId (spec §11, multi-tenant). */
 export interface Tenanted {

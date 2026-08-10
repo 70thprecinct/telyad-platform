@@ -4,7 +4,7 @@ import type {
   SelectHTMLAttributes,
   TextareaHTMLAttributes,
 } from 'react';
-import { cx } from './primitives.js';
+import { cx } from './primitives';
 
 export function Field({
   label,

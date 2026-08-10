@@ -12,7 +12,7 @@ import type {
   Notification,
   Telco,
 } from '@telyad/types';
-import type { StoredUser } from './store.js';
+import type { StoredUser } from './store';
 
 const SEED_TS = '2026-08-10T09:00:00.000Z';
 

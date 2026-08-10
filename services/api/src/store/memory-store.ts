@@ -6,8 +6,8 @@ import type {
   Notification,
   Telco,
 } from '@telyad/types';
-import type { CampaignFilter, Store, StoredUser } from './store.js';
-import { buildSeed } from './seed-data.js';
+import type { CampaignFilter, Store, StoredUser } from './store';
+import { buildSeed } from './seed-data';
 
 const clone = <T>(v: T): T => JSON.parse(JSON.stringify(v)) as T;
 

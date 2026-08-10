@@ -1,1 +1,1 @@
-export * from './estimate.js';
+export * from './estimate';

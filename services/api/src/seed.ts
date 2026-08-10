@@ -3,9 +3,9 @@
  * Run with: STORE=prisma DATABASE_URL=... pnpm --filter @telyad/api db:seed
  */
 import { PrismaClient } from '@prisma/client';
-import { hashPassword } from './auth.js';
-import { env } from './env.js';
-import { buildSeed } from './store/seed-data.js';
+import { hashPassword } from './auth';
+import { env } from './env';
+import { buildSeed } from './store/seed-data';
 
 async function main(): Promise<void> {
   const prisma = new PrismaClient();

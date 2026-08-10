@@ -1,9 +1,9 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import type { FastifyInstance } from 'fastify';
-import { buildApp } from './app.js';
-import { MemoryStore } from './store/memory-store.js';
-import { hashPassword, signToken } from './auth.js';
-import { env } from './env.js';
+import { buildApp } from './app';
+import { MemoryStore } from './store/memory-store';
+import { hashPassword, signToken } from './auth';
+import { env } from './env';
 
 let app: FastifyInstance;
 

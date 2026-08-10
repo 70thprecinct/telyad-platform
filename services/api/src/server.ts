@@ -1,6 +1,6 @@
-import { buildApp } from './app.js';
-import { createStore } from './store/index.js';
-import { env } from './env.js';
+import { buildApp } from './app';
+import { createStore } from './store/index';
+import { env } from './env';
 
 async function main(): Promise<void> {
   const store = await createStore();

@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import { cx } from './primitives.js';
+import { cx } from './primitives';
 
 export interface Step {
   n: number;

@@ -1,6 +1,6 @@
 'use client';
 import { useState, type ReactNode } from 'react';
-import { cx } from './primitives.js';
+import { cx } from './primitives';
 
 export interface NavItem {
   id: string;

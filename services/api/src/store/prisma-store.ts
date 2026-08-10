@@ -15,7 +15,7 @@ import {
   type AnyRole,
   type Realm,
 } from '@telyad/types';
-import type { CampaignFilter, Store, StoredUser } from './store.js';
+import type { CampaignFilter, Store, StoredUser } from './store';
 
 /** Maps a persisted Campaign row (JSON strings) back into the domain type. */
 function rowToCampaign(r: {

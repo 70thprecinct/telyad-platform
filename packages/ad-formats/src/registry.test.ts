@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { AD_FORMAT_IDS } from '@telyad/types';
-import { getFormat, listFormats, validateCreative } from './registry.js';
+import { getFormat, listFormats, validateCreative } from './registry';
 
 describe('advertising-format registry', () => {
   it('registers every current format', () => {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { hasPermission, permissionsFor } from './rbac.js';
+import { hasPermission, permissionsFor } from './rbac';
 
 describe('RBAC model', () => {
   it('lets a telco Campaign Reviewer approve, but not manage wallets', () => {

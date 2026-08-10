@@ -18,9 +18,9 @@ import { applyEvent, InvalidTransitionError, TELCO_APPROVAL_QUEUE_STATUSES } fro
 import { estimateAudience } from '@telyad/audience';
 import { listFormats, validateCreative } from '@telyad/ad-formats';
 import type { AuthTokenPayload } from '@telyad/auth';
-import type { Store } from './store/store.js';
-import { signToken, verifyPassword, verifyToken } from './auth.js';
-import { env } from './env.js';
+import type { Store } from './store/store';
+import { signToken, verifyPassword, verifyToken } from './auth';
+import { env } from './env';
 
 declare module 'fastify' {
   interface FastifyRequest {

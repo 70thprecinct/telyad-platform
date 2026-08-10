@@ -4,7 +4,7 @@ import {
   findPiiLeak,
   type AudienceDefinition,
 } from '@telyad/types';
-import { estimateAudience } from './estimate.js';
+import { estimateAudience } from './estimate';
 
 const base: AudienceDefinition = {
   geographies: ['Lagos'],

@@ -1,6 +1,6 @@
 'use client';
 import type { ReactNode } from 'react';
-import { Button } from './primitives.js';
+import { Button } from './primitives';
 
 export function Modal({
   open,
