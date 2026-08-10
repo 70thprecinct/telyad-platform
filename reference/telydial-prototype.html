@@ -1,0 +1,1782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>TelyDial — MVAS Acquisition Platform</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --sidebar:#0c1022;
+  --violet:#4a3aa7;
+  --vlight:rgba(74,58,167,.13);
+  --vborder:rgba(74,58,167,.26);
+  --aqua:#1baf7a;
+  --amber:#eda100;
+  --red:#e34948;
+  --blue:#2a78d6;
+  --bg:#f1f0ea;
+  --card:#ffffff;
+  --alt:#f8fafc;
+  --border:rgba(11,11,11,.08);
+  --border2:rgba(11,11,11,.14);
+  --t1:#0f172a;
+  --t2:#475569;
+  --t3:#94a3b8;
+  --ok-bg:#f0fdf4;--ok-t:#166534;--ok-b:#bbf7d0;
+  --warn-bg:#fffbeb;--warn-t:#92400e;--warn-b:#fde68a;
+  --err-bg:#fef2f2;--err-t:#991b1b;--err-b:#fecaca;
+  --acc-bg:#eff6ff;--acc-t:#1e40af;--acc-b:#bfdbfe;
+  --pro-bg:#f5f3ff;--pro-t:#5b21b6;--pro-b:#e9d5ff;
+  --r:8px;
+}
+body{font-family:-apple-system,'Inter',sans-serif;background:var(--bg);color:var(--t1);display:flex;height:100vh;overflow:hidden;font-size:13px;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;cursor:pointer;}
+input,select,textarea{font-family:inherit;font-size:12px;padding:8px 11px;border:0.5px solid var(--border2);border-radius:var(--r);background:var(--card);color:var(--t1);width:100%;outline:none;transition:border .15s;}
+input:focus,select:focus,textarea:focus{border-color:var(--violet);}
+textarea{resize:vertical;}
+
+/* ── Emoji Picker ── */
+.emoji-field-wrap{position:relative;width:100%;}
+.emoji-trigger{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:16px;cursor:pointer;padding:2px 4px;border-radius:5px;line-height:1;opacity:.6;transition:opacity .15s,background .15s;z-index:2;}
+.emoji-trigger:hover{opacity:1;background:var(--alt);}
+.emoji-trigger-area{position:absolute;right:8px;top:8px;background:none;border:none;font-size:16px;cursor:pointer;padding:2px 4px;border-radius:5px;line-height:1;opacity:.6;transition:opacity .15s,background .15s;z-index:2;}
+.emoji-trigger-area:hover{opacity:1;background:var(--alt);}
+.emoji-field-wrap input,.emoji-field-wrap textarea{padding-right:34px;}
+.emoji-picker{position:fixed;z-index:9999;background:var(--card);border:0.5px solid var(--border2);border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,.15);width:320px;overflow:hidden;display:none;flex-direction:column;}
+.emoji-picker.open{display:flex;}
+.emoji-picker-header{padding:10px 10px 6px;border-bottom:0.5px solid var(--border);}
+.emoji-search-wrap{position:relative;}
+.emoji-search-wrap i{position:absolute;left:8px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--t3);}
+.emoji-search{padding:6px 8px 6px 28px;font-size:12px;border:0.5px solid var(--border2);border-radius:7px;width:100%;background:var(--alt);color:var(--t1);}
+.emoji-search:focus{border-color:var(--violet);outline:none;}
+.emoji-cats{display:flex;gap:2px;padding:6px 8px 0;overflow-x:auto;scrollbar-width:none;}
+.emoji-cats::-webkit-scrollbar{display:none;}
+.emoji-cat-btn{flex-shrink:0;padding:4px 8px;border-radius:6px;font-size:14px;border:none;background:none;cursor:pointer;opacity:.6;transition:all .12s;}
+.emoji-cat-btn:hover{opacity:1;background:var(--alt);}
+.emoji-cat-btn.active{opacity:1;background:var(--vlight);}
+.emoji-cat-label{font-size:9px;color:var(--t3);font-weight:500;text-transform:uppercase;letter-spacing:.06em;padding:8px 10px 4px;}
+.emoji-grid{display:flex;flex-wrap:wrap;gap:1px;padding:4px 6px 8px;max-height:220px;overflow-y:auto;scrollbar-width:thin;}
+.emoji-grid::-webkit-scrollbar{width:4px;}
+.emoji-grid::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
+.emoji-btn{width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:18px;border:none;background:none;cursor:pointer;border-radius:6px;transition:background .1s;line-height:1;}
+.emoji-btn:hover{background:var(--alt);}
+.emoji-picker-footer{padding:6px 10px;border-top:0.5px solid var(--border);font-size:9.5px;color:var(--t3);min-height:28px;display:flex;align-items:center;gap:5px;}
+.emoji-preview{font-size:18px;}
+
+
+/* ── Sidebar ── */
+#sidebar{width:200px;flex-shrink:0;background:var(--sidebar);display:flex;flex-direction:column;transition:width .18s;overflow:hidden;position:relative;z-index:10;}
+#sidebar.collapsed{width:52px;}
+.sb-logo{padding:15px 13px;border-bottom:0.5px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:9px;cursor:pointer;}
+.sb-logo-icon{width:26px;height:26px;background:var(--violet);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff;flex-shrink:0;}
+.sb-logo-text{flex:1;overflow:hidden;}
+.sb-logo-text .name{font-size:12px;font-weight:500;color:#f1f5f9;white-space:nowrap;}
+.sb-logo-text .sub{font-size:8.5px;color:#6366f1;font-weight:500;letter-spacing:.07em;text-transform:uppercase;}
+.sb-badge{padding:8px 11px;}
+.sb-badge-inner{background:var(--vlight);border:0.5px solid var(--vborder);border-radius:6px;padding:7px 8px;}
+.sb-badge-inner .role{font-size:8.5px;color:#818cf8;font-weight:500;text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px;}
+.sb-badge-inner .company{font-size:11px;color:#cbd5e1;font-weight:500;}
+.sb-badge-inner .net{font-size:8.5px;color:#475569;margin-top:1px;}
+nav{flex:1;padding:4px 0;overflow-y:auto;}
+nav::-webkit-scrollbar{width:3px;}
+nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px;}
+.nav-item{display:flex;align-items:center;gap:8px;padding:8px 11px;margin:1px 6px;border-radius:6px;cursor:pointer;border-left:2px solid transparent;transition:all .1s;white-space:nowrap;}
+.nav-item:hover{background:rgba(255,255,255,.05);}
+.nav-item.active{background:rgba(74,58,167,.17);border-left-color:var(--violet);}
+.nav-item i{font-size:15px;color:#64748b;flex-shrink:0;transition:color .1s;}
+.nav-item.active i{color:#818cf8;}
+.nav-item .nav-label{font-size:11px;color:#94a3b8;font-weight:400;flex:1;}
+.nav-item.active .nav-label{color:#c4b5fd;font-weight:500;}
+.nav-badge{background:var(--red);color:#fff;font-size:8.5px;font-weight:600;border-radius:10px;padding:1px 5px;}
+#sidebar.collapsed .sb-badge,#sidebar.collapsed .sb-logo-text,#sidebar.collapsed .nav-label,#sidebar.collapsed .nav-badge,#sidebar.collapsed .sb-footer-text{display:none;}
+#sidebar.collapsed .nav-item{padding:9px 13px;margin:1px 6px;}
+.sb-footer{padding:9px 11px;border-top:0.5px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:8px;}
+.sb-avatar{width:22px;height:22px;border-radius:50%;background:var(--violet);display:flex;align-items:center;justify-content:center;font-size:8.5px;font-weight:600;color:#fff;flex-shrink:0;}
+.sb-footer-text .fn{font-size:10px;color:#cbd5e1;font-weight:500;}
+.sb-footer-text .ft{font-size:8.5px;color:#475569;}
+.sb-footer i{font-size:13px;color:#475569;margin-left:auto;cursor:pointer;}
+
+/* ── Main layout ── */
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+#topbar{background:var(--card);border-bottom:0.5px solid var(--border);padding:0 18px;height:48px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+#topbar .breadcrumb{font-size:9.5px;color:var(--t3);margin-top:1px;}
+#topbar .page-title{font-size:13px;font-weight:500;}
+.topbar-right{display:flex;align-items:center;gap:9px;}
+.wallet-pill{background:var(--ok-bg);color:var(--ok-t);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500;display:flex;align-items:center;gap:4px;}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:var(--r);font-size:11px;font-weight:500;border:0.5px solid var(--border2);background:var(--card);color:var(--t2);cursor:pointer;transition:all .15s;}
+.btn:hover{background:var(--alt);}
+.btn-primary{background:var(--violet);color:#fff;border:none;}
+.btn-primary:hover{background:#3d2f8e;}
+.btn-sm{padding:4px 9px;font-size:10.5px;}
+#content{flex:1;overflow-y:auto;padding:16px;}
+#content::-webkit-scrollbar{width:5px;}
+#content::-webkit-scrollbar-thumb{background:var(--border2);border-radius:5px;}
+
+/* ── Pages ── */
+.page{display:none;}
+.page.active{display:block;}
+
+/* ── Status badges ── */
+.badge{display:inline-flex;align-items:center;gap:5px;padding:2px 10px;border-radius:20px;font-size:10.5px;font-weight:500;}
+.badge::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.8;}
+.badge-active{background:var(--ok-bg);color:var(--ok-t);}
+.badge-pending{background:var(--warn-bg);color:var(--warn-t);}
+.badge-paused{background:var(--alt);color:var(--t2);}
+.badge-rejected{background:var(--err-bg);color:var(--err-t);}
+.badge-suspended{background:var(--err-bg);color:var(--err-t);}
+.badge-draft{background:var(--acc-bg);color:var(--acc-t);}
+.badge-approved{background:var(--ok-bg);color:var(--ok-t);}
+
+/* ── KPI grid ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:8px;margin-bottom:14px;}
+.kpi-card{background:var(--card);border-radius:var(--r);padding:13px 14px;border:0.5px solid var(--border);}
+.kpi-label{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px;}
+.kpi-label span{font-size:9px;color:var(--t3);font-weight:500;text-transform:uppercase;letter-spacing:.07em;}
+.kpi-label i{font-size:13px;color:var(--t3);}
+.kpi-value{font-size:19px;font-weight:500;color:var(--t1);margin-bottom:3px;}
+.kpi-sub{font-size:9px;color:var(--t3);}
+
+/* ── Charts ── */
+.chart-card{background:var(--card);border-radius:12px;padding:15px;border:0.5px solid var(--border);margin-bottom:12px;}
+.chart-title{font-size:12px;font-weight:500;margin-bottom:2px;}
+.chart-sub{font-size:9.5px;color:var(--t3);margin-bottom:10px;}
+.chart-legend{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:10px;}
+.chart-legend span{display:flex;align-items:center;gap:4px;font-size:9.5px;color:var(--t2);}
+.chart-legend-dot{width:9px;height:9px;border-radius:2px;display:inline-block;flex-shrink:0;}
+.chart-row{display:grid;grid-template-columns:2fr 1fr;gap:11px;margin-bottom:12px;}
+
+/* ── Tables ── */
+.table-card{background:var(--card);border-radius:12px;border:0.5px solid var(--border);overflow:auto;}
+.table-header{padding:12px 15px;border-bottom:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+table{width:100%;border-collapse:collapse;font-size:11px;}
+thead tr{background:var(--alt);border-bottom:0.5px solid var(--border);}
+th{padding:9px 12px;text-align:left;font-weight:500;color:var(--t3);font-size:9.5px;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;}
+td{padding:10px 12px;border-bottom:0.5px solid var(--border);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+.mono{font-family:monospace;font-size:10px;color:var(--violet);}
+.action-btns{display:flex;gap:4px;}
+.action-btn{background:var(--alt);border:0.5px solid var(--border);border-radius:5px;padding:3px 5px;cursor:pointer;color:var(--t2);font-size:11px;}
+.action-btn:hover{background:var(--border);}
+.model-tag{padding:2px 6px;border-radius:4px;font-size:9.5px;font-weight:500;}
+.model-cpa{background:var(--pro-bg);color:var(--pro-t);}
+.model-cpm{background:var(--acc-bg);color:var(--acc-t);}
+
+/* ── Section filters ── */
+.filter-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;}
+.filter-pills{display:flex;gap:5px;flex-wrap:wrap;}
+.pill{padding:4px 11px;border-radius:20px;font-size:10.5px;border:0.5px solid var(--border);background:var(--card);color:var(--t2);cursor:pointer;font-weight:400;transition:all .15s;}
+.pill.active{background:var(--violet);color:#fff;border-color:var(--violet);font-weight:500;}
+.search-wrap{position:relative;}
+.search-wrap i{position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--t3);}
+.search-wrap input{padding-left:28px;width:175px;}
+
+/* ── Wizard ── */
+.wizard-steps{background:var(--card);border-radius:12px;padding:14px 20px;border:0.5px solid var(--border);margin-bottom:14px;display:flex;align-items:center;}
+.w-step{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;}
+.w-step-circle{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;border:0.5px solid var(--border);background:var(--alt);color:var(--t3);transition:all .2s;}
+.w-step-circle.active{background:var(--violet);color:#fff;border:none;}
+.w-step-circle.done{background:var(--aqua);color:#fff;border:none;}
+.w-step-label{font-size:9px;font-weight:400;color:var(--t3);white-space:nowrap;}
+.w-step-label.active{color:var(--acc-t);font-weight:500;}
+.w-connector{flex:1;height:1px;background:var(--border);margin:0 7px;margin-bottom:16px;transition:background .2s;}
+.w-connector.done{background:var(--aqua);}
+.wizard-card{background:var(--card);border-radius:12px;padding:22px;border:0.5px solid var(--border);}
+.wizard-title{font-size:14px;font-weight:500;margin-bottom:3px;}
+.wizard-sub{font-size:11px;color:var(--t3);margin-bottom:18px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-group{margin-bottom:12px;}
+.form-group label{display:block;font-size:10.5px;font-weight:500;color:var(--t2);margin-bottom:5px;}
+.form-group label span{font-weight:400;color:var(--t3);}
+.char-count{color:var(--t3);}
+.char-warn{color:var(--warn-t);}
+.wizard-nav{display:flex;justify-content:space-between;margin-top:18px;}
+.step-page{display:none;}
+.step-page.active{display:block;}
+
+/* ── STK Preview ── */
+.preview-panel{background:var(--card);border-radius:12px;padding:18px;border:0.5px solid var(--border);position:sticky;top:0;display:flex;flex-direction:column;align-items:center;gap:10px;}
+.preview-label{font-size:9px;color:var(--t3);font-weight:500;text-transform:uppercase;letter-spacing:.07em;}
+.phone-frame{width:166px;height:322px;background:#0f172a;border-radius:24px;border:4px solid #1e293b;box-shadow:0 0 0 1px rgba(255,255,255,.04);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.phone-notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:46px;height:10px;background:#1e293b;border-radius:0 0 8px 8px;}
+.stk-dialog{position:relative;z-index:5;width:83%;background:rgba(30,41,59,.97);border-radius:9px;padding:12px 11px;text-align:center;border:0.5px solid rgba(255,255,255,.09);}
+.stk-title{color:#f1f5f9;font-size:10px;font-weight:500;margin-bottom:7px;line-height:1.4;word-break:break-word;}
+.stk-body{color:#94a3b8;font-size:8.5px;line-height:1.55;margin-bottom:11px;word-break:break-word;}
+.stk-buttons{display:flex;gap:5px;}
+.stk-btn-cancel{flex:1;border:0.5px solid rgba(255,255,255,.1);color:#64748b;border-radius:5px;padding:5px 0;font-size:7.5px;font-weight:500;text-align:center;}
+.stk-btn-accept{flex:1;background:var(--violet);color:#fff;border-radius:5px;padding:5px 0;font-size:7.5px;font-weight:500;text-align:center;}
+.phone-bar{position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:34px;height:3px;background:rgba(255,255,255,.1);border-radius:2px;}
+
+/* ── Device preview tabs ── */
+.preview-tabs{display:flex;gap:4px;margin-bottom:10px;background:var(--alt);border-radius:8px;padding:3px;}
+.preview-tab{flex:1;padding:5px 0;border-radius:6px;font-size:10px;font-weight:500;border:none;background:transparent;color:var(--t3);cursor:pointer;text-align:center;transition:all .15s;}
+.preview-tab.active{background:var(--card);color:var(--t1);box-shadow:0 1px 3px rgba(0,0,0,.08);}
+.device-view{display:none;flex-direction:column;align-items:center;gap:8px;}
+.device-view.active{display:flex;}
+
+/* ── iOS iPhone frame ── */
+.iphone-frame{width:166px;height:322px;background:#f2f2f7;border-radius:38px;border:5px solid #1c1c1e;box-shadow:0 0 0 1px rgba(255,255,255,.15) inset, 0 20px 40px rgba(0,0,0,.25);position:relative;overflow:hidden;display:flex;flex-direction:column;flex-shrink:0;}
+.iphone-side-btn{position:absolute;right:-7px;top:72px;width:4px;height:28px;background:#1c1c1e;border-radius:2px;}
+.iphone-vol-up{position:absolute;left:-7px;top:68px;width:4px;height:20px;background:#1c1c1e;border-radius:2px;}
+.iphone-vol-down{position:absolute;left:-7px;top:96px;width:4px;height:20px;background:#1c1c1e;border-radius:2px;}
+.iphone-power{position:absolute;right:-7px;top:72px;width:4px;height:30px;background:#1c1c1e;border-radius:2px;}
+
+/* Dynamic Island */
+.dynamic-island{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:60px;height:14px;background:#1c1c1e;border-radius:20px;z-index:10;}
+
+/* iOS wallpaper / lock screen style */
+.ios-screen{position:absolute;inset:0;background:linear-gradient(160deg,#1a1a2e 0%,#16213e 45%,#0f3460 100%);}
+.ios-screen-light{background:linear-gradient(160deg,#e8eaf6 0%,#c5cae9 45%,#9fa8da 100%);}
+
+/* iOS status bar */
+.ios-statusbar{position:relative;z-index:5;display:flex;justify-content:space-between;align-items:center;padding:22px 14px 4px;font-size:8px;font-weight:600;color:rgba(255,255,255,.9);font-family:-apple-system,sans-serif;}
+.ios-statusbar-light{color:rgba(0,0,0,.7);}
+.ios-statusbar-right{display:flex;align-items:center;gap:3px;}
+
+/* iOS alert dialog */
+.ios-alert-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:5;padding:12px;}
+.ios-alert{width:100%;background:rgba(242,242,247,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:14px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.25);}
+.ios-alert-body{padding:14px 12px 10px;text-align:center;}
+.ios-alert-operator{font-size:8px;color:#8e8e93;font-family:-apple-system,sans-serif;margin-bottom:4px;text-transform:uppercase;letter-spacing:.04em;}
+.ios-alert-title{font-size:11px;font-weight:700;color:#000;font-family:-apple-system,sans-serif;margin-bottom:6px;line-height:1.3;word-break:break-word;}
+.ios-alert-message{font-size:9px;color:#3c3c43;font-family:-apple-system,sans-serif;line-height:1.5;word-break:break-word;}
+.ios-alert-divider{height:0.5px;background:rgba(60,60,67,.29);}
+.ios-alert-buttons{display:flex;}
+.ios-alert-btn{flex:1;padding:9px 6px;font-size:11px;font-family:-apple-system,sans-serif;text-align:center;color:#007aff;cursor:default;font-weight:400;}
+.ios-alert-btn.bold{font-weight:600;}
+.ios-alert-btn-divider{width:0.5px;background:rgba(60,60,67,.29);flex-shrink:0;}
+
+/* iOS notification banner style (alternative) */
+.ios-notif-banner{position:absolute;top:30px;left:8px;right:8px;background:rgba(242,242,247,.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:14px;padding:10px 11px;z-index:6;box-shadow:0 4px 20px rgba(0,0,0,.2);display:flex;gap:8px;align-items:flex-start;}
+.ios-notif-icon{width:28px;height:28px;background:var(--violet);border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;}
+.ios-notif-text{flex:1;min-width:0;}
+.ios-notif-app{font-size:8px;font-weight:600;color:#8e8e93;font-family:-apple-system,sans-serif;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px;}
+.ios-notif-title{font-size:9.5px;font-weight:600;color:#000;font-family:-apple-system,sans-serif;line-height:1.3;margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ios-notif-body{font-size:8.5px;color:#3c3c43;font-family:-apple-system,sans-serif;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.ios-home-indicator{position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:50px;height:4px;background:rgba(0,0,0,.2);border-radius:3px;}
+
+.preview-meta{padding:9px;background:var(--alt);border-radius:6px;font-size:9.5px;color:var(--t3);line-height:1.7;width:100%;border:0.5px solid var(--border);}
+.preview-meta strong{color:var(--t2);display:block;margin-bottom:3px;font-size:10px;}
+
+/* ── Audience options ── */
+.option-chips{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:0;}
+.chip{padding:3px 9px;border-radius:14px;font-size:10.5px;border:0.5px solid var(--border);background:var(--card);color:var(--t2);cursor:pointer;transition:all .12s;}
+.chip:hover{border-color:var(--violet);}
+.chip.active{border:1.5px solid var(--violet);background:var(--acc-bg);color:var(--acc-t);font-weight:500;}
+.toggle-row{display:flex;gap:4px;margin-bottom:0;}
+.toggle-btn{flex:1;padding:6px 0;border-radius:6px;font-size:10px;border:0.5px solid var(--border);background:var(--card);color:var(--t2);cursor:pointer;text-align:center;transition:all .12s;}
+.toggle-btn.active{border:1.5px solid var(--violet);background:var(--acc-bg);color:var(--acc-t);font-weight:500;}
+
+/* ── Model cards ── */
+.model-cards{display:flex;gap:10px;margin-bottom:0;}
+.model-card{flex:1;padding:13px;border:0.5px solid var(--border);border-radius:9px;cursor:pointer;transition:all .15s;}
+.model-card:hover{border-color:var(--violet);}
+.model-card.active{border:1.5px solid var(--violet);background:var(--acc-bg);}
+.model-card-title{font-size:12px;font-weight:500;color:var(--t1);margin-bottom:3px;}
+.model-card.active .model-card-title{color:var(--acc-t);}
+.model-card-desc{font-size:10.5px;color:var(--t3);}
+.model-card.active .model-card-desc{color:var(--acc-t);}
+
+/* ── Info boxes ── */
+.info-box{padding:13px;border-radius:8px;font-size:10.5px;line-height:1.6;}
+.info-ok{background:var(--ok-bg);border:0.5px solid var(--ok-b);color:var(--ok-t);}
+.info-warn{background:var(--warn-bg);border:0.5px solid var(--warn-b);color:var(--warn-t);}
+.info-err{background:var(--err-bg);border:0.5px solid var(--err-b);color:var(--err-t);}
+.info-acc{background:var(--acc-bg);border:0.5px solid var(--acc-b);color:var(--acc-t);}
+.info-box-title{font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:5px;font-size:11px;}
+.info-box-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 20px;}
+.info-box-grid dt{font-size:9.5px;font-weight:500;opacity:.8;margin-bottom:1px;}
+.info-box-grid dd{font-size:11px;font-weight:500;}
+.estimate-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;}
+.estimate-grid .ev{font-size:13px;font-weight:500;}
+.estimate-grid .ek{font-size:9.5px;}
+.reach-box{display:flex;justify-content:space-between;align-items:center;padding:13px;border-radius:8px;background:var(--acc-bg);border:0.5px solid var(--acc-b);color:var(--acc-t);}
+.reach-box .reach-val{font-size:19px;font-weight:500;margin-top:3px;}
+.reach-box-right{font-size:9.5px;text-align:right;line-height:1.7;}
+
+/* ── Wallet ── */
+.wallet-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px;}
+.wallet-main{background:var(--violet);border-radius:12px;padding:16px 18px;color:#fff;}
+.wallet-main .wl{font-size:9.5px;opacity:.7;font-weight:500;text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;}
+.wallet-main .wv{font-size:24px;font-weight:500;}
+.wallet-main .ws{font-size:9.5px;opacity:.6;margin-top:3px;}
+.wallet-stat{background:var(--card);border-radius:12px;padding:16px 18px;border:0.5px solid var(--border);}
+.wallet-stat .wl{font-size:9.5px;color:var(--t3);font-weight:500;text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;}
+.wallet-stat .wv{font-size:20px;font-weight:500;color:var(--t1);}
+.wallet-stat .ws{font-size:9.5px;color:var(--t3);margin-top:3px;}
+.payment-methods{display:flex;gap:7px;flex-wrap:wrap;}
+.pay-btn{padding:7px 12px;border:0.5px solid var(--border2);border-radius:var(--r);font-size:11px;background:var(--card);color:var(--t2);cursor:pointer;display:flex;align-items:center;gap:4px;}
+.pay-btn:hover{background:var(--alt);}
+.ledger-platform{padding:2px 6px;border-radius:4px;font-size:9.5px;font-weight:500;}
+.lp-td{background:var(--pro-bg);color:var(--pro-t);}
+.lp-am{background:var(--acc-bg);color:var(--acc-t);}
+.amount-pos{color:var(--ok-t);font-weight:500;}
+.amount-neg{color:var(--err-t);font-weight:500;}
+
+/* ── Notifications ── */
+.notif-item{background:var(--card);border-radius:9px;padding:13px;border:0.5px solid var(--border);display:flex;gap:11px;margin-bottom:7px;}
+.notif-item.unread{border-color:#bfdbfe;}
+.notif-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.notif-icon i{font-size:14px;}
+.n-success .notif-icon{background:var(--ok-bg);}
+.n-success .notif-icon i{color:var(--ok-t);}
+.n-warning .notif-icon{background:var(--warn-bg);}
+.n-warning .notif-icon i{color:var(--warn-t);}
+.n-danger .notif-icon{background:var(--err-bg);}
+.n-danger .notif-icon i{color:var(--err-t);}
+.n-info .notif-icon{background:var(--acc-bg);}
+.n-info .notif-icon i{color:var(--acc-t);}
+.notif-body{flex:1;}
+.notif-header{display:flex;justify-content:space-between;align-items:flex-start;}
+.notif-title{font-size:12px;font-weight:500;}
+.unread-dot{width:6px;height:6px;border-radius:50%;background:var(--violet);flex-shrink:0;margin-top:3px;}
+.notif-text{font-size:11px;color:var(--t2);margin-top:2px;line-height:1.5;}
+.notif-time{font-size:9.5px;color:var(--t3);margin-top:5px;}
+
+/* ── Reports ── */
+.reports-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;}
+.report-card{background:var(--card);border-radius:12px;padding:16px;border:0.5px solid var(--border);}
+.report-card i{font-size:20px;color:var(--t3);display:block;margin-bottom:9px;}
+.report-card .rt{font-size:12px;font-weight:500;margin-bottom:4px;}
+.report-card .rd{font-size:10.5px;color:var(--t3);line-height:1.5;margin-bottom:12px;}
+.export-btns{display:flex;gap:5px;}
+.export-btn{padding:4px 8px;border:0.5px solid var(--border2);border-radius:5px;font-size:10px;font-weight:500;background:var(--card);color:var(--t2);cursor:pointer;display:flex;align-items:center;gap:3px;}
+.export-btn:hover{background:var(--alt);}
+
+/* ── Support ── */
+.faq-card{background:var(--card);border-radius:12px;padding:20px;border:0.5px solid var(--border);max-width:620px;}
+.faq-item{padding-bottom:13px;margin-bottom:13px;border-bottom:0.5px solid var(--border);}
+.faq-item:last-child{padding-bottom:0;margin-bottom:0;border-bottom:none;}
+.faq-q{font-size:12px;font-weight:500;margin-bottom:5px;}
+.faq-a{font-size:11px;color:var(--t2);line-height:1.6;}
+
+/* ── Review summary ── */
+.review-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.review-section{padding:13px;background:var(--alt);border-radius:8px;border:0.5px solid var(--border);}
+.review-section-title{font-size:9.5px;font-weight:500;color:var(--acc-t);text-transform:uppercase;letter-spacing:.06em;margin-bottom:9px;}
+.review-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;gap:8px;}
+.review-row dt{font-size:10.5px;color:var(--t3);flex-shrink:0;}
+.review-row dd{font-size:10.5px;font-weight:500;color:var(--t1);text-align:right;}
+
+/* ── Helpers ── */
+.flex{display:flex;} .flex-col{flex-direction:column;} .gap-8{gap:8px;} .gap-12{gap:12px;} .mt-12{margin-top:12px;} .mb-12{margin-bottom:12px;}
+.w-full{width:100%;box-sizing:border-box;}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside id="sidebar">
+  <div class="sb-logo" onclick="toggleSidebar()">
+    <div class="sb-logo-icon">T</div>
+    <div class="sb-logo-text">
+      <div class="name">TelyDial</div>
+      <div class="sub">MVAS Module</div>
+    </div>
+  </div>
+  <div class="sb-badge">
+    <div class="sb-badge-inner">
+      <div class="role">MVAS Provider</div>
+      <div class="company">70TH Precinct Ltd</div>
+      <div class="net">MTN Nigeria</div>
+    </div>
+  </div>
+  <nav>
+    <div class="nav-item active" onclick="showPage('dashboard',this)">
+      <i class="ti ti-layout-dashboard"></i><span class="nav-label">Dashboard</span>
+    </div>
+    <div class="nav-item" onclick="showPage('campaigns',this)">
+      <i class="ti ti-broadcast"></i><span class="nav-label">Campaigns</span>
+    </div>
+    <div class="nav-item" onclick="showPage('create',this)">
+      <i class="ti ti-plus"></i><span class="nav-label">Create campaign</span>
+    </div>
+    <div class="nav-item" onclick="showPage('products',this)">
+      <i class="ti ti-apps"></i><span class="nav-label">Products</span>
+    </div>
+    <div class="nav-item" onclick="showPage('analytics',this)">
+      <i class="ti ti-chart-line"></i><span class="nav-label">Analytics</span>
+    </div>
+    <div class="nav-item" onclick="showPage('wallet',this)">
+      <i class="ti ti-wallet"></i><span class="nav-label">Wallet</span>
+    </div>
+    <div class="nav-item" onclick="showPage('reports',this)">
+      <i class="ti ti-file-analytics"></i><span class="nav-label">Reports</span>
+    </div>
+    <div class="nav-item" onclick="showPage('notifications',this)">
+      <i class="ti ti-bell"></i><span class="nav-label">Notifications</span><span class="nav-badge">3</span>
+    </div>
+    <div class="nav-item" onclick="showPage('support',this)">
+      <i class="ti ti-help-circle"></i><span class="nav-label">Support</span>
+    </div>
+  </nav>
+  <div class="sb-footer">
+    <div class="sb-avatar">7P</div>
+    <div class="sb-footer-text">
+      <div class="fn">70TH Precinct</div>
+      <div class="ft">Admin</div>
+    </div>
+    <i class="ti ti-settings"></i>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div id="main">
+  <header id="topbar">
+    <div>
+      <div class="page-title" id="topbar-title">Dashboard</div>
+      <div class="breadcrumb">Tely Ads &rarr; TelyDial &rarr; <span id="topbar-bc">Dashboard</span></div>
+    </div>
+    <div class="topbar-right">
+      <div class="wallet-pill"><i class="ti ti-wallet"></i> &#8358;450,000</div>
+      <button class="btn btn-primary" onclick="showPage('create',null)"><i class="ti ti-plus"></i> New campaign</button>
+    </div>
+  </header>
+
+  <div id="content">
+
+    <!-- ═══════ DASHBOARD ═══════ -->
+    <div id="page-dashboard" class="page active">
+      <div class="kpi-grid" id="kpi-grid"></div>
+      <div class="chart-row">
+        <div class="chart-card">
+          <div class="chart-title">Pushes and opt-ins by day</div>
+          <div class="chart-sub">Last 7 days</div>
+          <div class="chart-legend">
+            <span><span class="chart-legend-dot" style="background:#4a3aa7"></span>STK pushes</span>
+            <span><span class="chart-legend-dot" style="background:#1baf7a"></span>Opt-ins</span>
+          </div>
+          <div style="position:relative;height:170px"><canvas id="chart-push" role="img" aria-label="Area chart showing STK pushes and opt-ins over 7 days">STK pushes and opt-ins trend over 7 days.</canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Acquisition by state</div>
+          <div class="chart-sub">Top 5 states</div>
+          <div style="position:relative;height:120px"><canvas id="chart-state" role="img" aria-label="Pie chart showing subscriber acquisition distribution by Nigerian state">State distribution chart.</canvas></div>
+          <div class="chart-legend" style="margin-top:8px;margin-bottom:0" id="state-legend"></div>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Spend and CPA trend</div>
+        <div class="chart-legend">
+          <span><span class="chart-legend-dot" style="background:#4a3aa7"></span>Daily spend (&#8358;)</span>
+          <span><span class="chart-legend-dot" style="background:#eda100;border-top:2px dashed #eda100"></span>CPA (&#8358;)</span>
+        </div>
+        <div style="position:relative;height:150px"><canvas id="chart-spend" role="img" aria-label="Line chart showing daily spend and CPA over 7 days">Spend and CPA trend chart.</canvas></div>
+      </div>
+    </div>
+
+    <!-- ═══════ CAMPAIGNS ═══════ -->
+    <div id="page-campaigns" class="page">
+      <div class="filter-row">
+        <div class="filter-pills">
+          <span class="pill active">All</span>
+          <span class="pill" onclick="filterPill(this)">Active</span>
+          <span class="pill" onclick="filterPill(this)">Pending</span>
+          <span class="pill" onclick="filterPill(this)">Paused</span>
+          <span class="pill" onclick="filterPill(this)">Rejected</span>
+        </div>
+        <div class="flex gap-8">
+          <div class="search-wrap"><i class="ti ti-search"></i><input placeholder="Search campaigns&hellip;" style="width:175px"/></div>
+          <button class="btn btn-primary" onclick="showPage('create',null)"><i class="ti ti-plus"></i> New campaign</button>
+        </div>
+      </div>
+      <div class="table-card">
+        <table>
+          <thead><tr>
+            <th>Campaign</th><th>Status</th><th>Product</th><th>Audience</th>
+            <th>Model</th><th>Daily spend</th><th>Total spend</th>
+            <th>Opt-ins</th><th>CPA</th><th>Conv %</th><th></th>
+          </tr></thead>
+          <tbody id="campaigns-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════ CREATE CAMPAIGN ═══════ -->
+    <div id="page-create" class="page">
+      <div style="max-width:860px;margin:0 auto">
+        <!-- Steps -->
+        <div class="wizard-steps" id="wizard-steps"></div>
+
+        <!-- Step 1 — Product -->
+        <div id="step-1" class="step-page active">
+          <div class="wizard-card">
+            <div class="wizard-title">Product verification</div>
+            <div class="wizard-sub">Enter your MTN Product ID. All service details are retrieved automatically — no short code, billing rate, or tariff entry required.</div>
+            <div class="form-group" style="max-width:430px">
+              <label>MTN Product ID</label>
+              <div class="flex gap-8">
+                <input id="product-id-input" placeholder="e.g. MTN-89012" style="font-family:monospace;font-size:13px" oninput="resetVerify()"/>
+                <button class="btn btn-primary" onclick="verifyProduct()" id="verify-btn" style="white-space:nowrap">Verify</button>
+              </div>
+              <div style="font-size:9.5px;color:var(--t3);margin-top:5px">Your Product ID was assigned by MTN Nigeria during service onboarding.</div>
+            </div>
+            <div id="verify-result"></div>
+            <div class="wizard-nav">
+              <div></div>
+              <button class="btn btn-primary" onclick="nextStep(2)" id="step1-next" disabled style="opacity:.45">Continue <i class="ti ti-arrow-right"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2 — Creative -->
+        <div id="step-2" class="step-page">
+          <div style="display:grid;grid-template-columns:1fr 188px;gap:12px;align-items:start">
+            <div class="wizard-card">
+              <div class="wizard-title">Creative builder</div>
+              <div class="wizard-sub">Compose your STK push message. The handset preview updates as you type.</div>
+              <div class="form-grid mb-12">
+                <div class="form-group" style="margin-bottom:0"><label>Campaign name</label><input id="cr-name" placeholder="World Cup Predictor Q3" class="w-full"/></div>
+                <div class="form-group" style="margin-bottom:0"><label>Internal reference</label><input id="cr-ref" placeholder="SOKA-2026-Q3" class="w-full"/></div>
+              </div>
+              <div class="form-group">
+                <label>Service name <span>— top line of push notification</span></label>
+                <div class="emoji-field-wrap"><input id="cr-sn" placeholder="e.g. World Cup Predictor" class="w-full" oninput="updatePreview()"/><button type="button" class="emoji-trigger" onclick="openEmoji(event,'cr-sn')" title="Insert emoji">😊</button></div>
+              </div>
+              <div class="form-group">
+                <label>Body copy <span class="char-count" id="body-count">0/160 characters</span></label>
+                <div class="emoji-field-wrap"><textarea id="cr-body" rows="3" maxlength="160" placeholder="e.g. Predict scores. WIN up to N4.65 MILLION! 500 winning positions. Click OK to play now!" class="w-full" oninput="updatePreview();updateCharCount()"></textarea><button type="button" class="emoji-trigger-area" onclick="openEmoji(event,'cr-body')" title="Insert emoji">😊</button></div>
+              </div>
+              <div class="form-group">
+                <label>Accept button label</label>
+                <div class="option-chips mb-12" id="accept-chips">
+                  <span class="chip active" onclick="setAccept(this,'Subscribe')">Subscribe</span>
+                  <span class="chip" onclick="setAccept(this,'Join now')">Join now</span>
+                  <span class="chip" onclick="setAccept(this,'Play now')">Play now</span>
+                  <span class="chip" onclick="setAccept(this,'Activate')">Activate</span>
+                  <span class="chip" onclick="setAccept(this,'Continue')">Continue</span>
+                  <span class="chip" onclick="setAccept(this,'Learn more')">Learn more</span>
+                </div>
+                <input id="cr-accept" value="Subscribe" placeholder="Custom label&hellip;" class="w-full" oninput="updatePreview()" style="margin-top:7px"/>
+              </div>
+              <div class="form-group" style="padding:11px;background:var(--alt);border-radius:8px;border:0.5px solid var(--border)">
+                <label style="display:flex;align-items:center;gap:4px;margin-bottom:5px"><i class="ti ti-device-mobile-message" style="font-size:12px"></i> SMS fallback <span>— for non-STK handsets</span></label>
+                <div class="emoji-field-wrap"><textarea id="cr-sms" rows="2" placeholder="World Cup Predictor: Predict scores. WIN up to N4.65M! Reply YES to subscribe." class="w-full"></textarea><button type="button" class="emoji-trigger-area" onclick="openEmoji(event,'cr-sms')" title="Insert emoji">😊</button></div>
+              </div>
+              <div class="wizard-nav">
+                <button class="btn" onclick="nextStep(1)"><i class="ti ti-arrow-left"></i> Back</button>
+                <button class="btn btn-primary" onclick="nextStep(3)">Continue <i class="ti ti-arrow-right"></i></button>
+              </div>
+            </div>
+            <!-- Phone preview -->
+            <div class="preview-panel">
+              <div class="preview-label">Live preview</div>
+
+              <!-- Device tabs -->
+              <div class="preview-tabs" style="width:100%">
+                <button class="preview-tab active" onclick="switchDevice('android',this)">&#9654; Android</button>
+                <button class="preview-tab" onclick="switchDevice('ios',this)"> iOS</button>
+              </div>
+
+              <!-- Android STK view -->
+              <div id="device-android" class="device-view active">
+                <div class="phone-frame">
+                  <div class="phone-notch"></div>
+                  <div class="stk-dialog">
+                    <div class="stk-title" id="prev-title">Service name</div>
+                    <div class="stk-body" id="prev-body">Your message will appear here exactly as subscribers will see it on their handset.</div>
+                    <div class="stk-buttons">
+                      <div class="stk-btn-cancel">Cancel</div>
+                      <div class="stk-btn-accept" id="prev-accept">Subscribe</div>
+                    </div>
+                  </div>
+                  <div class="phone-bar"></div>
+                </div>
+                <div style="font-size:9px;color:var(--t3);text-align:center">Android STK push</div>
+              </div>
+
+              <!-- iOS view — Alert dialog -->
+              <div id="device-ios" class="device-view">
+                <div class="iphone-frame">
+                  <div class="iphone-vol-up"></div>
+                  <div class="iphone-vol-down"></div>
+                  <div class="iphone-power"></div>
+                  <div class="dynamic-island"></div>
+                  <div class="ios-screen">
+                    <!-- Status bar -->
+                    <div class="ios-statusbar">
+                      <span style="font-size:9px;font-weight:700">9:41</span>
+                      <div class="ios-statusbar-right">
+                        <svg width="12" height="8" viewBox="0 0 12 8" fill="none"><rect x="0" y="2" width="2" height="6" rx="0.5" fill="white" opacity="0.4"/><rect x="3" y="1.5" width="2" height="6.5" rx="0.5" fill="white" opacity="0.6"/><rect x="6" y="0.5" width="2" height="7.5" rx="0.5" fill="white" opacity="0.8"/><rect x="9" y="0" width="2" height="8" rx="0.5" fill="white"/></svg>
+                        <svg width="11" height="8" viewBox="0 0 11 8" fill="none"><path d="M5.5 1.5C7.2 1.5 8.7 2.2 9.8 3.3L11 2.1C9.6 0.8 7.6 0 5.5 0C3.4 0 1.4 0.8 0 2.1L1.2 3.3C2.3 2.2 3.8 1.5 5.5 1.5Z" fill="white" opacity="0.4"/><path d="M5.5 4C6.5 4 7.4 4.4 8.1 5.1L9.3 3.9C8.3 3 7 2.4 5.5 2.4C4 2.4 2.7 3 1.7 3.9L2.9 5.1C3.6 4.4 4.5 4 5.5 4Z" fill="white" opacity="0.7"/><circle cx="5.5" cy="6.5" r="1.5" fill="white"/></svg>
+                        <svg width="19" height="8" viewBox="0 0 19 8" fill="white"><rect x="0" y="1" width="15" height="6" rx="1.5" stroke="white" stroke-width="0.8" fill="none" opacity="0.5"/><rect x="16" y="2.5" width="1.5" height="3" rx="0.75" fill="white" opacity="0.5"/><rect x="1" y="2" width="11" height="4" rx="0.8" fill="white"/></svg>
+                      </div>
+                    </div>
+                    <!-- iOS Alert dialog -->
+                    <div class="ios-alert-overlay">
+                      <div class="ios-alert">
+                        <div class="ios-alert-body">
+                          <div class="ios-alert-operator">SIM Application</div>
+                          <div class="ios-alert-title" id="ios-prev-title">Service name</div>
+                          <div class="ios-alert-message" id="ios-prev-body">Your message will appear here exactly as subscribers will see it on their handset.</div>
+                        </div>
+                        <div class="ios-alert-divider"></div>
+                        <div class="ios-alert-buttons">
+                          <div class="ios-alert-btn">Cancel</div>
+                          <div class="ios-alert-btn-divider"></div>
+                          <div class="ios-alert-btn bold" id="ios-prev-accept">Subscribe</div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- iOS home indicator -->
+                    <div class="ios-home-indicator"></div>
+                  </div>
+                </div>
+                <div style="font-size:9px;color:var(--t3);text-align:center">iPhone iOS STK alert</div>
+              </div>
+
+              <!-- Composition meta (shared) -->
+              <div class="preview-meta">
+                <strong>Composition</strong>
+                <div>Title: <span id="pm-title">0</span>/32</div>
+                <div>Body: <span id="pm-body">0</span>/160</div>
+                <div>Button: <span id="pm-acc">9</span>/14</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3 — Audience -->
+        <div id="step-3" class="step-page">
+          <div class="wizard-card">
+            <div class="wizard-title">Audience targeting</div>
+            <div class="wizard-sub">Define who receives your STK push. Existing subscribers are automatically excluded using your Product ID.</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+              <div>
+                <div class="form-group">
+                  <label>Target category</label>
+                  <div class="option-chips" id="cat-chips"></div>
+                </div>
+              </div>
+              <div>
+                <div class="form-group">
+                  <label>ARPU band</label>
+                  <div class="toggle-row" id="arpu-row">
+                    <span class="toggle-btn" onclick="toggleBtn(this,'arpu-row')">Very high</span>
+                    <span class="toggle-btn" onclick="toggleBtn(this,'arpu-row')">High</span>
+                    <span class="toggle-btn" onclick="toggleBtn(this,'arpu-row')">Medium</span>
+                    <span class="toggle-btn" onclick="toggleBtn(this,'arpu-row')">Low</span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Network type</label>
+                  <div class="toggle-row" id="net-row">
+                    <span class="toggle-btn" onclick="toggleBtn(this,'net-row')">Urban</span>
+                    <span class="toggle-btn" onclick="toggleBtn(this,'net-row')">Semi urban</span>
+                    <span class="toggle-btn" onclick="toggleBtn(this,'net-row')">Rural</span>
+                    <span class="toggle-btn" onclick="toggleBtn(this,'net-row')">All</span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Language preference</label>
+                  <select class="w-full"><option>All languages</option><option>English</option><option>Yoruba</option><option>Hausa</option><option>Igbo</option><option>Pidgin</option></select>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Location targeting</label>
+              <div class="toggle-row" id="loc-row" style="max-width:280px;margin-bottom:10px">
+                <span class="toggle-btn active" onclick="toggleBtn(this,'loc-row');toggleStates(this)">National</span>
+                <span class="toggle-btn" onclick="toggleBtn(this,'loc-row');toggleStates(this)">By state</span>
+                <span class="toggle-btn" onclick="toggleBtn(this,'loc-row');toggleStates(this)">By zone</span>
+              </div>
+              <div id="states-panel" style="display:none">
+                <div class="option-chips" id="state-chips"></div>
+              </div>
+            </div>
+            <div class="reach-box">
+              <div><div style="font-size:10.5px;font-weight:500">Estimated audience reach</div><div class="reach-val">2.4M &ndash; 3.1M subscribers</div></div>
+              <div class="reach-box-right"><div>Existing subscribers excluded</div><div>Device filtering applied automatically</div></div>
+            </div>
+            <div class="wizard-nav">
+              <button class="btn" onclick="nextStep(2)"><i class="ti ti-arrow-left"></i> Back</button>
+              <button class="btn btn-primary" onclick="nextStep(4)">Continue <i class="ti ti-arrow-right"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4 — Budget -->
+        <div id="step-4" class="step-page">
+          <div class="wizard-card">
+            <div class="wizard-title">Budget and delivery</div>
+            <div class="wizard-sub">Set your pricing model, daily spend limit, campaign schedule, and delivery settings.</div>
+            <div class="form-group">
+              <label>Pricing model</label>
+              <div class="model-cards">
+                <div class="model-card active" id="mc-cpa" onclick="selectModel('CPA')">
+                  <div class="model-card-title">CPA &mdash; Cost per acquisition</div>
+                  <div class="model-card-desc">Pay only when a subscription is confirmed by the network after the opt-in window.</div>
+                </div>
+                <div class="model-card" id="mc-cpm" onclick="selectModel('CPM')">
+                  <div class="model-card-title">CPM &mdash; Cost per mille</div>
+                  <div class="model-card-desc">Pay per 1,000 STK pushes delivered, regardless of opt-in outcome.</div>
+                </div>
+              </div>
+            </div>
+            <div class="form-grid">
+              <div class="form-group"><label>Daily spend limit (&#8358;)</label><input id="b-daily" placeholder="e.g. 25,000" class="w-full"/></div>
+              <div class="form-group"><label>Campaign budget (&#8358;)</label><input id="b-camp" placeholder="e.g. 500,000" class="w-full"/></div>
+              <div class="form-group"><label>Lifetime budget (&#8358;) <span>optional</span></label><input id="b-life" placeholder="Overall ceiling" class="w-full"/></div>
+              <div class="form-group"><label>Max subscribers to acquire <span>optional</span></label><input id="b-maxs" placeholder="e.g. 10,000" class="w-full"/></div>
+              <div class="form-group">
+                <label>Campaign priority</label>
+                <div class="toggle-row" id="pri-row">
+                  <span class="toggle-btn active" onclick="toggleBtn(this,'pri-row')">Standard</span>
+                  <span class="toggle-btn" onclick="toggleBtn(this,'pri-row')">High</span>
+                  <span class="toggle-btn" onclick="toggleBtn(this,'pri-row')">Premium</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Delivery speed</label>
+                <div class="toggle-row" id="spd-row">
+                  <span class="toggle-btn active" onclick="toggleBtn(this,'spd-row')">Normal</span>
+                  <span class="toggle-btn" onclick="toggleBtn(this,'spd-row')">Accelerated</span>
+                  <span class="toggle-btn" onclick="toggleBtn(this,'spd-row')">Even</span>
+                </div>
+              </div>
+              <div class="form-group"><label>Start date</label><input id="b-start" type="date" class="w-full"/></div>
+              <div class="form-group"><label>End date <span>optional</span></label><input id="b-end" type="date" class="w-full"/></div>
+            </div>
+            <div class="form-group">
+              <label>Frequency cap &mdash; max pushes per subscriber</label>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+                <div><label style="font-size:9.5px;color:var(--t3);font-weight:400;margin-bottom:3px">Per day</label><input placeholder="e.g. 2" class="w-full"/></div>
+                <div><label style="font-size:9.5px;color:var(--t3);font-weight:400;margin-bottom:3px">Per week</label><input placeholder="e.g. 5" class="w-full"/></div>
+                <div><label style="font-size:9.5px;color:var(--t3);font-weight:400;margin-bottom:3px">Campaign lifetime</label><input placeholder="e.g. 10" class="w-full"/></div>
+              </div>
+            </div>
+            <div class="wizard-nav">
+              <button class="btn" onclick="nextStep(3)"><i class="ti ti-arrow-left"></i> Back</button>
+              <button class="btn btn-primary" onclick="nextStep(5)">Review campaign <i class="ti ti-arrow-right"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 5 — Review -->
+        <div id="step-5" class="step-page">
+          <div class="wizard-card">
+            <div class="wizard-title">Review and submit</div>
+            <div class="wizard-sub">Review all campaign details. After submission, your campaign enters the MTN Nigeria telco approval queue.</div>
+            <div class="review-grid" id="review-grid"></div>
+            <div class="info-box info-ok mb-12">
+              <div class="info-box-title"><i class="ti ti-sparkles"></i> AI campaign estimates</div>
+              <div class="estimate-grid">
+                <div><div class="ev">2.4M&ndash;3.1M</div><div class="ek">Est. reach</div></div>
+                <div><div class="ev">2.1M&ndash;2.8M</div><div class="ek">Est. pushes</div></div>
+                <div><div class="ev">172K&ndash;243K</div><div class="ek">Expected opt-ins</div></div>
+                <div><div class="ev">82 / 100</div><div class="ek">Quality score</div></div>
+              </div>
+            </div>
+            <div class="info-box info-warn mb-12" style="display:flex;align-items:center;gap:8px">
+              <i class="ti ti-clock" style="font-size:14px;flex-shrink:0"></i>
+              After submission, your campaign enters the MTN Nigeria approval queue. You will be notified when approved or if reviewer changes are required.
+            </div>
+            <div class="wallet-pill" style="margin-bottom:16px;justify-content:space-between;border-radius:8px;padding:10px 14px">
+              <span>Wallet balance available</span><strong>&#8358;450,000</strong>
+            </div>
+            <div class="wizard-nav">
+              <button class="btn" onclick="nextStep(4)"><i class="ti ti-arrow-left"></i> Back</button>
+              <div class="flex gap-8">
+                <button class="btn"><i class="ti ti-device-floppy"></i> Save draft</button>
+                <button class="btn btn-primary" onclick="submitCampaign()"><i class="ti ti-send"></i> Submit for approval</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ PRODUCTS ═══════ -->
+    <div id="page-products" class="page">
+      <div class="filter-row">
+        <div style="font-size:11px;color:var(--t3)">5 MTN products registered</div>
+        <button class="btn btn-primary"><i class="ti ti-plus"></i> Verify new product</button>
+      </div>
+      <div class="table-card">
+        <table>
+          <thead><tr>
+            <th>Product ID</th><th>Service name</th><th>Status</th>
+            <th>Category</th><th>Subscription type</th><th>Created</th><th></th>
+          </tr></thead>
+          <tbody id="products-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════ ANALYTICS ═══════ -->
+    <div id="page-analytics" class="page">
+      <div class="kpi-grid" id="analytics-kpi"></div>
+      <div class="chart-card">
+        <div class="chart-title">Subscriber acquisition by day</div>
+        <div class="chart-legend">
+          <span><span class="chart-legend-dot" style="background:#4a3aa7"></span>Opt-ins</span>
+          <span><span class="chart-legend-dot" style="background:#1baf7a;opacity:.35"></span>STK pushes (scaled)</span>
+        </div>
+        <div style="position:relative;height:210px"><canvas id="chart-acq" role="img" aria-label="Bar chart of subscriber acquisition by day">Acquisition trend chart.</canvas></div>
+      </div>
+      <div class="chart-row">
+        <div class="chart-card" style="margin-bottom:0">
+          <div class="chart-title">Conversion funnel</div>
+          <div class="chart-sub">Pushes sent &rarr; confirmed subscriptions</div>
+          <div style="position:relative;height:170px"><canvas id="chart-funnel" role="img" aria-label="Funnel chart showing conversion steps">Conversion funnel.</canvas></div>
+        </div>
+        <div class="chart-card" style="margin-bottom:0">
+          <div class="chart-title">CPA trend</div>
+          <div class="chart-sub">Last 7 days</div>
+          <div style="position:relative;height:170px"><canvas id="chart-cpa" role="img" aria-label="CPA trend over 7 days">CPA trend chart.</canvas></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ WALLET ═══════ -->
+    <div id="page-wallet" class="page">
+      <div class="wallet-grid">
+        <div class="wallet-main">
+          <div class="wl">Wallet balance</div>
+          <div class="wv">&#8358;450,000</div>
+          <div class="ws">Available to spend</div>
+        </div>
+        <div class="wallet-stat"><div class="wl">Reserved spend</div><div class="wv">&#8358;45,000</div><div class="ws">Active campaigns</div></div>
+        <div class="wallet-stat"><div class="wl">Today&rsquo;s spend</div><div class="wv">&#8358;87,500</div><div class="ws">All campaigns</div></div>
+        <div class="wallet-stat"><div class="wl">Total spend</div><div class="wv">&#8358;1,245,000</div><div class="ws">All time</div></div>
+      </div>
+      <div class="chart-card mb-12">
+        <div class="chart-title" style="margin-bottom:12px">Add funds</div>
+        <div class="payment-methods">
+          <button class="pay-btn"><i class="ti ti-building-bank"></i> Bank transfer</button>
+          <button class="pay-btn"><i class="ti ti-credit-card"></i> Paystack</button>
+          <button class="pay-btn"><i class="ti ti-credit-card"></i> Flutterwave</button>
+          <button class="pay-btn"><i class="ti ti-credit-card"></i> Monnify</button>
+          <button class="pay-btn"><i class="ti ti-qrcode"></i> Virtual account</button>
+          <button class="pay-btn"><i class="ti ti-credit-card"></i> Card payment</button>
+        </div>
+      </div>
+      <div class="table-card">
+        <div class="table-header">
+          <div style="font-size:12px;font-weight:500">Transaction ledger</div>
+          <div class="flex gap-8">
+            <span class="pill active" style="font-size:10px">All</span>
+            <span class="pill" style="font-size:10px" onclick="filterPill(this)">TelyDial</span>
+            <span class="pill" style="font-size:10px" onclick="filterPill(this)">Ads Manager</span>
+          </div>
+        </div>
+        <table>
+          <thead><tr>
+            <th>Date</th><th>Reference</th><th>Type</th><th>Method/source</th><th>Platform</th><th>Amount</th>
+          </tr></thead>
+          <tbody id="ledger-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════ REPORTS ═══════ -->
+    <div id="page-reports" class="page">
+      <div class="reports-grid">
+        <div class="report-card"><i class="ti ti-chart-bar"></i><div class="rt">Campaign performance</div><div class="rd">Pushes, opt-ins, spend, and CPA across all campaigns</div><div class="export-btns"><button class="export-btn"><i class="ti ti-download"></i> PDF</button><button class="export-btn"><i class="ti ti-download"></i> Excel</button><button class="export-btn"><i class="ti ti-download"></i> CSV</button></div></div>
+        <div class="report-card"><i class="ti ti-users"></i><div class="rt">Acquisition report</div><div class="rd">Subscriber acquisition by campaign, state, and service category</div><div class="export-btns"><button class="export-btn"><i class="ti ti-download"></i> PDF</button><button class="export-btn"><i class="ti ti-download"></i> Excel</button><button class="export-btn"><i class="ti ti-download"></i> CSV</button></div></div>
+        <div class="report-card"><i class="ti ti-cash"></i><div class="rt">Spend analysis</div><div class="rd">Daily and monthly spend with CPA and CPM breakdowns</div><div class="export-btns"><button class="export-btn"><i class="ti ti-download"></i> PDF</button><button class="export-btn"><i class="ti ti-download"></i> Excel</button><button class="export-btn"><i class="ti ti-download"></i> CSV</button></div></div>
+        <div class="report-card"><i class="ti ti-map-pin"></i><div class="rt">State performance</div><div class="rd">Opt-in rates and acquisition cost by Nigerian state</div><div class="export-btns"><button class="export-btn"><i class="ti ti-download"></i> PDF</button><button class="export-btn"><i class="ti ti-download"></i> Excel</button><button class="export-btn"><i class="ti ti-download"></i> CSV</button></div></div>
+        <div class="report-card"><i class="ti ti-calendar"></i><div class="rt">Daily report</div><div class="rd">Yesterday&rsquo;s full campaign performance summary</div><div class="export-btns"><button class="export-btn"><i class="ti ti-download"></i> PDF</button><button class="export-btn"><i class="ti ti-download"></i> Excel</button><button class="export-btn"><i class="ti ti-download"></i> CSV</button></div></div>
+        <div class="report-card"><i class="ti ti-calendar-stats"></i><div class="rt">Monthly report</div><div class="rd">Complete month-to-date analytics across all campaigns</div><div class="export-btns"><button class="export-btn"><i class="ti ti-download"></i> PDF</button><button class="export-btn"><i class="ti ti-download"></i> Excel</button><button class="export-btn"><i class="ti ti-download"></i> CSV</button></div></div>
+      </div>
+    </div>
+
+    <!-- ═══════ NOTIFICATIONS ═══════ -->
+    <div id="page-notifications" class="page">
+      <div style="max-width:660px">
+        <div class="filter-row" style="margin-bottom:12px">
+          <div style="font-size:11px;color:var(--t3)">3 unread notifications</div>
+          <button class="btn btn-sm">Mark all as read</button>
+        </div>
+        <div id="notifs-list"></div>
+      </div>
+    </div>
+
+    <!-- ═══════ SUPPORT ═══════ -->
+    <div id="page-support" class="page">
+      <div class="faq-card">
+        <div style="font-size:13px;font-weight:500;margin-bottom:14px">Frequently asked questions</div>
+        <div id="faq-list"></div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+// ═══════ DATA ═══════
+const KPI_DATA=[
+  {l:'Active campaigns',v:'7',i:'ti-broadcast',s:'2 pending approval'},
+  {l:"Today's STK pushes",v:'145,230',i:'ti-device-mobile',s:'+18% vs yesterday'},
+  {l:'Total STK pushes',v:'2,847,650',i:'ti-chart-bar',s:'All time'},
+  {l:"Today's opt-ins",v:'1,234',i:'ti-check',s:'+12% vs yesterday'},
+  {l:'Total opt-ins',v:'34,567',i:'ti-users',s:'All campaigns'},
+  {l:'Active subscribers',v:'28,940',i:'ti-user-check',s:'Currently subscribed'},
+  {l:"Today's spend",v:'₦87,500',i:'ti-cash',s:'Budget: ₦250,000'},
+  {l:'Total spend',v:'₦1,245,000',i:'ti-receipt',s:'All time'},
+  {l:'Conversion rate',v:'8.7%',i:'ti-trending-up',s:'Avg across campaigns'},
+  {l:'Cost per acquisition',v:'₦36.05',i:'ti-target',s:'CPA average'},
+  {l:'Cost per mille',v:'₦12,500',i:'ti-chart-dots',s:'CPM average'},
+  {l:'Wallet balance',v:'₦450,000',i:'ti-wallet',s:'Available'},
+  {l:'Daily budget left',v:'₦162,500',i:'ti-calendar',s:'Today'},
+  {l:'Campaign budget left',v:'₦880,000',i:'ti-flag',s:'Across campaigns'},
+  {l:'Campaign success rate',v:'73.9%',i:'ti-trophy',s:'Met targets'},
+  {l:'Avg opt-in rate',v:'8.2%',i:'ti-percentage',s:'Per push sent'},
+  {l:'Pending approval',v:'2',i:'ti-clock',s:'Awaiting telco review'},
+  {l:'Total campaigns',v:'23',i:'ti-folder',s:'All time'},
+];
+const CAMPAIGNS=[
+  {id:'TDC-001',name:'World Cup Predictor Q2',status:'Active',product:'Soka Games',audience:'Sports',pricing:'CPA',daily:25000,total:245000,optins:6780,cpa:36.1,conv:9.2},
+  {id:'TDC-002',name:'Yello Trivia June',status:'Pending approval',product:'Yello Trivia',audience:'Entertainment',pricing:'CPM',daily:15000,total:0,optins:0,cpa:0,conv:0},
+  {id:'TDC-003',name:'Sports Tips Premium',status:'Active',product:'Sports Tips',audience:'Sports',pricing:'CPA',daily:20000,total:187000,optins:4320,cpa:43.3,conv:7.8},
+  {id:'TDC-004',name:'Ringtone Fiesta',status:'Paused',product:'Music Plus',audience:'Music',pricing:'CPM',daily:10000,total:312000,optins:12100,cpa:25.8,conv:11.2},
+  {id:'TDC-005',name:'News Flash Daily',status:'Rejected',product:'Flash News',audience:'News',pricing:'CPA',daily:8000,total:0,optins:0,cpa:0,conv:0},
+];
+const PRODUCTS=[
+  {id:'MTN-89012',name:'Soka Games',status:'Active',cat:'Gaming',type:'Recurring',created:'2024-03-15'},
+  {id:'MTN-45678',name:'Yello Trivia',status:'Active',cat:'Entertainment',type:'Recurring',created:'2024-06-20'},
+  {id:'MTN-23456',name:'Sports Tips',status:'Active',cat:'Sports',type:'Daily',created:'2023-11-08'},
+  {id:'MTN-34567',name:'Music Plus',status:'Suspended',cat:'Music',type:'Weekly',created:'2023-08-01'},
+  {id:'MTN-12345',name:'Flash News',status:'Active',cat:'News',type:'Daily',created:'2025-01-12'},
+];
+const LEDGER=[
+  {date:'2026-06-29',ref:'TW-9821',type:'Top up',method:'Bank transfer',plat:'TelyDial',amt:200000},
+  {date:'2026-06-29',ref:'TS-4421',type:'Campaign spend',method:'TDC-001',plat:'TelyDial',amt:-25000},
+  {date:'2026-06-28',ref:'TS-4398',type:'Campaign spend',method:'TDC-003',plat:'TelyDial',amt:-20000},
+  {date:'2026-06-28',ref:'TA-2211',type:'Campaign spend',method:'ADC-088',plat:'Ads Manager',amt:-15000},
+  {date:'2026-06-27',ref:'TW-9700',type:'Top up',method:'Paystack',plat:'TelyDial',amt:100000},
+];
+const NOTIFS=[
+  {type:'success',icon:'ti-circle-check',title:'Campaign approved',body:'World Cup Predictor Q2 approved by MTN Nigeria. Delivery has started.',time:'2 hours ago',unread:true},
+  {type:'warning',icon:'ti-alert-triangle',title:'Wallet balance low',body:'Balance below ₦100,000. Top up to prevent campaign interruption.',time:'5 hours ago',unread:true},
+  {type:'danger',icon:'ti-circle-x',title:'Campaign rejected',body:'News Flash Daily rejected. Reviewer comment: creative does not meet MTN content guidelines.',time:'1 day ago',unread:true},
+  {type:'info',icon:'ti-clock',title:'Campaign ending soon',body:'Sports Tips Premium ends in 3 days. Extend the end date to maintain subscriber acquisition.',time:'2 days ago',unread:false},
+  {type:'info',icon:'ti-flag',title:'Budget exhausted',body:'Ringtone Fiesta budget fully consumed. 12,100 subscribers acquired at ₦25.8 CPA.',time:'1 week ago',unread:false},
+];
+const FAQS=[
+  {q:'How do I verify a new MTN product?',a:'Go to Products → Verify new product. Enter your MTN-assigned Product ID and the platform retrieves all service details from the MTN registry automatically. No short code, billing rate, or tariff entry is required.'},
+  {q:'Why is my campaign in Pending approval?',a:'Every new campaign and any campaign with creative or audience changes must be reviewed by the telco before delivery begins. MTN Nigeria approval typically takes 24–48 hours. You will be notified when approved or if reviewer changes are required.'},
+  {q:'What is the difference between CPA and CPM?',a:'CPM charges per 1,000 STK pushes delivered, regardless of opt-in outcome. CPA charges only when a subscriber presses Accept and their subscription is confirmed by the network after the cancellation window. Both models respect your daily spend limit.'},
+  {q:'Are my existing subscribers excluded automatically?',a:'Yes. The platform uses your Product ID to automatically suppress active subscribers from all campaigns. This cannot be disabled — it prevents wasteful spend and duplicate acquisition charges.'},
+  {q:'Can I change a live campaign?',a:'You can edit the daily budget, end date, and schedule without re-approval. Changing the creative, audience, product, or targeting automatically returns the campaign to the telco approval queue.'},
+  {q:'What happens when my wallet runs low?',a:'You will receive a notification when your balance drops below ₦100,000. Campaigns pause automatically when the wallet has insufficient funds to cover the next delivery batch. Top up and campaigns resume immediately.'},
+];
+const CATS=['Sports','Gaming','Entertainment','Lifestyle','News','Education','Finance','Health','Religion','Music','Movies','Shopping','Jobs','Agriculture','Lottery','Travel','Food','Politics','Utilities','Government'];
+const STATES=['Lagos','Abuja','Kano','Rivers','Oyo','Delta','Enugu','Anambra','Kaduna','Katsina','Plateau','Borno','Edo','Ondo','Osun'];
+const PUSHDATA={labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],pushes:[45000,62000,58000,71000,89000,95000,145230],optins:[3200,4100,3800,5200,7100,8400,12340]};
+const SPENDDATA={labels:['Jun 23','Jun 24','Jun 25','Jun 26','Jun 27','Jun 28','Jun 29'],spend:[32000,45000,41000,58000,63000,72000,87500],cpa:[38,35,37,34,33,36,36]};
+const STATEDATA={labels:['Lagos','Abuja','Kano','Rivers','Others'],values:[38,22,15,12,13]};
+const PIE_COLORS=['#4a3aa7','#2a78d6','#1baf7a','#eda100','#888780'];
+
+// ═══════ STATE ═══════
+let currentStep=1;
+let verified=false;
+let chartsInit=false;
+let analyticsInit=false;
+
+// ═══════ NAVIGATION ═══════
+const PAGE_TITLES={dashboard:'Dashboard',campaigns:'Campaigns',create:'Create campaign',products:'Products',analytics:'Analytics',wallet:'Wallet',reports:'Reports',notifications:'Notifications',support:'Support'};
+function showPage(id,navEl){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(navEl) navEl.classList.add('active');
+  else{
+    document.querySelectorAll('.nav-item').forEach(n=>{
+      if(n.onclick&&n.onclick.toString().includes("'"+id+"'"))n.classList.add('active');
+    });
+  }
+  const t=PAGE_TITLES[id]||id;
+  document.getElementById('topbar-title').textContent=t;
+  document.getElementById('topbar-bc').textContent=t;
+  if(id==='create'){currentStep=1;renderWizard();}
+  if(id==='dashboard'&&!chartsInit){setTimeout(initCharts,50);chartsInit=true;}
+  if(id==='analytics'&&!analyticsInit){setTimeout(initAnalyticsCharts,50);analyticsInit=true;}
+}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('collapsed');}
+function filterPill(el){el.closest('.filter-pills,.table-header').querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));el.classList.add('active');}
+
+// ═══════ RENDER KPI ═══════
+function renderKpiGrid(containerId,data){
+  const g=document.getElementById(containerId);
+  g.innerHTML=data.map(k=>`<div class="kpi-card"><div class="kpi-label"><span>${k.l}</span><i class="ti ${k.i}"></i></div><div class="kpi-value">${k.v}</div><div class="kpi-sub">${k.s}</div></div>`).join('');
+}
+function statusBadge(s){
+  const m={'Active':'active','Pending approval':'pending','Paused':'paused','Rejected':'rejected','Suspended':'suspended','Draft':'draft','Approved':'approved'};
+  return `<span class="badge badge-${m[s]||'draft'}">${s}</span>`;
+}
+
+// ═══════ RENDER CAMPAIGNS ═══════
+function renderCampaigns(){
+  document.getElementById('campaigns-tbody').innerHTML=CAMPAIGNS.map(c=>`<tr>
+    <td><div style="font-weight:500">${c.name}</div><div class="mono">${c.id}</div></td>
+    <td>${statusBadge(c.status)}</td>
+    <td>${c.product}</td>
+    <td>${c.audience}</td>
+    <td><span class="model-tag model-${c.pricing.toLowerCase()}">${c.pricing}</span></td>
+    <td>&#8358;${c.daily.toLocaleString()}</td>
+    <td>&#8358;${c.total.toLocaleString()}</td>
+    <td style="color:var(--ok-t);font-weight:500">${c.optins.toLocaleString()}</td>
+    <td>${c.cpa?'&#8358;'+c.cpa:'&mdash;'}</td>
+    <td style="color:${c.conv>8?'var(--ok-t)':'var(--t1)'};font-weight:${c.conv>8?500:400}">${c.conv?c.conv+'%':'&mdash;'}</td>
+    <td><div class="action-btns"><button class="action-btn"><i class="ti ti-player-pause"></i></button><button class="action-btn"><i class="ti ti-edit"></i></button><button class="action-btn"><i class="ti ti-copy"></i></button></div></td>
+  </tr>`).join('');
+}
+
+// ═══════ RENDER PRODUCTS ═══════
+function renderProducts(){
+  document.getElementById('products-tbody').innerHTML=PRODUCTS.map(p=>`<tr>
+    <td class="mono">${p.id}</td>
+    <td style="font-weight:500">${p.name}</td>
+    <td>${statusBadge(p.status)}</td>
+    <td>${p.cat}</td><td>${p.type}</td>
+    <td style="color:var(--t3)">${p.created}</td>
+    <td><div class="action-btns"><button class="btn btn-primary btn-sm">Verify</button><button class="btn btn-sm">Details</button></div></td>
+  </tr>`).join('');
+}
+
+// ═══════ RENDER LEDGER ═══════
+function renderLedger(){
+  document.getElementById('ledger-tbody').innerHTML=LEDGER.map(t=>`<tr>
+    <td style="color:var(--t3)">${t.date}</td>
+    <td class="mono">${t.ref}</td>
+    <td style="font-weight:500">${t.type}</td>
+    <td style="color:var(--t2)">${t.method}</td>
+    <td><span class="ledger-platform ${t.plat==='TelyDial'?'lp-td':'lp-am'}">${t.plat}</span></td>
+    <td class="${t.amt>0?'amount-pos':'amount-neg'}">${t.amt>0?'+':''}&#8358;${Math.abs(t.amt).toLocaleString()}</td>
+  </tr>`).join('');
+}
+
+// ═══════ RENDER NOTIFICATIONS ═══════
+function renderNotifs(){
+  document.getElementById('notifs-list').innerHTML=NOTIFS.map(n=>`
+    <div class="notif-item n-${n.type} ${n.unread?'unread':''}">
+      <div class="notif-icon"><i class="ti ${n.icon}"></i></div>
+      <div class="notif-body">
+        <div class="notif-header"><div class="notif-title">${n.title}</div>${n.unread?'<div class="unread-dot"></div>':''}</div>
+        <div class="notif-text">${n.body}</div>
+        <div class="notif-time">${n.time}</div>
+      </div>
+    </div>`).join('');
+}
+
+// ═══════ RENDER FAQ ═══════
+function renderFaq(){
+  document.getElementById('faq-list').innerHTML=FAQS.map((f,i)=>`
+    <div class="faq-item" ${i===FAQS.length-1?'style="border-bottom:none;margin-bottom:0;padding-bottom:0"':''}>
+      <div class="faq-q">${f.q}</div>
+      <div class="faq-a">${f.a}</div>
+    </div>`).join('');
+}
+
+// ═══════ WIZARD ═══════
+const STEPS=[{n:1,l:'Product'},{n:2,l:'Creative'},{n:3,l:'Audience'},{n:4,l:'Budget'},{n:5,l:'Review'}];
+function renderWizard(){
+  const el=document.getElementById('wizard-steps');
+  el.innerHTML=STEPS.map((s,i)=>{
+    const done=currentStep>s.n,active=currentStep===s.n;
+    const conn=i<4?`<div class="w-connector ${currentStep>s.n?'done':''}"></div>`:'';
+    return`<div class="w-step" onclick="goStep(${s.n})"><div class="w-step-circle ${done?'done':active?'active':''}">${done?'<i class="ti ti-check" style="font-size:12px"></i>':s.n}</div><div class="w-step-label ${active?'active':''}">${s.l}</div></div>${conn}`;
+  }).join('');
+  document.querySelectorAll('.step-page').forEach(p=>p.classList.remove('active'));
+  const cur=document.getElementById('step-'+currentStep);
+  if(cur)cur.classList.add('active');
+  if(currentStep===5)buildReview();
+}
+function nextStep(n){
+  if(n===2&&!verified)return;
+  goStep(n);
+}
+function goStep(n){
+  if(n>1&&!verified)return;
+  currentStep=n;
+  renderWizard();
+}
+function verifyProduct(){
+  const pid=document.getElementById('product-id-input').value.trim();
+  if(!pid)return;
+  const btn=document.getElementById('verify-btn');
+  btn.textContent='Verifying…';btn.disabled=true;
+  setTimeout(()=>{
+    btn.textContent='Verify';btn.disabled=false;
+    verified=true;
+    document.getElementById('step1-next').disabled=false;
+    document.getElementById('step1-next').style.opacity='1';
+    document.getElementById('verify-result').innerHTML=`
+      <div class="info-box info-ok" style="margin-top:16px">
+        <div class="info-box-title"><i class="ti ti-circle-check"></i> Product verified</div>
+        <div class="info-box-grid">
+          <div><dt>Product name</dt><dd>Soka Games</dd></div>
+          <div><dt>Service category</dt><dd>Gaming</dd></div>
+          <div><dt>Subscription type</dt><dd>Recurring weekly</dd></div>
+          <div><dt>Provider</dt><dd>70TH Precinct Limited</dd></div>
+          <div><dt>Product status</dt><dd>Active</dd></div>
+          <div><dt>Product ID</dt><dd>${pid}</dd></div>
+        </div>
+      </div>`;
+  },1200);
+}
+function resetVerify(){verified=false;document.getElementById('step1-next').disabled=true;document.getElementById('step1-next').style.opacity='.45';document.getElementById('verify-result').innerHTML='';}
+
+// ═══════ CREATIVE PREVIEW ═══════
+function updatePreview(){
+  const sn=document.getElementById('cr-sn').value||'Service name';
+  const body=document.getElementById('cr-body').value||'Your message will appear here exactly as subscribers will see it on their handset.';
+  const acc=document.getElementById('cr-accept').value||'Accept';
+  // Android
+  document.getElementById('prev-title').textContent=sn;
+  document.getElementById('prev-body').textContent=body;
+  document.getElementById('prev-accept').textContent=acc;
+  // iOS
+  document.getElementById('ios-prev-title').textContent=sn;
+  document.getElementById('ios-prev-body').textContent=body;
+  document.getElementById('ios-prev-accept').textContent=acc;
+  // Counters
+  document.getElementById('pm-title').textContent=document.getElementById('cr-sn').value.length;
+  document.getElementById('pm-body').textContent=document.getElementById('cr-body').value.length;
+  document.getElementById('pm-acc').textContent=acc.length;
+}
+function switchDevice(id,btn){
+  document.querySelectorAll('.device-view').forEach(d=>d.classList.remove('active'));
+  document.querySelectorAll('.preview-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('device-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+function updateCharCount(){
+  const len=document.getElementById('cr-body').value.length;
+  const el=document.getElementById('body-count');
+  el.textContent=len+'/160 characters';
+  el.className=len>130?'char-warn':'char-count';
+}
+function setAccept(el,val){
+  document.querySelectorAll('#accept-chips .chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('cr-accept').value=val;
+  updatePreview();
+}
+function toggleBtn(el,rowId){
+  document.getElementById(rowId).querySelectorAll('.toggle-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+}
+function toggleStates(el){
+  document.getElementById('states-panel').style.display=el.textContent==='By state'?'block':'none';
+}
+function selectModel(m){
+  document.getElementById('mc-cpa').classList.toggle('active',m==='CPA');
+  document.getElementById('mc-cpm').classList.toggle('active',m==='CPM');
+}
+
+// ═══════ AUDIENCE CHIPS ═══════
+function initChips(){
+  document.getElementById('cat-chips').innerHTML=CATS.map(c=>`<span class="chip" onclick="toggleChip(this)">${c}</span>`).join('');
+  document.getElementById('state-chips').innerHTML=STATES.map(s=>`<span class="chip" onclick="toggleChip(this)">${s}</span>`).join('');
+}
+function toggleChip(el){el.classList.toggle('active');}
+
+// ═══════ REVIEW ═══════
+function buildReview(){
+  const pid=document.getElementById('product-id-input').value||'—';
+  const name=document.getElementById('cr-name').value||'—';
+  const sn=document.getElementById('cr-sn').value||'—';
+  const acc=document.getElementById('cr-accept').value||'Subscribe';
+  const sms=document.getElementById('cr-sms').value?'Configured':'Not set';
+  const daily=document.getElementById('b-daily').value;
+  const camp=document.getElementById('b-camp').value;
+  const start=document.getElementById('b-start').value||'—';
+  const model=document.getElementById('mc-cpa').classList.contains('active')?'CPA':'CPM';
+  const sections=[
+    {t:'Product',rows:[['Product ID',pid],['Service name','Soka Games'],['Category','Gaming'],['Status','Active']]},
+    {t:'Creative',rows:[['Campaign name',name],['Service title',sn],['Accept button',acc],['SMS fallback',sms]]},
+    {t:'Audience',rows:[['Category',document.querySelector('#cat-chips .chip.active')?.textContent||'All'],['Location',document.querySelector('#loc-row .toggle-btn.active')?.textContent||'National'],['ARPU band',document.querySelector('#arpu-row .toggle-btn.active')?.textContent||'All'],['Network type',document.querySelector('#net-row .toggle-btn.active')?.textContent||'All']]},
+    {t:'Budget',rows:[['Pricing model',model],['Daily limit',daily?'₦'+daily:'—'],['Campaign budget',camp?'₦'+camp:'—'],['Start date',start]]},
+  ];
+  document.getElementById('review-grid').innerHTML=sections.map(s=>`
+    <div class="review-section">
+      <div class="review-section-title">${s.t}</div>
+      ${s.rows.map(([k,v])=>`<div class="review-row"><dt>${k}</dt><dd>${v}</dd></div>`).join('')}
+    </div>`).join('');
+}
+function submitCampaign(){alert('Campaign submitted for MTN Nigeria approval.\n\nStatus: Pending Approval\nYou will be notified by email and in-app when reviewed.');showPage('campaigns',null);}
+
+// ═══════ ANALYTICS KPI ═══════
+const ANALYTICS_KPI=[
+  {l:'Pushes sent',v:'2,847,650',i:'ti-send'},
+  {l:'Delivered',v:'2,791,420',i:'ti-circle-check'},
+  {l:'Displayed',v:'2,703,890',i:'ti-eye'},
+  {l:'Accepted',v:'243,456',i:'ti-thumb-up'},
+  {l:'Cancelled',v:'198,320',i:'ti-thumb-down'},
+  {l:'Timed out',v:'47,230',i:'ti-clock-x'},
+  {l:'Failed',v:'56,230',i:'ti-alert-circle'},
+  {l:'Confirmed subs',v:'198,940',i:'ti-user-check'},
+  {l:'Conversion rate',v:'8.7%',i:'ti-trending-up'},
+  {l:'CPA average',v:'₦36.05',i:'ti-target'},
+  {l:'CPM average',v:'₦12,500',i:'ti-chart-dots'},
+  {l:'Total spend',v:'₦1,245,000',i:'ti-cash'},
+];
+
+// ═══════ CHARTS ═══════
+function initCharts(){
+  // Push + optins area chart
+  new Chart(document.getElementById('chart-push'),{
+    type:'line',
+    data:{
+      labels:PUSHDATA.labels,
+      datasets:[
+        {label:'STK pushes',data:PUSHDATA.pushes,borderColor:'#4a3aa7',backgroundColor:'rgba(74,58,167,.07)',fill:true,borderWidth:1.5,pointRadius:0,tension:.4},
+        {label:'Opt-ins',data:PUSHDATA.optins,borderColor:'#1baf7a',backgroundColor:'rgba(27,175,122,.07)',fill:true,borderWidth:1.5,pointRadius:0,tension:.4},
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:9.5}},grid:{display:false}},y:{ticks:{font:{size:9.5}},grid:{color:'rgba(0,0,0,.04)'}}}}
+  });
+  // State pie
+  const stateChart=new Chart(document.getElementById('chart-state'),{
+    type:'doughnut',
+    data:{labels:STATEDATA.labels,datasets:[{data:STATEDATA.values,backgroundColor:PIE_COLORS,borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},cutout:'55%'}
+  });
+  document.getElementById('state-legend').innerHTML=STATEDATA.labels.map((l,i)=>`<span><span class="chart-legend-dot" style="background:${PIE_COLORS[i]}"></span>${l} ${STATEDATA.values[i]}%</span>`).join('');
+  // Spend + CPA line
+  new Chart(document.getElementById('chart-spend'),{
+    type:'line',
+    data:{
+      labels:SPENDDATA.labels,
+      datasets:[
+        {label:'Spend (₦)',data:SPENDDATA.spend,borderColor:'#4a3aa7',borderWidth:1.5,pointRadius:0,tension:.4,yAxisID:'y'},
+        {label:'CPA (₦)',data:SPENDDATA.cpa,borderColor:'#eda100',borderWidth:1.5,pointRadius:0,tension:.4,borderDash:[4,2],yAxisID:'y2'},
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:9.5}},grid:{display:false}},y:{ticks:{font:{size:9.5}},grid:{color:'rgba(0,0,0,.04)'}},y2:{position:'right',ticks:{font:{size:9.5}},grid:{display:false}}}}
+  });
+}
+function initAnalyticsCharts(){
+  renderKpiGrid('analytics-kpi',ANALYTICS_KPI);
+  new Chart(document.getElementById('chart-acq'),{
+    type:'bar',
+    data:{
+      labels:PUSHDATA.labels,
+      datasets:[
+        {label:'Opt-ins',data:PUSHDATA.optins,backgroundColor:'#4a3aa7',borderRadius:3,borderSkipped:false},
+        {label:'Pushes (÷10)',data:PUSHDATA.pushes.map(v=>Math.round(v/10)),backgroundColor:'rgba(27,175,122,.28)',borderRadius:3,borderSkipped:false},
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:9.5}},grid:{display:false}},y:{ticks:{font:{size:9.5}},grid:{color:'rgba(0,0,0,.04)'}}}}
+  });
+  new Chart(document.getElementById('chart-funnel'),{
+    type:'bar',
+    data:{
+      labels:['Sent','Delivered','Displayed','Accepted','Confirmed'],
+      datasets:[{label:'Subscribers',data:[2847650,2791420,2703890,243456,198940],backgroundColor:['#4a3aa7','#3d2f8e','#2a78d6','#1baf7a','#0f8a5a'],borderRadius:3,borderSkipped:false}]
+    },
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:9.5}},grid:{color:'rgba(0,0,0,.04)'}},y:{ticks:{font:{size:9.5}},grid:{display:false}}}}
+  });
+  new Chart(document.getElementById('chart-cpa'),{
+    type:'line',
+    data:{labels:SPENDDATA.labels,datasets:[{label:'CPA (₦)',data:SPENDDATA.cpa,borderColor:'#eda100',backgroundColor:'rgba(237,161,0,.07)',fill:true,borderWidth:1.5,pointRadius:3,pointBackgroundColor:'#eda100',tension:.4}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:9.5}},grid:{display:false}},y:{ticks:{font:{size:9.5}},grid:{color:'rgba(0,0,0,.04)'}}}}
+  });
+}
+
+// ═══════ INIT ═══════
+renderKpiGrid('kpi-grid',KPI_DATA);
+renderCampaigns();
+renderProducts();
+renderLedger();
+renderNotifs();
+renderFaq();
+initChips();
+renderWizard();
+setTimeout(initCharts,100);
+
+// ═══════ EMOJI PICKER ═══════
+const EMOJI_CATS=[
+  {id:'smileys',icon:'😀',label:'Smileys & Emotion',emojis:[
+    {e:'😀',n:'grinning face'},{e:'😃',n:'grinning big eyes'},{e:'😄',n:'grinning smiling eyes'},
+    {e:'😁',n:'beaming face'},{e:'😆',n:'grinning squinting'},{e:'😅',n:'grinning sweat'},
+    {e:'🤣',n:'rolling on floor laughing'},{e:'😂',n:'face tears of joy'},{e:'🙂',n:'slightly smiling'},
+    {e:'🙃',n:'upside down face'},{e:'🫠',n:'melting face'},{e:'😉',n:'winking face'},
+    {e:'😊',n:'smiling face'},{e:'😇',n:'smiling halo'},{e:'🥰',n:'smiling hearts'},
+    {e:'😍',n:'heart eyes'},{e:'🤩',n:'star struck'},{e:'😘',n:'face blowing kiss'},
+    {e:'😗',n:'kissing face'},{e:'😚',n:'kissing closed eyes'},{e:'😙',n:'kissing smiling eyes'},
+    {e:'🥲',n:'smiling tear'},{e:'😋',n:'face savoring food'},{e:'😛',n:'face tongue'},
+    {e:'😜',n:'winking tongue'},{e:'🤪',n:'zany face'},{e:'😝',n:'squinting tongue'},
+    {e:'🤑',n:'money mouth face'},{e:'🤗',n:'smiling hands'},{e:'🤭',n:'face hand over mouth'},
+    {e:'🫢',n:'face gasping'},{e:'🫣',n:'face peeking'},{e:'🤫',n:'shushing face'},
+    {e:'🤔',n:'thinking face'},{e:'🫡',n:'saluting face'},{e:'🤐',n:'zipper mouth'},
+    {e:'🤨',n:'raised eyebrow'},{e:'😐',n:'neutral face'},{e:'😑',n:'expressionless'},
+    {e:'😶',n:'no mouth'},{e:'🫥',n:'dotted line face'},{e:'😏',n:'smirking face'},
+    {e:'😒',n:'unamused face'},{e:'🙄',n:'rolling eyes'},{e:'😬',n:'grimacing face'},
+    {e:'🤥',n:'lying face'},{e:'🫨',n:'shaking face'},{e:'😔',n:'pensive face'},
+    {e:'😪',n:'sleepy face'},{e:'🤤',n:'drooling face'},{e:'😴',n:'sleeping face'},
+    {e:'😷',n:'face mask'},{e:'🤒',n:'face thermometer'},{e:'🤕',n:'face bandage'},
+    {e:'🤢',n:'nauseated face'},{e:'🤮',n:'vomiting face'},{e:'🤧',n:'sneezing face'},
+    {e:'🥵',n:'hot face'},{e:'🥶',n:'cold face'},{e:'🥴',n:'woozy face'},
+    {e:'😵',n:'dizzy face'},{e:'💫',n:'dizzy'},{e:'🤯',n:'exploding head'},
+    {e:'🤠',n:'cowboy hat face'},{e:'🥳',n:'partying face'},{e:'🥸',n:'disguised face'},
+    {e:'😎',n:'cool sunglasses'},{e:'🤓',n:'nerd face'},{e:'🧐',n:'face monocle'},
+    {e:'😕',n:'confused face'},{e:'🫤',n:'face diagonal mouth'},{e:'😟',n:'worried face'},
+    {e:'🙁',n:'slightly frowning'},{e:'☹️',n:'frowning face'},{e:'😮',n:'face open mouth'},
+    {e:'😯',n:'hushed face'},{e:'😲',n:'astonished face'},{e:'😳',n:'flushed face'},
+    {e:'🥺',n:'pleading face'},{e:'🥹',n:'holding back tears'},{e:'😦',n:'frowning open mouth'},
+    {e:'😧',n:'anguished face'},{e:'😨',n:'fearful face'},{e:'😰',n:'anxious sweat'},
+    {e:'😥',n:'sad relieved'},{e:'😢',n:'crying face'},{e:'😭',n:'loudly crying'},
+    {e:'😱',n:'screaming fear'},{e:'😖',n:'confounded face'},{e:'😣',n:'persevering face'},
+    {e:'😞',n:'disappointed face'},{e:'😓',n:'downcast sweat'},{e:'😩',n:'weary face'},
+    {e:'😫',n:'tired face'},{e:'🥱',n:'yawning face'},{e:'😤',n:'face steam'},
+    {e:'😡',n:'pouting face'},{e:'😠',n:'angry face'},{e:'🤬',n:'face symbols mouth'},
+    {e:'😈',n:'smiling devil'},{e:'👿',n:'angry devil'},{e:'💀',n:'skull'},
+    {e:'☠️',n:'skull crossbones'},{e:'💩',n:'pile of poo'},{e:'🤡',n:'clown face'},
+    {e:'👹',n:'ogre'},{e:'👺',n:'goblin'},{e:'👻',n:'ghost'},
+    {e:'👽',n:'alien'},{e:'👾',n:'alien monster'},{e:'🤖',n:'robot'},
+    {e:'😺',n:'grinning cat'},{e:'😸',n:'grinning cat eyes'},{e:'😹',n:'cat joy'},
+    {e:'😻',n:'heart eyes cat'},{e:'😼',n:'cat wry smile'},{e:'😽',n:'kissing cat'},
+    {e:'🙀',n:'weary cat'},{e:'😿',n:'crying cat'},{e:'😾',n:'pouting cat'},
+  ]},
+  {id:'hearts',icon:'❤️',label:'Hearts & Love',emojis:[
+    {e:'❤️',n:'red heart'},{e:'🧡',n:'orange heart'},{e:'💛',n:'yellow heart'},
+    {e:'💚',n:'green heart'},{e:'💙',n:'blue heart'},{e:'💜',n:'purple heart'},
+    {e:'🖤',n:'black heart'},{e:'🤍',n:'white heart'},{e:'🤎',n:'brown heart'},
+    {e:'💔',n:'broken heart'},{e:'❤️‍🔥',n:'heart on fire'},{e:'❤️‍🩹',n:'mending heart'},
+    {e:'❣️',n:'heart exclamation'},{e:'💕',n:'two hearts'},{e:'💞',n:'revolving hearts'},
+    {e:'💓',n:'beating heart'},{e:'💗',n:'growing heart'},{e:'💖',n:'sparkling heart'},
+    {e:'💘',n:'heart arrow'},{e:'💝',n:'heart ribbon'},{e:'💟',n:'heart decoration'},
+    {e:'☮️',n:'peace symbol'},{e:'✝️',n:'latin cross'},{e:'☪️',n:'star crescent'},
+    {e:'🕉️',n:'om'},{e:'☸️',n:'wheel of dharma'},{e:'✡️',n:'star of david'},
+    {e:'🔯',n:'six pointed star'},{e:'🛐',n:'place of worship'},{e:'⛎',n:'ophiuchus'},
+    {e:'♈',n:'aries'},{e:'♉',n:'taurus'},{e:'♊',n:'gemini'},
+    {e:'♋',n:'cancer'},{e:'♌',n:'leo'},{e:'♍',n:'virgo'},
+    {e:'♎',n:'libra'},{e:'♏',n:'scorpio'},{e:'♐',n:'sagittarius'},
+    {e:'♑',n:'capricorn'},{e:'♒',n:'aquarius'},{e:'♓',n:'pisces'},
+    {e:'🌈',n:'rainbow'},{e:'⭐',n:'star'},{e:'🌟',n:'glowing star'},
+    {e:'✨',n:'sparkles'},{e:'💫',n:'dizzy star'},{e:'🌠',n:'shooting star'},
+    {e:'🌌',n:'milky way'},{e:'🔥',n:'fire'},{e:'⚡',n:'lightning bolt'},
+    {e:'🌈',n:'rainbow'},{e:'❄️',n:'snowflake'},{e:'💧',n:'droplet'},
+  ]},
+  {id:'people',icon:'👋',label:'People & Gestures',emojis:[
+    {e:'👋',n:'waving hand'},{e:'🤚',n:'raised back hand'},{e:'🖐️',n:'hand fingers splayed'},
+    {e:'✋',n:'raised hand'},{e:'🖖',n:'vulcan salute'},{e:'🫱',n:'hand right'},
+    {e:'🫲',n:'hand left'},{e:'🫳',n:'hand down'},{e:'🫴',n:'hand up'},
+    {e:'🫶',n:'heart hands'},{e:'👌',n:'ok hand'},{e:'🤌',n:'pinched fingers'},
+    {e:'🤏',n:'pinching hand'},{e:'✌️',n:'victory hand'},{e:'🤞',n:'crossed fingers'},
+    {e:'🫰',n:'hand index thumb'},{e:'🤟',n:'love you gesture'},{e:'🤘',n:'sign of horns'},
+    {e:'🤙',n:'call me hand'},{e:'👈',n:'pointing left'},{e:'👉',n:'pointing right'},
+    {e:'👆',n:'pointing up'},{e:'🖕',n:'middle finger'},{e:'👇',n:'pointing down'},
+    {e:'☝️',n:'index pointing up'},{e:'🫵',n:'point at viewer'},{e:'👍',n:'thumbs up'},
+    {e:'👎',n:'thumbs down'},{e:'✊',n:'raised fist'},{e:'👊',n:'oncoming fist'},
+    {e:'🤛',n:'left facing fist'},{e:'🤜',n:'right facing fist'},{e:'👏',n:'clapping hands'},
+    {e:'🙌',n:'raising hands'},{e:'🫶',n:'heart hands'},{e:'👐',n:'open hands'},
+    {e:'🤲',n:'palms up'},{e:'🤝',n:'handshake'},{e:'🙏',n:'folded hands'},
+    {e:'✍️',n:'writing hand'},{e:'💅',n:'nail polish'},{e:'🤳',n:'selfie'},
+    {e:'💪',n:'flexed bicep'},{e:'🦾',n:'mechanical arm'},{e:'🦿',n:'mechanical leg'},
+    {e:'🦵',n:'leg'},{e:'🦶',n:'foot'},{e:'👂',n:'ear'},
+    {e:'🦻',n:'ear hearing aid'},{e:'👃',n:'nose'},{e:'🧠',n:'brain'},
+    {e:'🦷',n:'tooth'},{e:'🦴',n:'bone'},{e:'👀',n:'eyes'},
+    {e:'👁️',n:'eye'},{e:'👅',n:'tongue'},{e:'👄',n:'mouth'},
+    {e:'🫦',n:'biting lip'},{e:'💋',n:'kiss mark'},{e:'👶',n:'baby'},
+    {e:'🧒',n:'child'},{e:'👦',n:'boy'},{e:'👧',n:'girl'},
+    {e:'🧑',n:'person'},{e:'👱',n:'person blond hair'},{e:'👨',n:'man'},
+    {e:'🧔',n:'person beard'},{e:'👩',n:'woman'},{e:'🧓',n:'older person'},
+    {e:'👴',n:'old man'},{e:'👵',n:'old woman'},{e:'🫂',n:'people hugging'},
+    {e:'👨‍💼',n:'man office worker'},{e:'👩‍💼',n:'woman office worker'},{e:'👨‍🏫',n:'man teacher'},
+    {e:'👩‍🏫',n:'woman teacher'},{e:'👨‍⚕️',n:'man health worker'},{e:'👩‍⚕️',n:'woman health worker'},
+    {e:'👨‍🍳',n:'man cook'},{e:'👩‍🍳',n:'woman cook'},{e:'👨‍🎤',n:'man singer'},
+    {e:'👩‍🎤',n:'woman singer'},{e:'👨‍💻',n:'man technologist'},{e:'👩‍💻',n:'woman technologist'},
+  ]},
+  {id:'sports',icon:'⚽',label:'Sports & Activities',emojis:[
+    {e:'⚽',n:'soccer ball'},{e:'🏀',n:'basketball'},{e:'🏈',n:'american football'},
+    {e:'⚾',n:'baseball'},{e:'🥎',n:'softball'},{e:'🎾',n:'tennis'},
+    {e:'🏐',n:'volleyball'},{e:'🏉',n:'rugby football'},{e:'🎱',n:'pool 8 ball'},
+    {e:'🏓',n:'ping pong'},{e:'🏸',n:'badminton'},{e:'🏒',n:'ice hockey'},
+    {e:'🏑',n:'field hockey'},{e:'🏏',n:'cricket game'},{e:'🪃',n:'boomerang'},
+    {e:'🏹',n:'bow and arrow'},{e:'🎣',n:'fishing pole'},{e:'🤿',n:'diving mask'},
+    {e:'🥊',n:'boxing glove'},{e:'🥋',n:'martial arts uniform'},{e:'🎽',n:'running shirt'},
+    {e:'🎿',n:'skis'},{e:'🛷',n:'sled'},{e:'🥌',n:'curling stone'},
+    {e:'🎯',n:'bullseye'},{e:'🎳',n:'bowling'},{e:'🏋️',n:'person lifting weights'},
+    {e:'⛹️',n:'person bouncing ball'},{e:'🤸',n:'person cartwheel'},{e:'🏊',n:'person swimming'},
+    {e:'🚴',n:'person cycling'},{e:'🏇',n:'horse racing'},{e:'⛷️',n:'skier'},
+    {e:'🏂',n:'snowboarder'},{e:'🤼',n:'people wrestling'},{e:'🤺',n:'person fencing'},
+    {e:'🤾',n:'person handball'},{e:'🧗',n:'person climbing'},{e:'🧘',n:'person lotus position'},
+    {e:'🏄',n:'person surfing'},{e:'🏌️',n:'person golfing'},{e:'🏇',n:'horse racing'},
+    {e:'🚵',n:'person mountain biking'},{e:'🤽',n:'person water polo'},{e:'🤾',n:'person handball'},
+    {e:'🧜',n:'merperson'},{e:'🧗',n:'person climbing'},{e:'🤼',n:'people wrestling'},
+    {e:'⛸️',n:'ice skate'},{e:'🏋️',n:'weight lifter'},{e:'🤸',n:'gymnast'},
+    {e:'🚣',n:'person rowing boat'},{e:'🧗',n:'person climbing'},{e:'🏊',n:'swimmer'},
+    {e:'🏆',n:'trophy'},{e:'🥇',n:'gold medal'},{e:'🥈',n:'silver medal'},
+    {e:'🥉',n:'bronze medal'},{e:'🏅',n:'sports medal'},{e:'🎖️',n:'military medal'},
+    {e:'🎗️',n:'reminder ribbon'},{e:'🏵️',n:'rosette'},{e:'🎫',n:'ticket'},
+    {e:'🎟️',n:'admission tickets'},{e:'🎪',n:'circus tent'},{e:'🤹',n:'juggler'},
+  ]},
+  {id:'awards',icon:'🏆',label:'Awards & Money',emojis:[
+    {e:'🏆',n:'trophy'},{e:'🥇',n:'gold medal'},{e:'🥈',n:'silver medal'},
+    {e:'🥉',n:'bronze medal'},{e:'🏅',n:'sports medal'},{e:'🎖️',n:'military medal'},
+    {e:'🎗️',n:'reminder ribbon'},{e:'👑',n:'crown'},{e:'💎',n:'gem stone'},
+    {e:'💰',n:'money bag'},{e:'💵',n:'dollar banknote'},{e:'💴',n:'yen banknote'},
+    {e:'💶',n:'euro banknote'},{e:'💷',n:'pound banknote'},{e:'💸',n:'money with wings'},
+    {e:'💳',n:'credit card'},{e:'🤑',n:'money mouth face'},{e:'💹',n:'chart increasing yen'},
+    {e:'📈',n:'chart increasing'},{e:'📉',n:'chart decreasing'},{e:'💱',n:'currency exchange'},
+    {e:'💲',n:'dollar sign'},{e:'🏦',n:'bank'},{e:'🏧',n:'ATM sign'},
+    {e:'💵',n:'dollar bill'},{e:'🪙',n:'coin'},{e:'💰',n:'money bag'},
+    {e:'🎁',n:'wrapped gift'},{e:'🎀',n:'ribbon'},{e:'🎊',n:'confetti ball'},
+    {e:'🎉',n:'party popper'},{e:'🎈',n:'balloon'},{e:'🎂',n:'birthday cake'},
+    {e:'🥂',n:'clinking glasses'},{e:'🍾',n:'bottle popping cork'},{e:'🥳',n:'partying face'},
+    {e:'🤩',n:'star struck'},{e:'😎',n:'cool'},{e:'💪',n:'strong'},
+    {e:'⭐',n:'star'},{e:'🌟',n:'glowing star'},{e:'✨',n:'sparkles'},
+    {e:'🔥',n:'fire'},{e:'⚡',n:'lightning'},{e:'💥',n:'collision'},
+    {e:'🚀',n:'rocket'},{e:'🎯',n:'bullseye'},{e:'🏹',n:'bow arrow'},
+  ]},
+  {id:'animals',icon:'🐶',label:'Animals & Nature',emojis:[
+    {e:'🐶',n:'dog face'},{e:'🐱',n:'cat face'},{e:'🐭',n:'mouse face'},
+    {e:'🐹',n:'hamster face'},{e:'🐰',n:'rabbit face'},{e:'🦊',n:'fox face'},
+    {e:'🐻',n:'bear face'},{e:'🐼',n:'panda face'},{e:'🐨',n:'koala'},
+    {e:'🐯',n:'tiger face'},{e:'🦁',n:'lion'},{e:'🐮',n:'cow face'},
+    {e:'🐷',n:'pig face'},{e:'🐸',n:'frog face'},{e:'🐵',n:'monkey face'},
+    {e:'🙈',n:'see no evil'},{e:'🙉',n:'hear no evil'},{e:'🙊',n:'speak no evil'},
+    {e:'🐔',n:'chicken'},{e:'🐧',n:'penguin'},{e:'🐦',n:'bird'},
+    {e:'🦆',n:'duck'},{e:'🦅',n:'eagle'},{e:'🦉',n:'owl'},
+    {e:'🦇',n:'bat'},{e:'🐺',n:'wolf'},{e:'🐗',n:'boar'},
+    {e:'🐴',n:'horse face'},{e:'🦄',n:'unicorn'},{e:'🐝',n:'honeybee'},
+    {e:'🐛',n:'bug'},{e:'🦋',n:'butterfly'},{e:'🐌',n:'snail'},
+    {e:'🐞',n:'lady beetle'},{e:'🐜',n:'ant'},{e:'🦟',n:'mosquito'},
+    {e:'🦗',n:'cricket'},{e:'🕷️',n:'spider'},{e:'🦂',n:'scorpion'},
+    {e:'🐢',n:'turtle'},{e:'🦎',n:'lizard'},{e:'🐍',n:'snake'},
+    {e:'🦕',n:'sauropod'},{e:'🦖',n:'T rex'},{e:'🦑',n:'squid'},
+    {e:'🐙',n:'octopus'},{e:'🦞',n:'lobster'},{e:'🦀',n:'crab'},
+    {e:'🐡',n:'blowfish'},{e:'🐠',n:'tropical fish'},{e:'🐟',n:'fish'},
+    {e:'🐬',n:'dolphin'},{e:'🐳',n:'spouting whale'},{e:'🐋',n:'whale'},
+    {e:'🦈',n:'shark'},{e:'🦭',n:'seal'},{e:'🐊',n:'crocodile'},
+    {e:'🐅',n:'tiger'},{e:'🐆',n:'leopard'},{e:'🦓',n:'zebra'},
+    {e:'🦍',n:'gorilla'},{e:'🐘',n:'elephant'},{e:'🦛',n:'hippopotamus'},
+    {e:'🦏',n:'rhinoceros'},{e:'🐪',n:'camel'},{e:'🦒',n:'giraffe'},
+    {e:'🦘',n:'kangaroo'},{e:'🐃',n:'water buffalo'},{e:'🐄',n:'cow'},
+    {e:'🐎',n:'horse'},{e:'🐖',n:'pig'},{e:'🐏',n:'ram'},
+    {e:'🐑',n:'ewe'},{e:'🦙',n:'llama'},{e:'🐐',n:'goat'},
+    {e:'🦌',n:'deer'},{e:'🐕',n:'dog'},{e:'🐩',n:'poodle'},
+    {e:'🦮',n:'guide dog'},{e:'🐈',n:'cat'},{e:'🐓',n:'rooster'},
+    {e:'🦃',n:'turkey'},{e:'🦚',n:'peacock'},{e:'🦜',n:'parrot'},
+    {e:'🦢',n:'swan'},{e:'🦩',n:'flamingo'},{e:'🕊️',n:'dove'},
+    {e:'🐇',n:'rabbit'},{e:'🦝',n:'raccoon'},{e:'🦨',n:'skunk'},
+    {e:'🦡',n:'badger'},{e:'🦦',n:'otter'},{e:'🦥',n:'sloth'},
+    {e:'🐿️',n:'chipmunk'},{e:'🌵',n:'cactus'},{e:'🎄',n:'christmas tree'},
+    {e:'🌲',n:'evergreen tree'},{e:'🌳',n:'deciduous tree'},{e:'🌴',n:'palm tree'},
+    {e:'🌱',n:'seedling'},{e:'🌿',n:'herb'},{e:'☘️',n:'shamrock'},
+    {e:'🍀',n:'four leaf clover'},{e:'🍃',n:'leaves wind'},{e:'🍂',n:'fallen leaf'},
+    {e:'🍁',n:'maple leaf'},{e:'🍄',n:'mushroom'},{e:'🌾',n:'sheaf of rice'},
+    {e:'💐',n:'bouquet'},{e:'🌷',n:'tulip'},{e:'🌹',n:'rose'},
+    {e:'🥀',n:'wilted flower'},{e:'🌺',n:'hibiscus'},{e:'🌸',n:'cherry blossom'},
+    {e:'🌼',n:'blossom'},{e:'🌻',n:'sunflower'},{e:'🌞',n:'sun face'},
+  ]},
+  {id:'food',icon:'🍕',label:'Food & Drink',emojis:[
+    {e:'🍏',n:'green apple'},{e:'🍎',n:'red apple'},{e:'🍐',n:'pear'},
+    {e:'🍊',n:'tangerine'},{e:'🍋',n:'lemon'},{e:'🍌',n:'banana'},
+    {e:'🍉',n:'watermelon'},{e:'🍇',n:'grapes'},{e:'🍓',n:'strawberry'},
+    {e:'🫐',n:'blueberries'},{e:'🍈',n:'melon'},{e:'🍒',n:'cherries'},
+    {e:'🍑',n:'peach'},{e:'🥭',n:'mango'},{e:'🍍',n:'pineapple'},
+    {e:'🥥',n:'coconut'},{e:'🥝',n:'kiwi fruit'},{e:'🍅',n:'tomato'},
+    {e:'🍆',n:'eggplant'},{e:'🥑',n:'avocado'},{e:'🥦',n:'broccoli'},
+    {e:'🥬',n:'leafy green'},{e:'🥒',n:'cucumber'},{e:'🌶️',n:'hot pepper'},
+    {e:'🫑',n:'bell pepper'},{e:'🧄',n:'garlic'},{e:'🧅',n:'onion'},
+    {e:'🥔',n:'potato'},{e:'🌽',n:'ear of corn'},{e:'🍠',n:'roasted sweet potato'},
+    {e:'🥐',n:'croissant'},{e:'🥖',n:'baguette'},{e:'🍞',n:'bread'},
+    {e:'🥨',n:'pretzel'},{e:'🥯',n:'bagel'},{e:'🧀',n:'cheese wedge'},
+    {e:'🥚',n:'egg'},{e:'🍳',n:'cooking'},{e:'🧈',n:'butter'},
+    {e:'🥞',n:'pancakes'},{e:'🧇',n:'waffle'},{e:'🥓',n:'bacon'},
+    {e:'🥩',n:'cut of meat'},{e:'🍗',n:'poultry leg'},{e:'🍖',n:'meat on bone'},
+    {e:'🌭',n:'hot dog'},{e:'🍔',n:'hamburger'},{e:'🍟',n:'french fries'},
+    {e:'🍕',n:'pizza'},{e:'🌮',n:'taco'},{e:'🌯',n:'burrito'},
+    {e:'🫔',n:'tamale'},{e:'🥙',n:'stuffed flatbread'},{e:'🧆',n:'falafel'},
+    {e:'🍜',n:'steaming bowl'},{e:'🍝',n:'spaghetti'},{e:'🍲',n:'pot of food'},
+    {e:'🍛',n:'curry rice'},{e:'🍚',n:'cooked rice'},{e:'🍙',n:'rice ball'},
+    {e:'🍘',n:'rice cracker'},{e:'🍣',n:'sushi'},{e:'🍤',n:'fried shrimp'},
+    {e:'🦪',n:'oyster'},{e:'🍦',n:'soft ice cream'},{e:'🍧',n:'shaved ice'},
+    {e:'🍨',n:'ice cream'},{e:'🍩',n:'doughnut'},{e:'🍪',n:'cookie'},
+    {e:'🎂',n:'birthday cake'},{e:'🍰',n:'shortcake'},{e:'🧁',n:'cupcake'},
+    {e:'🥧',n:'pie'},{e:'🍫',n:'chocolate bar'},{e:'🍬',n:'candy'},
+    {e:'🍭',n:'lollipop'},{e:'🍮',n:'custard'},{e:'🍯',n:'honey pot'},
+    {e:'🍼',n:'baby bottle'},{e:'🥛',n:'glass of milk'},{e:'☕',n:'hot beverage'},
+    {e:'🫖',n:'teapot'},{e:'🍵',n:'teacup'},{e:'🧃',n:'beverage box'},
+    {e:'🥤',n:'cup with straw'},{e:'🧋',n:'bubble tea'},{e:'🍶',n:'sake'},
+    {e:'🍾',n:'bottle cork'},{e:'🍷',n:'wine glass'},{e:'🍸',n:'cocktail'},
+    {e:'🍹',n:'tropical drink'},{e:'🍺',n:'beer mug'},{e:'🍻',n:'clinking beers'},
+    {e:'🥂',n:'clinking glasses'},{e:'🥃',n:'tumbler glass'},{e:'🫗',n:'pouring liquid'},
+    {e:'🧉',n:'mate drink'},{e:'🍴',n:'fork and knife'},{e:'🥄',n:'spoon'},
+    {e:'🔪',n:'kitchen knife'},{e:'🫙',n:'jar'},{e:'🍱',n:'bento box'},
+  ]},
+  {id:'travel',icon:'✈️',label:'Travel & Places',emojis:[
+    {e:'🌍',n:'globe Africa'},{e:'🌎',n:'globe Americas'},{e:'🌏',n:'globe Asia'},
+    {e:'🌐',n:'globe'},{e:'🗺️',n:'world map'},{e:'🧭',n:'compass'},
+    {e:'🏔️',n:'mountain snow'},{e:'⛰️',n:'mountain'},{e:'🌋',n:'volcano'},
+    {e:'🗻',n:'mount fuji'},{e:'🏕️',n:'camping'},{e:'🏖️',n:'beach'},
+    {e:'🏜️',n:'desert'},{e:'🏝️',n:'desert island'},{e:'🏞️',n:'national park'},
+    {e:'🏟️',n:'stadium'},{e:'🏛️',n:'classical building'},{e:'🏗️',n:'building construction'},
+    {e:'🏘️',n:'houses'},{e:'🏚️',n:'derelict house'},{e:'🏠',n:'house'},
+    {e:'🏡',n:'house garden'},{e:'🏢',n:'office building'},{e:'🏣',n:'japanese post office'},
+    {e:'🏤',n:'post office'},{e:'🏥',n:'hospital'},{e:'🏦',n:'bank'},
+    {e:'🏨',n:'hotel'},{e:'🏩',n:'love hotel'},{e:'🏪',n:'convenience store'},
+    {e:'🏫',n:'school'},{e:'🏬',n:'department store'},{e:'🏭',n:'factory'},
+    {e:'🏯',n:'japanese castle'},{e:'🏰',n:'european castle'},{e:'💒',n:'wedding'},
+    {e:'🗼',n:'tokyo tower'},{e:'🗽',n:'statue of liberty'},{e:'⛪',n:'church'},
+    {e:'🕌',n:'mosque'},{e:'🛕',n:'hindu temple'},{e:'🕍',n:'synagogue'},
+    {e:'⛩️',n:'shinto shrine'},{e:'🕋',n:'kaaba'},{e:'⛲',n:'fountain'},
+    {e:'🌁',n:'foggy'},{e:'🌃',n:'night stars'},{e:'🏙️',n:'cityscape'},
+    {e:'🌄',n:'sunrise mountains'},{e:'🌅',n:'sunrise'},{e:'🌆',n:'dusk cityscape'},
+    {e:'🌇',n:'sunset city'},{e:'🌉',n:'night bridge'},{e:'🎑',n:'moon viewing ceremony'},
+    {e:'🚂',n:'locomotive'},{e:'🚃',n:'railway car'},{e:'🚄',n:'bullet train'},
+    {e:'🚅',n:'high speed train'},{e:'🚆',n:'train'},{e:'🚇',n:'metro'},
+    {e:'🚈',n:'light rail'},{e:'🚉',n:'station'},{e:'🚊',n:'tram'},
+    {e:'🚌',n:'bus'},{e:'🚍',n:'oncoming bus'},{e:'🚎',n:'trolleybus'},
+    {e:'🚐',n:'minibus'},{e:'🚑',n:'ambulance'},{e:'🚒',n:'fire engine'},
+    {e:'🚓',n:'police car'},{e:'🚕',n:'taxi'},{e:'🚗',n:'automobile'},
+    {e:'🚙',n:'suv'},{e:'🛻',n:'pickup truck'},{e:'🚚',n:'delivery truck'},
+    {e:'🚛',n:'articulated lorry'},{e:'🚜',n:'tractor'},{e:'🏎️',n:'racing car'},
+    {e:'🏍️',n:'motorcycle'},{e:'🛵',n:'motor scooter'},{e:'🚲',n:'bicycle'},
+    {e:'🛴',n:'kick scooter'},{e:'🛹',n:'skateboard'},{e:'🛼',n:'roller skate'},
+    {e:'⛽',n:'fuel pump'},{e:'🚨',n:'police car light'},{e:'🚥',n:'horizontal traffic light'},
+    {e:'🚦',n:'vertical traffic light'},{e:'🚧',n:'construction sign'},{e:'⚓',n:'anchor'},
+    {e:'⛵',n:'sailboat'},{e:'🚤',n:'speedboat'},{e:'🛥️',n:'motor boat'},
+    {e:'🛳️',n:'passenger ship'},{e:'⛴️',n:'ferry'},{e:'🚢',n:'ship'},
+    {e:'✈️',n:'airplane'},{e:'🛩️',n:'small airplane'},{e:'🛫',n:'airplane departure'},
+    {e:'🛬',n:'airplane arrival'},{e:'🪂',n:'parachute'},{e:'💺',n:'seat'},
+    {e:'🚁',n:'helicopter'},{e:'🛰️',n:'satellite'},{e:'🚀',n:'rocket'},
+    {e:'🛸',n:'flying saucer'},{e:'🧳',n:'luggage'},{e:'🌂',n:'closed umbrella'},
+  ]},
+  {id:'objects',icon:'💡',label:'Objects & Tools',emojis:[
+    {e:'⌚',n:'watch'},{e:'📱',n:'mobile phone'},{e:'📲',n:'mobile phone arrow'},
+    {e:'💻',n:'laptop'},{e:'⌨️',n:'keyboard'},{e:'🖥️',n:'desktop computer'},
+    {e:'🖨️',n:'printer'},{e:'🖱️',n:'computer mouse'},{e:'🖲️',n:'trackball'},
+    {e:'💾',n:'floppy disk'},{e:'💿',n:'optical disk'},{e:'📀',n:'dvd'},
+    {e:'🧮',n:'abacus'},{e:'📷',n:'camera'},{e:'📸',n:'camera flash'},
+    {e:'📹',n:'video camera'},{e:'🎥',n:'movie camera'},{e:'📽️',n:'film projector'},
+    {e:'🎞️',n:'film frames'},{e:'📞',n:'telephone receiver'},{e:'☎️',n:'telephone'},
+    {e:'📟',n:'pager'},{e:'📠',n:'fax machine'},{e:'📺',n:'television'},
+    {e:'📻',n:'radio'},{e:'🧭',n:'compass'},{e:'⏱️',n:'stopwatch'},
+    {e:'⏰',n:'alarm clock'},{e:'⌛',n:'hourglass done'},{e:'⏳',n:'hourglass not done'},
+    {e:'📡',n:'satellite antenna'},{e:'🔋',n:'battery'},{e:'🔌',n:'electric plug'},
+    {e:'💡',n:'light bulb'},{e:'🔦',n:'flashlight'},{e:'🕯️',n:'candle'},
+    {e:'💰',n:'money bag'},{e:'💴',n:'yen banknote'},{e:'💵',n:'dollar banknote'},
+    {e:'💶',n:'euro banknote'},{e:'💷',n:'pound banknote'},{e:'💸',n:'money wings'},
+    {e:'💳',n:'credit card'},{e:'🪙',n:'coin'},{e:'📈',n:'chart increasing'},
+    {e:'📉',n:'chart decreasing'},{e:'📊',n:'bar chart'},{e:'📋',n:'clipboard'},
+    {e:'📌',n:'pushpin'},{e:'📍',n:'round pushpin'},{e:'📎',n:'paperclip'},
+    {e:'🖇️',n:'linked paperclips'},{e:'📏',n:'straight ruler'},{e:'📐',n:'triangular ruler'},
+    {e:'✂️',n:'scissors'},{e:'🗃️',n:'card file box'},{e:'🗄️',n:'file cabinet'},
+    {e:'🗑️',n:'wastebasket'},{e:'🔒',n:'locked'},{e:'🔓',n:'unlocked'},
+    {e:'🔑',n:'key'},{e:'🗝️',n:'old key'},{e:'🔨',n:'hammer'},
+    {e:'🪓',n:'axe'},{e:'⛏️',n:'pick'},{e:'⚒️',n:'hammer and pick'},
+    {e:'🛠️',n:'hammer and wrench'},{e:'🗡️',n:'dagger'},{e:'⚔️',n:'crossed swords'},
+    {e:'🛡️',n:'shield'},{e:'🪚',n:'carpentry saw'},{e:'🔧',n:'wrench'},
+    {e:'🪛',n:'screwdriver'},{e:'🔩',n:'nut and bolt'},{e:'⚙️',n:'gear'},
+    {e:'🗜️',n:'clamp'},{e:'⚖️',n:'balance scale'},{e:'🦯',n:'probing cane'},
+    {e:'🔗',n:'link'},{e:'⛓️',n:'chains'},{e:'🪝',n:'hook'},
+    {e:'🧲',n:'magnet'},{e:'🪜',n:'ladder'},{e:'⚗️',n:'alembic'},
+    {e:'🔬',n:'microscope'},{e:'🔭',n:'telescope'},{e:'📡',n:'satellite antenna'},
+    {e:'💈',n:'barber pole'},{e:'🩺',n:'stethoscope'},{e:'🩹',n:'adhesive bandage'},
+    {e:'💊',n:'pill'},{e:'💉',n:'syringe'},{e:'🩸',n:'drop of blood'},
+    {e:'🏮',n:'red paper lantern'},{e:'🪔',n:'diya lamp'},{e:'🧯',n:'fire extinguisher'},
+    {e:'🛒',n:'shopping cart'},{e:'🚪',n:'door'},{e:'🪞',n:'mirror'},
+    {e:'🪟',n:'window'},{e:'🛏️',n:'bed'},{e:'🛋️',n:'couch'},
+    {e:'🪑',n:'chair'},{e:'🚽',n:'toilet'},{e:'🚿',n:'shower'},
+    {e:'🛁',n:'bathtub'},{e:'🧴',n:'lotion bottle'},{e:'🧷',n:'safety pin'},
+    {e:'🧹',n:'broom'},{e:'🧺',n:'basket'},{e:'🧻',n:'roll of paper'},
+    {e:'🪣',n:'bucket'},{e:'🧼',n:'soap'},{e:'🫧',n:'bubbles'},
+    {e:'🪥',n:'toothbrush'},{e:'🧽',n:'sponge'},{e:'🪒',n:'razor'},
+    {e:'🧲',n:'magnet'},{e:'🔮',n:'crystal ball'},{e:'🧸',n:'teddy bear'},
+    {e:'🪆',n:'nesting dolls'},{e:'🪅',n:'piñata'},{e:'🎭',n:'performing arts'},
+    {e:'🎨',n:'artist palette'},{e:'🖼️',n:'framed picture'},{e:'🎰',n:'slot machine'},
+    {e:'🎲',n:'game die'},{e:'♟️',n:'chess pawn'},{e:'🃏',n:'joker'},
+    {e:'🀄',n:'mahjong red dragon'},{e:'🎴',n:'flower playing cards'},{e:'🧩',n:'puzzle piece'},
+  ]},
+  {id:'symbols',icon:'✅',label:'Symbols & Signs',emojis:[
+    {e:'🔔',n:'bell'},{e:'🔕',n:'bell slash'},{e:'📢',n:'loudspeaker'},
+    {e:'📣',n:'megaphone'},{e:'📯',n:'postal horn'},{e:'🔇',n:'muted speaker'},
+    {e:'🔈',n:'speaker low'},{e:'🔉',n:'speaker medium'},{e:'🔊',n:'speaker high'},
+    {e:'📻',n:'radio'},{e:'🎵',n:'musical note'},{e:'🎶',n:'musical notes'},
+    {e:'🎼',n:'musical score'},{e:'🎤',n:'microphone'},{e:'🎧',n:'headphone'},
+    {e:'❤️',n:'red heart'},{e:'🧡',n:'orange heart'},{e:'💛',n:'yellow heart'},
+    {e:'💚',n:'green heart'},{e:'💙',n:'blue heart'},{e:'💜',n:'purple heart'},
+    {e:'🖤',n:'black heart'},{e:'🤍',n:'white heart'},{e:'🤎',n:'brown heart'},
+    {e:'💔',n:'broken heart'},{e:'❣️',n:'heart exclamation'},{e:'💕',n:'two hearts'},
+    {e:'♾️',n:'infinity'},{e:'♻️',n:'recycling symbol'},{e:'⚜️',n:'fleur de lis'},
+    {e:'🔱',n:'trident emblem'},{e:'📛',n:'name badge'},{e:'🔰',n:'japanese symbol beginner'},
+    {e:'⭕',n:'hollow red circle'},{e:'✅',n:'check mark button'},{e:'☑️',n:'check box'},
+    {e:'✔️',n:'check mark'},{e:'❌',n:'cross mark'},{e:'❎',n:'cross mark button'},
+    {e:'〽️',n:'part alternation mark'},{e:'✳️',n:'eight spoked asterisk'},{e:'✴️',n:'eight pointed star'},
+    {e:'❇️',n:'sparkle'},{e:'💯',n:'hundred points'},{e:'🔅',n:'low brightness'},
+    {e:'🔆',n:'high brightness'},{e:'📶',n:'antenna bars'},{e:'🈶',n:'not free in japanese'},
+    {e:'🈯',n:'reserved in japanese'},{e:'🉐',n:'bargain in japanese'},{e:'🈹',n:'discount in japanese'},
+    {e:'🈚',n:'free in japanese'},{e:'🈲',n:'prohibited in japanese'},{e:'🅰️',n:'a button blood type'},
+    {e:'🅱️',n:'b button blood type'},{e:'🆎',n:'ab button blood type'},{e:'🆑',n:'cl button'},
+    {e:'🆒',n:'cool button'},{e:'🆓',n:'free button'},{e:'🆔',n:'id button'},
+    {e:'🆕',n:'new button'},{e:'🆖',n:'ng button'},{e:'🅾️',n:'o button blood type'},
+    {e:'🆗',n:'ok button'},{e:'🅿️',n:'p button'},{e:'🆘',n:'sos button'},
+    {e:'🆙',n:'up button'},{e:'🆚',n:'vs button'},{e:'🈴',n:'passing grade japanese'},
+    {e:'🈳',n:'vacancy in japanese'},{e:'🈺',n:'open for business japanese'},{e:'🈵',n:'no vacancy japanese'},
+    {e:'🚼',n:'baby symbol'},{e:'🚾',n:'water closet'},{e:'🛂',n:'passport control'},
+    {e:'🛃',n:'customs'},{e:'🛄',n:'baggage claim'},{e:'🛅',n:'left luggage'},
+    {e:'⚠️',n:'warning'},{e:'🚸',n:'children crossing'},{e:'⛔',n:'no entry'},
+    {e:'🚫',n:'prohibited'},{e:'🚳',n:'no bicycles'},{e:'🚭',n:'no smoking'},
+    {e:'🚯',n:'no littering'},{e:'🚱',n:'non potable water'},{e:'🚷',n:'no pedestrians'},
+    {e:'📵',n:'no mobile phones'},{e:'🔞',n:'no one under 18'},{e:'🔃',n:'counterclockwise arrows'},
+    {e:'🔄',n:'counterclockwise button'},{e:'🔙',n:'back arrow'},{e:'🔚',n:'end arrow'},
+    {e:'🔛',n:'on arrow'},{e:'🔜',n:'soon arrow'},{e:'🔝',n:'top arrow'},
+    {e:'🔀',n:'shuffle tracks'},{e:'🔁',n:'repeat button'},{e:'🔂',n:'repeat single button'},
+    {e:'▶️',n:'play button'},{e:'⏩',n:'fast forward'},{e:'⏭️',n:'next track'},
+    {e:'⏯️',n:'play or pause'},{e:'◀️',n:'reverse button'},{e:'⏪',n:'fast reverse'},
+    {e:'⏮️',n:'last track'},{e:'🔼',n:'upward button'},{e:'⏫',n:'fast up'},
+    {e:'🔽',n:'downward button'},{e:'⏬',n:'fast down'},{e:'⏸️',n:'pause button'},
+    {e:'⏹️',n:'stop button'},{e:'⏺️',n:'record button'},{e:'🎦',n:'cinema'},
+    {e:'🔅',n:'dim button'},{e:'🔆',n:'bright button'},{e:'📳',n:'vibration mode'},
+    {e:'📴',n:'mobile phone off'},{e:'♀️',n:'female sign'},{e:'♂️',n:'male sign'},
+    {e:'⚧️',n:'transgender symbol'},{e:'✖️',n:'multiply'},{e:'➕',n:'plus'},
+    {e:'➖',n:'minus'},{e:'➗',n:'divide'},{e:'🟰',n:'heavy equals sign'},
+    {e:'♾️',n:'infinity'},{e:'‼️',n:'double exclamation'},{e:'⁉️',n:'exclamation question'},
+    {e:'❓',n:'question mark'},{e:'❔',n:'white question mark'},{e:'❕',n:'white exclamation'},
+    {e:'❗',n:'exclamation mark'},{e:'〰️',n:'wavy dash'},{e:'💱',n:'currency exchange'},
+    {e:'💲',n:'heavy dollar sign'},{e:'⚕️',n:'medical symbol'},{e:'♻️',n:'recycling symbol'},
+    {e:'⚜️',n:'fleur de lis'},{e:'🔱',n:'trident emblem'},{e:'📛',n:'name badge'},
+    {e:'🔰',n:'beginner'},{e:'⭐',n:'star'},{e:'🌟',n:'glowing star'},
+    {e:'✨',n:'sparkles'},{e:'💥',n:'collision'},{e:'🔥',n:'fire'},
+    {e:'🌈',n:'rainbow'},{e:'☀️',n:'sun'},{e:'⚡',n:'lightning'},
+  ]},
+  {id:'flags',icon:'🚩',label:'Flags & Countries',emojis:[
+    {e:'🚩',n:'red flag'},{e:'🏁',n:'chequered flag'},{e:'🏳️',n:'white flag'},
+    {e:'🏴',n:'black flag'},{e:'🏴‍☠️',n:'pirate flag'},{e:'🌍',n:'globe Africa'},
+    {e:'🇳🇬',n:'Nigeria flag'},{e:'🇬🇧',n:'United Kingdom flag'},{e:'🇺🇸',n:'United States flag'},
+    {e:'🇿🇦',n:'South Africa flag'},{e:'🇬🇭',n:'Ghana flag'},{e:'🇰🇪',n:'Kenya flag'},
+    {e:'🇪🇬',n:'Egypt flag'},{e:'🇲🇦',n:'Morocco flag'},{e:'🇸🇳',n:'Senegal flag'},
+    {e:'🇨🇲',n:'Cameroon flag'},{e:'🇨🇮',n:'Ivory Coast flag'},{e:'🇹🇿',n:'Tanzania flag'},
+    {e:'🇺🇬',n:'Uganda flag'},{e:'🇪🇹',n:'Ethiopia flag'},{e:'🇷🇼',n:'Rwanda flag'},
+    {e:'🇦🇴',n:'Angola flag'},{e:'🇨🇩',n:'DR Congo flag'},{e:'🇿🇼',n:'Zimbabwe flag'},
+    {e:'🇧🇼',n:'Botswana flag'},{e:'🇲🇿',n:'Mozambique flag'},{e:'🇿🇲',n:'Zambia flag'},
+    {e:'🇸🇱',n:'Sierra Leone flag'},{e:'🇱🇷',n:'Liberia flag'},{e:'🇧🇯',n:'Benin flag'},
+    {e:'🇳🇪',n:'Niger flag'},{e:'🇲🇱',n:'Mali flag'},{e:'🇧🇫',n:'Burkina Faso flag'},
+    {e:'🇩🇿',n:'Algeria flag'},{e:'🇸🇩',n:'Sudan flag'},{e:'🇫🇷',n:'France flag'},
+    {e:'🇩🇪',n:'Germany flag'},{e:'🇮🇹',n:'Italy flag'},{e:'🇪🇸',n:'Spain flag'},
+    {e:'🇧🇷',n:'Brazil flag'},{e:'🇦🇺',n:'Australia flag'},{e:'🇨🇦',n:'Canada flag'},
+    {e:'🇨🇳',n:'China flag'},{e:'🇮🇳',n:'India flag'},{e:'🇯🇵',n:'Japan flag'},
+    {e:'🇷🇺',n:'Russia flag'},{e:'🇦🇪',n:'UAE flag'},{e:'🇸🇦',n:'Saudi Arabia flag'},
+    {e:'🇵🇹',n:'Portugal flag'},{e:'🇳🇱',n:'Netherlands flag'},{e:'🇧🇪',n:'Belgium flag'},
+    {e:'🇨🇭',n:'Switzerland flag'},{e:'🇸🇪',n:'Sweden flag'},{e:'🇳🇴',n:'Norway flag'},
+    {e:'🇩🇰',n:'Denmark flag'},{e:'🇫🇮',n:'Finland flag'},{e:'🇵🇱',n:'Poland flag'},
+    {e:'🇦🇹',n:'Austria flag'},{e:'🇬🇷',n:'Greece flag'},{e:'🇹🇷',n:'Turkey flag'},
+    {e:'🇲🇽',n:'Mexico flag'},{e:'🇦🇷',n:'Argentina flag'},{e:'🇨🇴',n:'Colombia flag'},
+    {e:'🇵🇪',n:'Peru flag'},{e:'🇵🇰',n:'Pakistan flag'},{e:'🇧🇩',n:'Bangladesh flag'},
+    {e:'🇮🇩',n:'Indonesia flag'},{e:'🇵🇭',n:'Philippines flag'},{e:'🇰🇷',n:'South Korea flag'},
+    {e:'🇹🇭',n:'Thailand flag'},{e:'🇻🇳',n:'Vietnam flag'},{e:'🇳🇿',n:'New Zealand flag'},
+    {e:'🇮🇱',n:'Israel flag'},{e:'🇮🇶',n:'Iraq flag'},{e:'🇮🇷',n:'Iran flag'},
+    {e:'🎌',n:'crossed flags'},{e:'🏳️‍🌈',n:'rainbow flag'},{e:'🏳️‍⚧️',n:'transgender flag'},
+    {e:'🏴‍☠️',n:'pirate flag'},
+  ]},
+];
+
+let emojiTargetId=null;
+let activeCatIdx=0;
+
+function buildEmojiPicker(){
+  const catsEl=document.getElementById('emoji-cats');
+  catsEl.innerHTML=EMOJI_CATS.map((c,i)=>`<button class="emoji-cat-btn ${i===0?'active':''}" title="${c.label}" onclick="showEmojiCat(${i},this)">${c.icon}</button>`).join('');
+  showEmojiCat(0,null);
+}
+
+function showEmojiCat(idx,btn){
+  activeCatIdx=idx;
+  document.querySelectorAll('.emoji-cat-btn').forEach((b,i)=>b.classList.toggle('active',i===idx));
+  document.getElementById('emoji-cat-label').textContent=EMOJI_CATS[idx].label;
+  renderEmojiGrid(EMOJI_CATS[idx].emojis);
+}
+
+function renderEmojiGrid(emojis){
+  const grid=document.getElementById('emoji-grid');
+  if(!emojis.length){grid.innerHTML='<div style="padding:12px;color:var(--t3);font-size:11px">No emojis found</div>';return;}
+  grid.innerHTML=emojis.map(em=>`<button class="emoji-btn" title="${em.n}" onmouseenter="previewEmoji('${em.e}','${em.n}')" onmouseleave="clearEmojiPreview()" onclick="insertEmoji('${em.e}')">${em.e}</button>`).join('');
+}
+
+function searchEmojis(q){
+  if(!q.trim()){showEmojiCat(activeCatIdx,null);document.getElementById('emoji-cat-label').textContent=EMOJI_CATS[activeCatIdx].label;return;}
+  const all=EMOJI_CATS.flatMap(c=>c.emojis);
+  const results=all.filter(e=>e.n.toLowerCase().includes(q.toLowerCase())||e.e.includes(q));
+  document.getElementById('emoji-cat-label').textContent=`Search results (${results.length})`;
+  renderEmojiGrid(results);
+}
+
+function previewEmoji(e,n){document.getElementById('emoji-preview-char').textContent=e;document.getElementById('emoji-preview-name').textContent=n;}
+function clearEmojiPreview(){document.getElementById('emoji-preview-char').textContent='';document.getElementById('emoji-preview-name').textContent='';}
+
+function openEmoji(evt,targetId){
+  evt.stopPropagation();
+  const picker=document.getElementById('emoji-picker');
+  const wasOpen=picker.classList.contains('open')&&emojiTargetId===targetId;
+  closeEmoji();
+  if(wasOpen)return;
+  emojiTargetId=targetId;
+  document.getElementById('emoji-search').value='';
+  showEmojiCat(activeCatIdx,null);
+  // Position picker near the button
+  const btn=evt.currentTarget;
+  const rect=btn.getBoundingClientRect();
+  picker.classList.add('open');
+  const pw=320,ph=320;
+  let left=rect.left;
+  let top=rect.bottom+4;
+  if(left+pw>window.innerWidth-8)left=window.innerWidth-pw-8;
+  if(top+ph>window.innerHeight-8)top=rect.top-ph-4;
+  if(left<8)left=8;
+  picker.style.left=left+'px';
+  picker.style.top=top+'px';
+  setTimeout(()=>document.getElementById('emoji-search').focus(),50);
+}
+
+function closeEmoji(){
+  document.getElementById('emoji-picker').classList.remove('open');
+}
+
+function insertEmoji(emoji){
+  const el=document.getElementById(emojiTargetId);
+  if(!el)return;
+  const start=el.selectionStart||0;
+  const end=el.selectionEnd||0;
+  const val=el.value;
+  // Respect maxlength
+  const max=parseInt(el.getAttribute('maxlength'))||9999;
+  if(val.length>=max)return;
+  const newVal=val.substring(0,start)+emoji+val.substring(end);
+  if(newVal.length>max)return;
+  el.value=newVal;
+  const newPos=start+emoji.length;
+  el.setSelectionRange(newPos,newPos);
+  el.focus();
+  // Trigger update functions
+  el.dispatchEvent(new Event('input',{bubbles:true}));
+}
+
+// Close picker on outside click
+document.addEventListener('click',function(e){
+  const picker=document.getElementById('emoji-picker');
+  if(picker.classList.contains('open')&&!picker.contains(e.target)&&!e.target.classList.contains('emoji-trigger')&&!e.target.classList.contains('emoji-trigger-area')){
+    closeEmoji();
+  }
+});
+// Close on Escape
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeEmoji();});
+
+buildEmojiPicker();
+
+</script>
+
+<!-- ══ EMOJI PICKER ══ -->
+<div id="emoji-picker" class="emoji-picker" role="dialog" aria-label="Emoji picker">
+  <div class="emoji-picker-header">
+    <div class="emoji-search-wrap">
+      <i class="ti ti-search"></i>
+      <input class="emoji-search" id="emoji-search" placeholder="Search emojis…" oninput="searchEmojis(this.value)" autocomplete="off"/>
+    </div>
+    <div class="emoji-cats" id="emoji-cats"></div>
+  </div>
+  <div class="emoji-cat-label" id="emoji-cat-label">Smileys &amp; People</div>
+  <div class="emoji-grid" id="emoji-grid"></div>
+  <div class="emoji-picker-footer"><span class="emoji-preview" id="emoji-preview-char"></span><span id="emoji-preview-name"></span></div>
+</div>
+
+</body>
+</html>

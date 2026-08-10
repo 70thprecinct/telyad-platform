@@ -1,0 +1,35 @@
+{
+  "name": "telyad-platform",
+  "version": "0.1.0",
+  "private": true,
+  "description": "TelyAd — carrier-powered advertising platform (monorepo)",
+  "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "node": ">=20 <21"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "db:generate": "pnpm --filter @telyad/api db:generate",
+    "db:migrate": "pnpm --filter @telyad/api db:migrate",
+    "db:seed": "pnpm --filter @telyad/api db:seed",
+    "db:reset": "pnpm --filter @telyad/api db:reset"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "eslint": "^9.17.0",
+    "eslint-plugin-react": "^7.37.3",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "globals": "^15.14.0",
+    "prettier": "^3.4.2",
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.19.0"
+  }
+}
