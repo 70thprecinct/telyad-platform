@@ -4,6 +4,13 @@ import { defineConfig, devices } from '@playwright/test';
  * Live-domain Playwright config (spec §20–21). Runs the SAME specs plus the
  * live-only admin smoke against the DEPLOYED domains — NO webServer is started.
  *
+ * The shared `tests/**` glob now includes the reworked multi-capability journey
+ * (demo-journey.spec.ts: wizard capability selection → audience-match estimate →
+ * MTN reviews the persisted audience snapshot + full capability plan + per-
+ * capability experience preview) and the WP02C preview/audience-match suite
+ * (wp02c.spec.ts), so the WP02C.1 persistence path is exercised end-to-end
+ * against the live deployment, not just locally.
+ *
  * Required env before running:
  *   ADVERTISER_URL=https://advertiser.telyad.com
  *   TELCO_URL=https://mtn.telyad.com

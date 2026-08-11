@@ -113,13 +113,22 @@ Primary brand: **Maltina Family Moments** (FMCG). Full narrative in
 4. **AI Intelligence** — enter a Maltina brief (FMCG, Awareness, ₦20M, national,
    English+Pidgin, 28 days) → **Generate media plan** → explain the mix →
    **Apply to Campaign**.
-5. **New Campaign** wizard — audience (aggregate estimate, no identities);
-   creative + **Languages & localisation** (generate Pidgin/Yoruba variants,
-   note "human review required"); budget; review; **Submit for approval**.
+5. **New Campaign** wizard (5 steps) — objective & name; **Capabilities** (pick
+   from the 48 or "Use recommended set" — the plan can span multiple formats);
+   **Audience Match** (aggregate estimate, no identities: eligible → selected
+   target → forecast reach, frequency, coverage, cost — too-narrow segments are
+   privacy-masked); creative + **Languages & localisation** (generate
+   Pidgin/Yoruba variants, note "human review required"); review; **Submit for
+   approval**. On submit the server captures the exact audience snapshot + full
+   capability plan and stores them on the campaign — the figures are frozen.
 
 **MTN Operations (`:3002`) — govern & approve**
-6. **Campaign Approval** → the campaign shows advertiser, audience definition,
-   compliance/DND. **Approve** with a comment (rejection requires one).
+6. **Campaign Approval** → the campaign shows advertiser and the **persisted
+   audience snapshot** (eligible/target/forecast/frequency/coverage/cost) plus
+   the **full capability plan**; switch capability tabs to see each one's
+   **subscriber-experience preview**. These are the immutable figures the
+   advertiser submitted, not a re-computation. **Approve** with a comment
+   (rejection requires one).
 7. **Inventory & Ad Formats** — show governance; toggle a capability's status
    (persists + audited).
 8. **Revenue & Commercials** + **AI Intelligence** — revenue by family/industry,

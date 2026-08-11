@@ -53,10 +53,19 @@ alter unrelated records (apex, MX, etc.).
 ## Database & migrations (spec §4–5)
 - Local/dev/tests use **SQLite** (`prisma/schema.prisma`).
 - Production uses **PostgreSQL** (`prisma-postgres/schema.prisma`, identical
-  models). A committed baseline migration lives in
-  `prisma-postgres/migrations/0001_init/`.
-- `pnpm --filter @telyad/api db:migrate:deploy` applies migrations
-  (non-destructive; no reset). `db:generate:pg` generates the client.
+  models). Committed migrations live in `prisma-postgres/migrations/`:
+  - `0001_init/` — baseline schema.
+  - `0002_campaign_snapshot_plan/` — adds the WP02C.1 columns
+    `Campaign.audienceSnapshotJson` and `Campaign.capabilityPlanJson` (both
+    nullable `TEXT`). **Additive and non-destructive**: existing rows backfill to
+    `NULL`, so it is safe to apply to a populated database with no downtime or
+    backfill step. These columns persist the immutable audience-estimate snapshot
+    and full multi-capability media plan captured at submission, which MTN reviews
+    verbatim during approval.
+- `pnpm --filter @telyad/api db:migrate:deploy` applies **all** pending
+  migrations in order (non-destructive; no reset). `db:generate:pg` generates the
+  Postgres client. On a fresh database both migrations run; on the existing demo
+  database only `0002` applies.
 - **Seed vs reset:** `db:seed` seeds initial data; **`demo:reset`** restores the
   deterministic demo state and **refuses unless `DEMO_MODE` is on** — it never
   runs a schema reset and never wipes state implicitly.

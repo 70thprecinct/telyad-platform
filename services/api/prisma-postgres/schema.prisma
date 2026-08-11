@@ -76,6 +76,8 @@ model Campaign {
   submittedAt         String?
   approvedAt          String?
   approvedByTelcoName String?
+  audienceSnapshotJson String?
+  capabilityPlanJson   String?
 
   @@index([telcoId])
   @@index([advertiserId])
