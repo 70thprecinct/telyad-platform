@@ -40,7 +40,7 @@ export default function LoginPage() {
       <form
         onSubmit={onSubmit}
         className="tly-card"
-        style={{ width: 400, marginBottom: 0 }}
+        style={{ width: 'min(400px, 92vw)', marginBottom: 0 }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
           <div className="tly-brand-mark">T</div>

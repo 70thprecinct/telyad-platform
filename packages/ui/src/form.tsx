@@ -17,10 +17,14 @@ export function Field({
   error?: string;
   children: ReactNode;
 }) {
+  // Wrapping the control in the <label> implicitly associates them, so the
+  // control's accessible name is the label text (good for a11y and testing).
   return (
     <div className="tly-field">
-      {label && <label>{label}</label>}
-      {children}
+      <label>
+        {label && <span className="tly-field-label">{label}</span>}
+        {children}
+      </label>
       {error ? (
         <div className="hint" style={{ color: 'var(--tly-danger)' }}>
           {error}

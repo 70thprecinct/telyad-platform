@@ -36,9 +36,11 @@ export function PortalShell({ active, children }: { active: string; children: Re
       envLabel="Demonstration Environment — figures are illustrative, not live MTN data."
       topbarRight={
         <>
-          <Button size="sm" onClick={() => router.push('/campaigns/new')}>
-            + New Campaign
-          </Button>
+          <span className="tly-hide-mobile">
+            <Button size="sm" onClick={() => router.push('/campaigns/new')}>
+              + New Campaign
+            </Button>
+          </span>
           <Button size="sm" variant="ghost" onClick={() => { logout(); router.replace('/login'); }}>
             Sign out
           </Button>
