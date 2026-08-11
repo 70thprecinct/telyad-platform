@@ -14,8 +14,48 @@ Concise operational guide for the live demo. Keep this open during the meeting.
 | MTN Operations | http://localhost:3002 |
 | Tely Master Admin | http://localhost:3003 |
 
-Deployed URLs (if deployed): `advertiser.telyad.com`, `mtn.telyad.com`,
-`admin.telyad.com`, API at `api.telyad.com`.
+Deployed URLs (once deployed — see `docs/deployment/DEPLOYMENT.md`):
+`https://advertiser.telyad.com`, `https://mtn.telyad.com`,
+`https://admin.telyad.com`, API `https://api.telyad.com`.
+
+---
+
+## 0b. Live deployment — 30 minutes before (primary path)
+
+1. **Open the domains** in the browser; confirm each loads over HTTPS with a
+   valid certificate (no warnings, no mixed content).
+2. **API health:**
+   ```bash
+   curl -s https://api.telyad.com/health   # {"ok":true,...}
+   curl -s https://api.telyad.com/ready    # {"ready":true,"store":"prisma","db":"reachable"}
+   ```
+3. **Database readiness:** `/ready` returns `db:"reachable"`.
+4. **Login check:** sign in to all three apps with the demo accounts (below).
+5. **Restore demo state (explicit, safe):**
+   ```bash
+   DEMO_MODE=on pnpm --filter @telyad/api demo:reset   # deterministic demo data
+   ```
+   (Run as a one-off job on the host, or against the hosted DB. `demo:reset`
+   refuses unless `DEMO_MODE=on` and never resets the schema.)
+6. **Pre-open browser tabs** (below) and hard-refresh each (clear cache if a
+   stale build is suspected).
+
+### Browser tabs to pre-open
+1. MTN Executive Overview (`mtn.telyad.com`)
+2. Advertiser Dashboard (`advertiser.telyad.com`)
+3. Ad Format Marketplace
+4. Maltina campaign (advertiser)
+5. MTN Approval queue
+6. MTN AI Intelligence
+7. Revenue Intelligence
+
+### Recovery shortcuts
+- **Reset demo:** `DEMO_MODE=on pnpm --filter @telyad/api demo:reset`.
+- **Restart API:** redeploy/restart on the host; campaign/approval/audit state
+  persists (hosted Postgres).
+- **Fallback preview URL:** use the Vercel preview deployment URL if a custom
+  domain misbehaves.
+- **Fallback local:** run the full stack locally (§1) with persistent SQLite.
 
 ---
 
@@ -73,13 +113,22 @@ Primary brand: **Maltina Family Moments** (FMCG). Full narrative in
 4. **AI Intelligence** — enter a Maltina brief (FMCG, Awareness, ₦20M, national,
    English+Pidgin, 28 days) → **Generate media plan** → explain the mix →
    **Apply to Campaign**.
-5. **New Campaign** wizard — audience (aggregate estimate, no identities);
-   creative + **Languages & localisation** (generate Pidgin/Yoruba variants,
-   note "human review required"); budget; review; **Submit for approval**.
+5. **New Campaign** wizard (5 steps) — objective & name; **Capabilities** (pick
+   from the 48 or "Use recommended set" — the plan can span multiple formats);
+   **Audience Match** (aggregate estimate, no identities: eligible → selected
+   target → forecast reach, frequency, coverage, cost — too-narrow segments are
+   privacy-masked); creative + **Languages & localisation** (generate
+   Pidgin/Yoruba variants, note "human review required"); review; **Submit for
+   approval**. On submit the server captures the exact audience snapshot + full
+   capability plan and stores them on the campaign — the figures are frozen.
 
 **MTN Operations (`:3002`) — govern & approve**
-6. **Campaign Approval** → the campaign shows advertiser, audience definition,
-   compliance/DND. **Approve** with a comment (rejection requires one).
+6. **Campaign Approval** → the campaign shows advertiser and the **persisted
+   audience snapshot** (eligible/target/forecast/frequency/coverage/cost) plus
+   the **full capability plan**; switch capability tabs to see each one's
+   **subscriber-experience preview**. These are the immutable figures the
+   advertiser submitted, not a re-computation. **Approve** with a comment
+   (rejection requires one).
 7. **Inventory & Ad Formats** — show governance; toggle a capability's status
    (persists + audited).
 8. **Revenue & Commercials** + **AI Intelligence** — revenue by family/industry,

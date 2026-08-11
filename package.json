@@ -21,7 +21,8 @@
     "db:generate": "pnpm --filter @telyad/api db:generate",
     "db:migrate": "pnpm --filter @telyad/api db:migrate",
     "db:seed": "pnpm --filter @telyad/api db:seed",
-    "db:reset": "pnpm --filter @telyad/api db:reset"
+    "db:reset": "pnpm --filter @telyad/api db:reset",
+    "demo:reset": "pnpm --filter @telyad/api demo:reset"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

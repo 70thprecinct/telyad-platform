@@ -1,104 +1,111 @@
 # Deployment
 
-Each front-end app deploys independently behind its own subdomain; the API
-deploys as a Node service with a PostgreSQL database. No DNS changes are made by
-this repository.
+Deploys the four independently-deployable apps + one shared API to the TelyAd
+domains. **No DNS or hosting changes are made by this repository.**
 
-## Targets
+> **Status in this repo:** deployment artifacts are prepared and committed, but
+> the platform was **NOT deployed from the build environment** (no Docker, no
+> cloud/DB/DNS credentials available). Follow this doc to deploy where those are
+> available. See the WP03 completion report for the honest per-component state.
 
-| Component | Host (suggested) | Domain |
+## Chosen platform & rationale
+- **API + PostgreSQL → Render** (`render.yaml` blueprint). One host for a
+  Dockerised Fastify service **and** managed Postgres, with HTTPS, custom
+  domains, logs, health checks, one-click rollback, and no Kubernetes overhead.
+- **Three Next.js apps → Vercel** (`apps/*/vercel.json`). First-class Next.js
+  hosting, per-branch preview URLs (verify before switching DNS), instant
+  rollback, custom domains, env management.
+- Any equivalent host works (Fly.io/Railway for the API; Netlify for the apps).
+
+## Target domains
+| Component | Domain | Host |
 | --- | --- | --- |
-| Advertiser Portal | Vercel (Next.js) | `advertiser.telyad.com` |
-| MTN Operations | Vercel (Next.js) | `mtn.telyad.com` |
-| Tely Master Admin | Vercel (Next.js) | `admin.telyad.com` |
-| TelyDial | Vercel (Next.js) | (initially separate) |
-| Shared API | Fly.io / Render / Railway (Node) | `api.telyad.com` |
-| Database | Managed PostgreSQL | — |
+| Advertiser Portal | `advertiser.telyad.com` | Vercel |
+| MTN Operations | `mtn.telyad.com` | Vercel |
+| Tely Master Admin | `admin.telyad.com` | Vercel |
+| Shared API | `api.telyad.com` | Render (Docker) |
+| Database | — | Render managed PostgreSQL 16 |
 
-## API service
+## Existing DNS (recorded for rollback — inspect again before changing)
+Read-only inspection at WP03 time:
+- `advertiser.telyad.com` → **217.154.0.66** (IONOS), Apache/2.4.37 AlmaLinux, HTTP 200 (old dev implementation).
+- `admin.telyad.com` → **217.154.0.66**, Apache/2.4.37, HTTP 200.
+- `api.telyad.com` → **217.154.0.66**, HTTP 404 (no app).
+- `mtn.telyad.com` → **no DNS record** (must be created).
+- apex `telyad.com` → **217.160.0.246**.
 
-1. Provision PostgreSQL; set `DATABASE_URL` to it.
-2. Set environment variables (see `services/api/.env.example`):
-   - `JWT_SECRET` — long random string (`openssl rand -hex 32`). **Required.**
-   - `DEMO_USER_PASSWORD` — password assigned to seeded demo users.
-   - `STORE=prisma` — use the database (omit for the in-memory demo store).
-   - `CORS_ORIGINS` — the deployed app origins, comma-separated.
-   - `TELYAD_ENV_LABEL` — e.g. `Demonstration Environment`.
-3. Build & migrate & seed:
-   ```bash
-   pnpm --filter @telyad/api build
-   DATABASE_URL=... pnpm --filter @telyad/api exec prisma migrate deploy
-   STORE=prisma DATABASE_URL=... pnpm --filter @telyad/api db:seed
-   ```
-   For PostgreSQL, set `provider = "postgresql"` in `services/api/prisma/schema.prisma`.
-4. Start: `pnpm --filter @telyad/api start`.
+**Rollback target for advertiser/admin: `217.154.0.66` (IONOS).** Record the
+exact current records (A/CNAME + TTL) before editing, and keep the IONOS host
+serving until the new Vercel deployment is verified on its preview URL. Do not
+alter unrelated records (apex, MX, etc.).
 
-## Front-end apps
+## Deployment order (spec §15)
+1. **PostgreSQL** — provision (Render blueprint creates `telyad-db`).
+2. **API** — deploy the Docker image; it runs `prisma migrate deploy` (Postgres
+   schema) then starts. Confirm `/health` and `/ready`.
+3. **Admin**, 4. **MTN console**, 5. **Advertiser** — deploy on Vercel; set
+   `NEXT_PUBLIC_API_URL=https://api.telyad.com`; verify on preview URLs.
+4. **DNS / custom domains** — only after backend readiness: point the three app
+   subdomains at Vercel and `api.telyad.com` at Render. Create `mtn.telyad.com`.
+5. **Seed demo data** — one-off: `DEMO_MODE=on pnpm --filter @telyad/api demo:reset`.
+6. **Browser E2E** — run `pnpm --filter @telyad/e2e e2e:live` (see below).
 
-For each app (`advertiser`, `telco-console`, `platform-admin`, `telydial`):
+## Database & migrations (spec §4–5)
+- Local/dev/tests use **SQLite** (`prisma/schema.prisma`).
+- Production uses **PostgreSQL** (`prisma-postgres/schema.prisma`, identical
+  models). Committed migrations live in `prisma-postgres/migrations/`:
+  - `0001_init/` — baseline schema.
+  - `0002_campaign_snapshot_plan/` — adds the WP02C.1 columns
+    `Campaign.audienceSnapshotJson` and `Campaign.capabilityPlanJson` (both
+    nullable `TEXT`). **Additive and non-destructive**: existing rows backfill to
+    `NULL`, so it is safe to apply to a populated database with no downtime or
+    backfill step. These columns persist the immutable audience-estimate snapshot
+    and full multi-capability media plan captured at submission, which MTN reviews
+    verbatim during approval.
+- `pnpm --filter @telyad/api db:migrate:deploy` applies **all** pending
+  migrations in order (non-destructive; no reset). `db:generate:pg` generates the
+  Postgres client. On a fresh database both migrations run; on the existing demo
+  database only `0002` applies.
+- **Seed vs reset:** `db:seed` seeds initial data; **`demo:reset`** restores the
+  deterministic demo state and **refuses unless `DEMO_MODE` is on** — it never
+  runs a schema reset and never wipes state implicitly.
 
-- Root directory: the app folder (monorepo-aware; Vercel detects pnpm workspaces).
-- Build command: `pnpm build` (Turborepo builds workspace deps first) or
-  `pnpm --filter @telyad/<app> build`.
-- Environment: `NEXT_PUBLIC_API_URL=https://api.telyad.com`.
-- Assign the domain from the table above.
+## Environment variables
+| Variable | Where | Notes |
+| --- | --- | --- |
+| `DATABASE_URL` | API | Postgres URL (from Render DB) |
+| `STORE` | API | `prisma` in production |
+| `JWT_SECRET` | API | long random; Render `generateValue` |
+| `DEMO_USER_PASSWORD` | API | set in dashboard (not committed) |
+| `ALLOWED_ORIGINS` | API | `https://advertiser.telyad.com,https://mtn.telyad.com,https://admin.telyad.com` |
+| `API_BASE_URL` | API | `https://api.telyad.com` |
+| `APP_ENV` / `DEMO_MODE` | API | `production` / `on` for the demo |
+| `NEXT_PUBLIC_API_URL` | each app | `https://api.telyad.com` (build-time) |
 
-## Environment variables summary
+## Health, CORS, session
+- **Health:** `/health` (liveness), `/ready` (503 when DB unreachable).
+- **CORS:** explicit `ALLOWED_ORIGINS` only — never wildcard for authed traffic.
+- **Session:** stateless JWT in the `Authorization` header (no cross-domain
+  cookies), so the three subdomains work without cookie-domain config.
 
-| Variable | Where | Required | Notes |
-| --- | --- | --- | --- |
-| `JWT_SECRET` | API | prod: yes | ≥16 chars; long random in prod |
-| `DEMO_USER_PASSWORD` | API | demo | seed-time password for demo users |
-| `DATABASE_URL` | API | with Prisma | SQLite file or Postgres URL |
-| `STORE` | API | no | `prisma` to use the DB; unset = in-memory |
-| `CORS_ORIGINS` | API | prod | comma-separated app origins |
-| `NEXT_PUBLIC_API_URL` | each app | yes | the API base URL |
-
-## Health checks
-
-The API exposes two probes (no secrets, no infra internals):
-
-- `GET /health` — **liveness**. `{ ok: true }` when the process is up.
-- `GET /ready` — **readiness**. `{ ready: true, store, db }` (200), or **503**
-  when the backing store is unreachable. Point your load balancer / platform
-  health check at `/ready`.
-
-## Persistence
-
-The API defaults to the **persistent Prisma store**; `DATABASE_URL` is required
-and the process fails fast if it is missing (no silent fallback to memory).
-Set `provider = "postgresql"` in `services/api/prisma/schema.prisma` for
-production and run `prisma migrate deploy` + `db:seed`. `STORE=memory` is for
-tests / throwaway runs only.
-
-## Session, cookies & CORS
-
-Authentication is **stateless JWT in the `Authorization: Bearer` header** (stored
-client-side), *not* cookies. Therefore:
-
-- No cross-subdomain cookie/domain configuration is required — advertiser, MTN
-  and admin apps on separate subdomains all send the header to the API.
-- `CORS_ORIGINS` must list the exact app origins (e.g.
-  `https://advertiser.telyad.com,https://mtn.telyad.com,https://admin.telyad.com`).
-  Wildcard CORS is not used for authenticated traffic.
-- Because tokens live in `localStorage`, they are origin-scoped per app. A 401
-  mid-session clears the token and returns the user to the login page.
+## Live E2E (spec §20)
+```bash
+ADVERTISER_URL=https://advertiser.telyad.com TELCO_URL=https://mtn.telyad.com \
+ADMIN_URL=https://admin.telyad.com API_URL=https://api.telyad.com \
+DEMO_USER_PASSWORD=<deployed demo password> \
+pnpm --filter @telyad/e2e e2e:live
+```
+Runs the demo journey + responsive + WP02B + admin smoke on desktop (1440) and
+Pixel-7 mobile, against the deployed domains.
 
 ## Rollback
-
-- **Front-end apps** (Vercel or similar): redeploy the previous build, or use the
-  platform's instant rollback to the prior deployment. No DB coupling.
-- **API:** deploy the previous image/commit. The database schema is
-  additive-friendly; if a release included a migration, roll back with the
-  paired down-migration or redeploy the prior schema before the prior API image.
-- **Database:** restore from the managed provider's latest snapshot. For the
-  demo, `pnpm --filter @telyad/api db:reset` restores the deterministic dataset.
+- **Apps (Vercel):** instant rollback to the previous deployment; or repoint DNS
+  to the recorded IONOS host `217.154.0.66`.
+- **API (Render):** redeploy the previous image; DB is decoupled.
+- **Database:** restore from Render's automated snapshot; `demo:reset` restores
+  the demo dataset. Keep the previous IONOS deployment live until verified.
 
 ## CI
-
-`.github/workflows/ci.yml` runs two jobs on every push and pull request:
-
-- **verify:** install → lint → typecheck → test → build.
-- **e2e:** build the apps, install Chromium, run the Playwright demo-journey and
-  responsive suites (starting the API + apps automatically). The Playwright HTML
-  report is uploaded as a build artifact.
+`.github/workflows/ci.yml`: **verify** (install/lint/typecheck/test/build) +
+**e2e** (Playwright against locally-started servers). Live-domain E2E is run
+manually post-deploy (it needs live URLs), not in CI.

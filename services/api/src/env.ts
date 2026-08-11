@@ -10,15 +10,26 @@ const isProd = process.env.NODE_ENV === 'production';
 
 export const env = {
   nodeEnv: process.env.NODE_ENV ?? 'development',
+  /** Deployment environment label: development | staging | production. */
+  appEnv: optional('APP_ENV', process.env.NODE_ENV ?? 'development'),
+  /** DEMO_MODE gates demo-only operations (e.g. demo:reset). */
+  demoMode: /^(on|true|1)$/i.test(optional('DEMO_MODE', isProd ? 'off' : 'on')),
   port: Number(optional('API_PORT', '4000')),
   host: optional('API_HOST', '0.0.0.0'),
-  /** Comma-separated allowed origins for CORS. */
+  /**
+   * Comma-separated allowed origins for CORS. Prefers ALLOWED_ORIGINS, falls
+   * back to CORS_ORIGINS, then the local dev origins.
+   */
   corsOrigins: optional(
-    'CORS_ORIGINS',
-    'http://localhost:3001,http://localhost:3002,http://localhost:3003,http://localhost:3004',
+    'ALLOWED_ORIGINS',
+    optional(
+      'CORS_ORIGINS',
+      'http://localhost:3001,http://localhost:3002,http://localhost:3003,http://localhost:3004',
+    ),
   )
     .split(',')
-    .map((s) => s.trim()),
+    .map((s) => s.trim())
+    .filter(Boolean),
   jwtSecret: (() => {
     const v = process.env.JWT_SECRET;
     if (!v || v.length < 16) {

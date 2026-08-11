@@ -15,8 +15,11 @@
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
+    "db:generate:pg": "prisma generate --schema prisma-postgres/schema.prisma",
+    "db:migrate:deploy": "prisma migrate deploy --schema prisma-postgres/schema.prisma",
     "db:reset": "prisma db push --force-reset && pnpm db:seed",
     "db:seed": "tsx src/seed.ts",
+    "demo:reset": "tsx src/demo-reset.ts",
     "e2e:serve": "rm -f prisma/e2e.db prisma/e2e.db-journal && prisma db push --skip-generate && tsx src/seed.ts && tsx src/server.ts",
     "clean": "rm -rf dist .turbo prisma/generated"
   },
