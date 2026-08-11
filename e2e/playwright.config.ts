@@ -13,9 +13,13 @@ const JWT_SECRET = process.env.JWT_SECRET ?? 'e2e-only-secret-0123456789abcdef';
 // Not a secret — must match the API's dev seed default so local login works.
 const DEMO_USER_PASSWORD = process.env.DEMO_USER_PASSWORD ?? 'dev-demo-password-not-secret';
 
-export const ADVERTISER_URL = 'http://localhost:3001';
-export const TELCO_URL = 'http://localhost:3002';
-export const API_URL = 'http://localhost:4000';
+// Base URLs are env-driven so the SAME specs run locally (default) or against
+// deployed domains (set ADVERTISER_URL/TELCO_URL/ADMIN_URL/API_URL) — see
+// playwright.live.config.ts.
+export const ADVERTISER_URL = process.env.ADVERTISER_URL ?? 'http://localhost:3001';
+export const TELCO_URL = process.env.TELCO_URL ?? 'http://localhost:3002';
+export const ADMIN_URL = process.env.ADMIN_URL ?? 'http://localhost:3003';
+export const API_URL = process.env.API_URL ?? 'http://localhost:4000';
 export const DEMO_PASSWORD = DEMO_USER_PASSWORD;
 
 export default defineConfig({
