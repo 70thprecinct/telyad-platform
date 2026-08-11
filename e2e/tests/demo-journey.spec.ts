@@ -9,7 +9,7 @@ async function login(page: Page, base: string, email: string) {
   await page.getByLabel('Work email').fill(email);
   await page.getByLabel('Password').fill(DEMO_PASSWORD);
   await page.getByRole('button', { name: 'Sign in' }).click();
-  await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
+  await expect(page).toHaveURL(/\/dashboard/);
 }
 
 test('Wednesday demo journey: advertiser submit → MTN approve → advertiser sees approved', async ({
