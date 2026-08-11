@@ -10,14 +10,18 @@ export default function DashboardPage() {
   const router = useRouter();
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loaded, setLoaded] = useState(false);
+  const [error, setError] = useState(false);
 
-  useEffect(() => {
+  function load() {
+    setLoaded(false);
+    setError(false);
     api
       .listCampaigns()
       .then((r) => setCampaigns(r.campaigns))
-      .catch(() => undefined)
+      .catch(() => setError(true))
       .finally(() => setLoaded(true));
-  }, []);
+  }
+  useEffect(load, []);
 
   const live = campaigns.filter((c) => c.status === 'LIVE').length;
   const pending = campaigns.filter((c) => c.status === 'PENDING_TELCO_APPROVAL').length;
@@ -49,7 +53,13 @@ export default function DashboardPage() {
             </Button>
           }
         />
-        {!loaded ? (
+        {error ? (
+          <div className="tly-empty" data-testid="dashboard-error">
+            <div style={{ fontWeight: 600, marginBottom: 6 }}>Couldn’t reach the API</div>
+            <div style={{ fontSize: 12.5, marginBottom: 12 }}>Check the API is running, then retry.</div>
+            <Button variant="ghost" size="sm" onClick={load}>Retry</Button>
+          </div>
+        ) : !loaded ? (
           <div className="tly-faint">Loading…</div>
         ) : campaigns.length === 0 ? (
           <div className="tly-empty">No campaigns yet. Create your first campaign.</div>

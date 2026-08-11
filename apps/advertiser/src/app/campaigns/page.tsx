@@ -10,14 +10,18 @@ export default function CampaignsPage() {
   const router = useRouter();
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loaded, setLoaded] = useState(false);
+  const [error, setError] = useState(false);
 
-  useEffect(() => {
+  function load() {
+    setLoaded(false);
+    setError(false);
     api
       .listCampaigns()
       .then((r) => setCampaigns(r.campaigns))
-      .catch(() => undefined)
+      .catch(() => setError(true))
       .finally(() => setLoaded(true));
-  }, []);
+  }
+  useEffect(load, []);
 
   return (
     <PortalShell active="campaigns">
@@ -31,7 +35,12 @@ export default function CampaignsPage() {
             </Button>
           }
         />
-        {!loaded ? (
+        {error ? (
+          <div className="tly-empty" data-testid="campaigns-error">
+            <div style={{ fontWeight: 600, marginBottom: 6 }}>Couldn’t reach the API</div>
+            <Button variant="ghost" size="sm" onClick={load}>Retry</Button>
+          </div>
+        ) : !loaded ? (
           <div className="tly-faint">Loading…</div>
         ) : (
           <Table head={['Campaign', 'Objective', 'Format', 'Est. reach', 'Budget', 'Status', 'Approval']}>

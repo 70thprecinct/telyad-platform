@@ -120,6 +120,30 @@ describe('Wednesday demo flow — advertiser submit → MTN approve → advertis
   });
 });
 
+describe('demo analytics & approval rules', () => {
+  it('derives stable metrics for a LIVE campaign', async () => {
+    const token = await login('ops.lead@mtn.example');
+    const a = await app.inject({ method: 'GET', url: '/campaigns/camp_jumia_flash/metrics', headers: auth(token) });
+    const b = await app.inject({ method: 'GET', url: '/campaigns/camp_jumia_flash/metrics', headers: auth(token) });
+    expect(a.statusCode).toBe(200);
+    expect(a.json().metrics.hasData).toBe(true);
+    expect(a.json().metrics.impressions).toBeGreaterThan(0);
+    // deterministic — identical across calls
+    expect(a.json().metrics).toEqual(b.json().metrics);
+  });
+
+  it('rejecting without a comment is refused (400)', async () => {
+    const token = await login('ops.lead@mtn.example');
+    const res = await app.inject({
+      method: 'POST',
+      url: '/campaigns/camp_fairmoney_q3/decision',
+      headers: auth(token),
+      payload: { decision: 'REJECTED', comments: '   ' },
+    });
+    expect(res.statusCode).toBe(400);
+  });
+});
+
 describe('health & readiness', () => {
   it('reports liveness on /health', async () => {
     const res = await app.inject({ method: 'GET', url: '/health' });

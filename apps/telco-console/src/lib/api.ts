@@ -1,4 +1,10 @@
-import type { Advertiser, AuditEvent, AuthUser, Campaign } from '@telyad/types';
+import type {
+  Advertiser,
+  AuditEvent,
+  AuthUser,
+  Campaign,
+  CampaignApproval,
+} from '@telyad/types';
 
 const BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000';
 const TOKEN_KEY = 'telyad_telco_token';
@@ -34,7 +40,13 @@ async function request<T>(path: string, opts: RequestInit = {}): Promise<T> {
     },
   });
   const body = res.status === 204 ? null : await res.json().catch(() => null);
-  if (!res.ok) throw new ApiError(res.status, (body as { error?: string })?.error ?? res.statusText);
+  if (!res.ok) {
+    if (res.status === 401 && token && !path.startsWith('/auth/login')) {
+      clearToken();
+      if (typeof window !== 'undefined') window.location.href = '/login';
+    }
+    throw new ApiError(res.status, (body as { error?: string })?.error ?? res.statusText);
+  }
   return body as T;
 }
 
@@ -53,5 +65,6 @@ export const api = {
       body: JSON.stringify({ decision, comments }),
     }),
   advertisers: () => request<{ advertisers: Advertiser[] }>('/telco/advertisers'),
+  approvals: () => request<{ approvals: CampaignApproval[] }>('/telco/approvals'),
   audit: () => request<{ events: AuditEvent[] }>('/telco/audit'),
 };

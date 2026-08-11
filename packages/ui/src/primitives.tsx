@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from 'react';
 import type { CampaignStatus } from '@telyad/types';
 
 export function cx(...parts: Array<string | false | null | undefined>): string {
@@ -34,8 +34,12 @@ export function Button({
 }
 
 // ── Card ───────────────────────────────────────────────────────────────────
-export function Card({ children, className }: { children: ReactNode; className?: string }) {
-  return <div className={cx('tly-card', className)}>{children}</div>;
+export function Card({ children, className, ...rest }: HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div className={cx('tly-card', className)} {...rest}>
+      {children}
+    </div>
+  );
 }
 export function CardHead({ title, sub, action }: { title: string; sub?: string; action?: ReactNode }) {
   return (

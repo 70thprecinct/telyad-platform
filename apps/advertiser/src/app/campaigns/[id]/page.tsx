@@ -1,8 +1,8 @@
 'use client';
 import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { compactNumber, formatMoney, type Campaign } from '@telyad/types';
-import { Button, Card, CardHead, PageHeader, StatusBadge, useToast } from '@telyad/ui';
+import { compactNumber, formatMoney, type Campaign, type CampaignMetrics } from '@telyad/types';
+import { Button, Card, CardHead, Kpi, KpiGrid, PageHeader, StatusBadge, useToast } from '@telyad/ui';
 import { PortalShell } from '@/components/PortalShell';
 import { api, ApiError } from '@/lib/api';
 
@@ -11,13 +11,19 @@ export default function CampaignDetailPage() {
   const id = params.id;
   const { toast } = useToast();
   const [campaign, setCampaign] = useState<Campaign | null>(null);
+  const [metrics, setMetrics] = useState<CampaignMetrics | null>(null);
+  const [error, setError] = useState(false);
   const [busy, setBusy] = useState(false);
 
   const load = useCallback(() => {
+    setError(false);
     api
       .getCampaign(id)
-      .then((r) => setCampaign(r.campaign))
-      .catch(() => setCampaign(null));
+      .then((r) => {
+        setCampaign(r.campaign);
+        return api.campaignMetrics(id).then((m) => setMetrics(m.metrics)).catch(() => setMetrics(null));
+      })
+      .catch(() => setError(true));
   }, [id]);
 
   useEffect(load, [load]);
@@ -27,6 +33,7 @@ export default function CampaignDetailPage() {
     try {
       const r = await api.submitCampaign(id);
       setCampaign(r.campaign);
+      api.campaignMetrics(id).then((m) => setMetrics(m.metrics)).catch(() => undefined);
       toast('Submitted for approval', 'MTN Nigeria will review this campaign.', 'success');
     } catch (e) {
       toast('Could not submit', e instanceof ApiError ? e.message : 'Unexpected error', 'danger');
@@ -37,15 +44,24 @@ export default function CampaignDetailPage() {
 
   return (
     <PortalShell active="campaigns">
-      {!campaign ? (
-        <div className="tly-faint">Loading campaign…</div>
+      {error ? (
+        <Card>
+          <div className="tly-empty" data-testid="campaign-error">
+            <div style={{ fontWeight: 600, marginBottom: 6 }}>Couldn’t load this campaign</div>
+            <div style={{ fontSize: 12.5, marginBottom: 12 }}>The API may be unavailable. Your work is safe.</div>
+            <Button variant="ghost" onClick={load}>Retry</Button>
+          </div>
+        </Card>
+      ) : !campaign ? (
+        <div className="tly-faint" data-testid="campaign-loading">Loading campaign…</div>
       ) : (
-        <>
+        <div data-testid="campaign-detail" data-status={campaign.status}>
           <PageHeader eyebrow={campaign.objective} title={campaign.name} />
 
           {campaign.status === 'APPROVED' && (
             <div
               className="tly-card"
+              data-testid="approval-banner"
               style={{
                 borderColor: 'var(--tly-success)',
                 background: 'var(--tly-success-dim)',
@@ -93,15 +109,29 @@ export default function CampaignDetailPage() {
             </Card>
           </div>
 
+          {metrics?.hasData && (
+            <Card>
+              <CardHead title="Campaign analytics" sub="Demonstration data — deterministic, aggregate" />
+              <KpiGrid>
+                <Kpi label="Impressions" value={compactNumber(metrics.impressions)} />
+                <Kpi label="Clicks / actions" value={compactNumber(metrics.clicks)} />
+                <Kpi label="Conversions" value={compactNumber(metrics.conversions)} />
+                <Kpi label="CTR" value={`${metrics.ctr}%`} />
+                <Kpi label="Spend" value={formatMoney({ minor: metrics.spendMinor, currency: 'NGN' }, { compact: true })} />
+                <Kpi label="Remaining budget" value={formatMoney({ minor: metrics.remainingBudgetMinor, currency: 'NGN' }, { compact: true })} />
+              </KpiGrid>
+            </Card>
+          )}
+
           {(campaign.status === 'DRAFT' || campaign.status === 'READY_FOR_REVIEW') && (
             <Card>
               <CardHead title="Ready to submit?" sub="Send this campaign to MTN Nigeria for approval." />
-              <Button onClick={submit} disabled={busy}>
+              <Button onClick={submit} disabled={busy} data-testid="submit-campaign">
                 {busy ? 'Submitting…' : 'Submit for approval'}
               </Button>
             </Card>
           )}
-        </>
+        </div>
       )}
     </PortalShell>
   );

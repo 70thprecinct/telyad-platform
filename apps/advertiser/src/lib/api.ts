@@ -4,6 +4,7 @@ import type {
   AudienceEstimate,
   AuthUser,
   Campaign,
+  CampaignMetrics,
   CreateCampaignRequest,
 } from '@telyad/types';
 
@@ -43,6 +44,11 @@ async function request<T>(path: string, opts: RequestInit = {}): Promise<T> {
   });
   const body = res.status === 204 ? null : await res.json().catch(() => null);
   if (!res.ok) {
+    // Session expired mid-use: clear the stale token and return to login.
+    if (res.status === 401 && token && !path.startsWith('/auth/login')) {
+      clearToken();
+      if (typeof window !== 'undefined') window.location.href = '/login';
+    }
     throw new ApiError(res.status, (body as { error?: string })?.error ?? res.statusText, body);
   }
   return body as T;
@@ -70,4 +76,6 @@ export const api = {
     }),
   submitCampaign: (id: string) =>
     request<{ campaign: Campaign }>(`/campaigns/${id}/submit`, { method: 'POST' }),
+  campaignMetrics: (id: string) =>
+    request<{ metrics: CampaignMetrics }>(`/campaigns/${id}/metrics`),
 };
