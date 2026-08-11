@@ -113,6 +113,17 @@ model AuditEvent {
   @@index([telcoId])
 }
 
+model TelcoCapabilityAvailability {
+  id            String @id
+  telcoId       String
+  capabilityId  String
+  status        String
+  updatedAt     String
+
+  @@unique([telcoId, capabilityId])
+  @@index([telcoId])
+}
+
 model Notification {
   id            String  @id
   telcoId       String?
