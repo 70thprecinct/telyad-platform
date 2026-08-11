@@ -3,6 +3,7 @@ import type {
   AuditEvent,
   Campaign,
   CampaignApproval,
+  CapabilityStatus,
   Notification,
   Telco,
 } from '@telyad/types';
@@ -110,5 +111,21 @@ export class MemoryStore implements Store {
         (n) => n.audienceRealm === filter.realm && (filter.telcoId ? n.telcoId === filter.telcoId : true),
       ),
     );
+  }
+
+  private capabilityOverrides = new Map<string, CapabilityStatus>();
+  private key(telcoId: string, capabilityId: string): string {
+    return `${telcoId}::${capabilityId}`;
+  }
+  async listCapabilityOverrides(telcoId: string): Promise<Record<string, CapabilityStatus>> {
+    const out: Record<string, CapabilityStatus> = {};
+    for (const [k, v] of this.capabilityOverrides) {
+      const [t, cap] = k.split('::');
+      if (t === telcoId && cap) out[cap] = v;
+    }
+    return out;
+  }
+  async setCapabilityStatus(telcoId: string, capabilityId: string, status: CapabilityStatus): Promise<void> {
+    this.capabilityOverrides.set(this.key(telcoId, capabilityId), status);
   }
 }

@@ -9,6 +9,7 @@ import {
   type CampaignApproval,
   type CampaignObjective,
   type CampaignStatus,
+  type CapabilityStatus,
   type Notification,
   type Telco,
   type AdFormatId,
@@ -149,6 +150,7 @@ export class PrismaStore implements Store {
       ...a,
       id: asId<'AdvertiserId'>(a.id),
       telcoId: asId<'TelcoId'>(a.telcoId),
+      type: a.type as Advertiser['type'],
       status: a.status as Advertiser['status'],
       risk: a.risk as Advertiser['risk'],
     }));
@@ -160,6 +162,7 @@ export class PrismaStore implements Store {
           ...a,
           id: asId<'AdvertiserId'>(a.id),
           telcoId: asId<'TelcoId'>(a.telcoId),
+          type: a.type as Advertiser['type'],
           status: a.status as Advertiser['status'],
           risk: a.risk as Advertiser['risk'],
         }
@@ -231,6 +234,22 @@ export class PrismaStore implements Store {
       userId: r.userId ? asId<'UserId'>(r.userId) : null,
     }));
   }
+  async listCapabilityOverrides(telcoId: string): Promise<Record<string, CapabilityStatus>> {
+    const rows = await this.prisma.telcoCapabilityAvailability.findMany({ where: { telcoId } });
+    const out: Record<string, CapabilityStatus> = {};
+    for (const r of rows) out[r.capabilityId] = r.status as CapabilityStatus;
+    return out;
+  }
+  async setCapabilityStatus(telcoId: string, capabilityId: string, status: CapabilityStatus): Promise<void> {
+    const id = `${telcoId}::${capabilityId}`;
+    const updatedAt = new Date().toISOString();
+    await this.prisma.telcoCapabilityAvailability.upsert({
+      where: { telcoId_capabilityId: { telcoId, capabilityId } },
+      create: { id, telcoId, capabilityId, status, updatedAt },
+      update: { status, updatedAt },
+    });
+  }
+
   async listNotifications(filter: { telcoId?: string | null; realm: string }): Promise<Notification[]> {
     const rows = await this.prisma.notification.findMany({
       where: { audienceRealm: filter.realm, telcoId: filter.telcoId ?? undefined },

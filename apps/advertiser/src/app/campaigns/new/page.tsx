@@ -1,18 +1,23 @@
 'use client';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   CAMPAIGN_OBJECTIVES,
   compactNumber,
+  LANGUAGES,
+  LANGUAGE_LABELS,
   type AdFormatId,
   type AudienceDefinition,
   type CampaignObjective,
   type CreateCampaignRequest,
+  type LanguageCode,
+  type LanguageVariant,
   type PricingModel,
 } from '@telyad/types';
 import { getFormat, listFormats } from '@telyad/ad-formats';
 import { estimateAudience } from '@telyad/audience';
 import {
+  Badge,
   Button,
   Card,
   CardHead,
@@ -78,8 +83,75 @@ export default function NewCampaignPage() {
   const [endDate, setEndDate] = useState('2026-08-28');
   const [busy, setBusy] = useState(false);
 
+  // Multilingual localisation (drafts requiring human review — never auto-active).
+  const [localeLangs, setLocaleLangs] = useState<LanguageCode[]>(['en']);
+  const [variants, setVariants] = useState<LanguageVariant[]>([]);
+  const [localising, setLocalising] = useState(false);
+
+  // Note surfaced when arriving from the AI Copilot with an applied media plan.
+  const [planNote, setPlanNote] = useState<string | null>(null);
+
+  useEffect(() => {
+    let raw: string | null = null;
+    try {
+      raw = sessionStorage.getItem('telyad_media_plan');
+    } catch {
+      raw = null;
+    }
+    if (!raw) return;
+    try {
+      const plan = JSON.parse(raw) as {
+        items?: unknown[];
+        request?: { objective?: string };
+      };
+      const count = Array.isArray(plan.items) ? plan.items.length : 0;
+      setPlanNote(`Applied AI media plan: ${count} format${count === 1 ? '' : 's'} recommended`);
+      const obj = plan.request?.objective;
+      if (obj && (CAMPAIGN_OBJECTIVES as readonly string[]).includes(obj)) {
+        setObjective(obj as CampaignObjective);
+      }
+    } catch {
+      /* ignore malformed plan */
+    }
+  }, []);
+
   const format = getFormat(formatId)!;
   const estimate = useMemo(() => estimateAudience(audience), [audience]);
+
+  const toggleLocaleLang = (v: LanguageCode) =>
+    setLocaleLangs((l) => (l.includes(v) ? l.filter((x) => x !== v) : [...l, v]));
+
+  async function generateVariants() {
+    // Pick the primary body/message field for this format as the base copy.
+    const baseText =
+      creative.body ||
+      creative.message ||
+      creative.menuText ||
+      creative.script ||
+      creative.title ||
+      Object.values(creative).find((v) => v && v.trim().length > 0) ||
+      '';
+    const cta = creative.option1 || creative.cta || creative.ctaText || undefined;
+    const targets = localeLangs.filter((l) => l !== 'en');
+    if (!baseText.trim() || targets.length === 0) {
+      setVariants([]);
+      return;
+    }
+    setLocalising(true);
+    try {
+      const results = await Promise.all(
+        targets.map((targetLanguage) =>
+          api
+            .localise({ baseText, cta, targetLanguage, charLimit: 160 })
+            .then((r) => r.variant)
+            .catch(() => null),
+        ),
+      );
+      setVariants(results.filter((v): v is LanguageVariant => v !== null));
+    } finally {
+      setLocalising(false);
+    }
+  }
 
   const toggle = (key: keyof AudienceDefinition, value: string) =>
     setAudience((a) => {
@@ -135,6 +207,28 @@ export default function NewCampaignPage() {
         desc="Build a privacy-safe campaign on MTN Nigeria. Reach figures are aggregate estimates."
       />
       <Stepper steps={STEPS} current={step} />
+
+      {planNote && (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 12,
+            border: '1px solid var(--tly-border-soft)',
+            borderRadius: 8,
+            padding: '8px 12px',
+            marginBottom: 12,
+            fontSize: 12.5,
+            color: 'var(--tly-text-dim)',
+          }}
+        >
+          <span>✨ {planNote}</span>
+          <Button variant="ghost" size="sm" onClick={() => setPlanNote(null)}>
+            Dismiss
+          </Button>
+        </div>
+      )}
 
       <div className="tly-grid-2">
         <div>
@@ -202,6 +296,57 @@ export default function NewCampaignPage() {
                   )}
                 </Field>
               ))}
+            </Card>
+          )}
+
+          {step === 2 && (
+            <Card data-testid="localise-panel">
+              <CardHead
+                title="Languages & localisation"
+                sub="Drafts only — machine variants require human review before use."
+              />
+              <ChipWrap>
+                {LANGUAGES.map((l) => (
+                  <Chip key={l} active={localeLangs.includes(l)} onToggle={() => toggleLocaleLang(l)}>
+                    {LANGUAGE_LABELS[l]}
+                  </Chip>
+                ))}
+              </ChipWrap>
+              <div style={{ marginTop: 12 }}>
+                <Button
+                  data-testid="generate-variants"
+                  size="sm"
+                  variant="ghost"
+                  disabled={localising}
+                  onClick={generateVariants}
+                >
+                  {localising ? 'Generating…' : 'Generate variants'}
+                </Button>
+              </div>
+              {variants.length > 0 && (
+                <div style={{ display: 'grid', gap: 10, marginTop: 14 }}>
+                  {variants.map((v) => (
+                    <div
+                      key={v.language}
+                      style={{ border: '1px solid var(--tly-border-soft)', borderRadius: 8, padding: 10 }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                        <strong style={{ fontSize: 12.5 }}>{LANGUAGE_LABELS[v.language]}</strong>
+                        {v.requiresReview && <Badge tone="warning">Human review required</Badge>}
+                        <Badge tone={v.withinLimit ? 'success' : 'danger'}>
+                          {v.withinLimit ? 'Within limit' : 'Over limit'}
+                        </Badge>
+                      </div>
+                      <div style={{ fontSize: 12.5, color: 'var(--tly-text-dim)', lineHeight: 1.45 }}>{v.text}</div>
+                      {v.cta && (
+                        <div className="tly-faint" style={{ fontSize: 11, marginTop: 6 }}>
+                          CTA: {v.cta}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </Card>
           )}
 

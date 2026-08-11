@@ -42,6 +42,7 @@ export function buildSeed(passwordHash: string): SeedBundle {
     telcoId: a.telcoId,
     name: a.name,
     industry: a.industry,
+    type: a.type,
     status: a.status,
     risk: a.risk,
     accountManager: a.accountManager,

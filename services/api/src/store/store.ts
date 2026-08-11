@@ -4,6 +4,7 @@ import type {
   Campaign,
   CampaignApproval,
   CampaignStatus,
+  CapabilityStatus,
   Notification,
   Telco,
   User,
@@ -54,4 +55,8 @@ export interface Store {
     telcoId?: string | null;
     realm: string;
   }): Promise<Notification[]>;
+
+  // capability governance (per-telco network availability overrides)
+  listCapabilityOverrides(telcoId: string): Promise<Record<string, CapabilityStatus>>;
+  setCapabilityStatus(telcoId: string, capabilityId: string, status: CapabilityStatus): Promise<void>;
 }

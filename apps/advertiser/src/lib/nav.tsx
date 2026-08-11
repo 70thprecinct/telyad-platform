@@ -9,6 +9,13 @@ export const NAV: NavGroup[] = [
     ],
   },
   {
+    group: 'Discover',
+    items: [
+      { id: 'marketplace', label: 'Ad Format Marketplace' },
+      { id: 'ai', label: 'AI Intelligence' },
+    ],
+  },
+  {
     group: 'Create',
     items: [{ id: 'campaigns/new', label: 'New Campaign' }],
   },

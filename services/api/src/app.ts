@@ -16,7 +16,14 @@ import {
 import { permissionsFor } from '@telyad/auth';
 import { applyEvent, InvalidTransitionError, TELCO_APPROVAL_QUEUE_STATUSES } from '@telyad/campaign-engine';
 import { estimateAudience } from '@telyad/audience';
-import { listFormats, validateCreative } from '@telyad/ad-formats';
+import {
+  getCapability,
+  listCapabilities,
+  listFormats,
+  validateCreative,
+} from '@telyad/ad-formats';
+import { intelligence, type RevenueLine } from '@telyad/intelligence';
+import { CAPABILITY_STATUSES, type CapabilityStatus } from '@telyad/types';
 import type { AuthTokenPayload } from '@telyad/auth';
 import type { Store } from './store/store';
 import { signToken, verifyPassword, verifyToken } from './auth';
@@ -147,6 +154,148 @@ export function buildApp({ store, logger = false }: AppOptions): FastifyInstance
   app.get('/telcos', { preHandler: authenticate }, async (req, reply) => {
     if (req.auth!.realm !== 'platform') return reply.code(403).send({ error: 'Platform only' });
     return { telcos: await store.listTelcos() };
+  });
+
+  // ── capability universe (catalogue, all realms) ──────────────────────────────
+  app.get('/capabilities', { preHandler: authenticate }, async () => ({
+    capabilities: listCapabilities(),
+  }));
+  app.get('/capabilities/:id', { preHandler: authenticate }, async (req, reply) => {
+    const capability = getCapability((req.params as { id: string }).id);
+    if (!capability) return reply.code(404).send({ error: 'Unknown capability' });
+    return { capability };
+  });
+
+  // ── advertiser AI (demonstration intelligence) ───────────────────────────────
+  app.post('/ai/media-plan', { preHandler: authenticate }, async (req, reply) => {
+    if (!require(req, reply, 'campaign:view')) return;
+    const body = req.body as Parameters<typeof intelligence.planner.recommendMediaPlan>[0];
+    if (!body || typeof body.budgetMinor !== 'number' || !body.objective || !body.sector) {
+      return reply.code(400).send({ error: 'sector, objective and budgetMinor are required' });
+    }
+    return { plan: intelligence.planner.recommendMediaPlan(body) };
+  });
+
+  app.post('/ai/localise', { preHandler: authenticate }, async (req, reply) => {
+    if (!require(req, reply, 'campaign:view')) return;
+    const body = req.body as Parameters<typeof intelligence.localisation.generateVariant>[0];
+    if (!body || !body.baseText || !body.targetLanguage) {
+      return reply.code(400).send({ error: 'baseText and targetLanguage are required' });
+    }
+    return { variant: intelligence.localisation.generateVariant(body) };
+  });
+
+  app.post('/ai/audience-opportunity', { preHandler: authenticate }, async (req, reply) => {
+    if (!require(req, reply, 'campaign:view')) return;
+    const parsed = audienceDefinitionSchema.safeParse(req.body);
+    if (!parsed.success) return reply.code(400).send({ error: 'Invalid audience definition' });
+    const estimate = estimateAudience(parsed.data);
+    return { estimate, opportunities: intelligence.audience.findOpportunities(parsed.data, estimate) };
+  });
+
+  // ── telco inventory governance ───────────────────────────────────────────────
+  app.get('/telco/inventory', { preHandler: authenticate }, async (req, reply) => {
+    if (!require(req, reply, 'campaign:view')) return;
+    const a = req.auth!;
+    if (a.realm !== 'telco') return reply.code(403).send({ error: 'Telco console only' });
+    const overrides = await store.listCapabilityOverrides(a.telcoId ?? '__none__');
+    const items = listCapabilities().map((c) => ({
+      capability: c,
+      effectiveStatus: overrides[c.id] ?? c.defaultNetworkStatus,
+      isOverridden: overrides[c.id] !== undefined,
+    }));
+    return { items };
+  });
+
+  app.post('/telco/inventory/:id/status', { preHandler: authenticate }, async (req, reply) => {
+    if (!require(req, reply, 'inventory:manage')) return;
+    const a = req.auth!;
+    if (a.realm !== 'telco') return reply.code(403).send({ error: 'Telco console only' });
+    const capabilityId = (req.params as { id: string }).id;
+    const capability = getCapability(capabilityId);
+    if (!capability) return reply.code(404).send({ error: 'Unknown capability' });
+    const status = (req.body as { status?: string })?.status as CapabilityStatus;
+    if (!CAPABILITY_STATUSES.includes(status)) {
+      return reply.code(400).send({ error: 'Invalid capability status' });
+    }
+    const before = (await store.listCapabilityOverrides(a.telcoId ?? '__none__'))[capabilityId] ?? capability.defaultNetworkStatus;
+    await store.setCapabilityStatus(a.telcoId!, capabilityId, status);
+    await audit(req, {
+      action: 'Changed capability network status',
+      target: capability.name,
+      before,
+      after: status,
+    });
+    return { capabilityId, status };
+  });
+
+  // ── telco revenue intelligence ───────────────────────────────────────────────
+  app.get('/telco/revenue-intelligence', { preHandler: authenticate }, async (req, reply) => {
+    if (!require(req, reply, 'revenue:view')) return;
+    const a = req.auth!;
+    if (a.realm !== 'telco') return reply.code(403).send({ error: 'Telco console only' });
+    const [campaigns, advertisers] = await Promise.all([
+      store.listCampaigns({ telcoId: a.telcoId ?? '__none__' }),
+      store.listAdvertisers(a.telcoId ?? '__none__'),
+    ]);
+    const advIndustry = new Map(advertisers.map((ad) => [ad.id, ad.industry]));
+    const familyByFormat: Record<string, string> = {
+      sms: 'messaging',
+      ussd: 'ussd_interactive',
+      stk: 'sim_device',
+      wap: 'sim_device',
+      obd: 'voice',
+    };
+    const lines: RevenueLine[] = campaigns.map((c) => ({
+      industry: advIndustry.get(c.advertiserId) ?? 'Other',
+      family: familyByFormat[c.formatId] ?? 'messaging',
+      pricingModel: c.budget.pricingModel,
+      spendMinor: c.budget.total.minor,
+    }));
+    return { report: intelligence.revenue.analyse({ currency: 'NGN', lines }) };
+  });
+
+  // ── telco AI intelligence (demonstration insights) ───────────────────────────
+  app.get('/telco/ai-intelligence', { preHandler: authenticate }, async (req, reply) => {
+    if (!require(req, reply, 'campaign:view')) return;
+    const a = req.auth!;
+    if (a.realm !== 'telco') return reply.code(403).send({ error: 'Telco console only' });
+    const [campaigns, advertisers] = await Promise.all([
+      store.listCampaigns({ telcoId: a.telcoId ?? '__none__' }),
+      store.listAdvertisers(a.telcoId ?? '__none__'),
+    ]);
+    const advIndustry = new Map(advertisers.map((ad) => [ad.id, ad.industry]));
+    const familyByFormat: Record<string, string> = {
+      sms: 'messaging', ussd: 'ussd_interactive', stk: 'sim_device', wap: 'sim_device', obd: 'voice',
+    };
+    const report = intelligence.revenue.analyse({
+      currency: 'NGN',
+      lines: campaigns.map((c) => ({
+        industry: advIndustry.get(c.advertiserId) ?? 'Other',
+        family: familyByFormat[c.formatId] ?? 'messaging',
+        pricingModel: c.budget.pricingModel,
+        spendMinor: c.budget.total.minor,
+      })),
+    });
+    const pending = campaigns.filter((c) => c.status === 'PENDING_TELCO_APPROVAL').length;
+    const insights = [
+      {
+        kind: 'revenue_opportunity',
+        title: 'Under-utilised inventory could unlock FMCG revenue',
+        detail: report.opportunities[0]?.detail ?? 'Inventory utilisation is healthy across live formats.',
+      },
+      {
+        kind: 'campaign_risk',
+        title: `${pending} campaign(s) awaiting review`,
+        detail: 'Timely approvals keep advertiser spend flowing and inventory monetised.',
+      },
+      {
+        kind: 'audience_saturation',
+        title: 'Monitor repeated targeting of the same aggregate cohorts',
+        detail: 'Diversifying targeted cohorts protects engagement and frequency-cap compliance.',
+      },
+    ];
+    return { insights, report, generatedBy: 'demonstration-rules' as const };
   });
 
   // ── campaigns (advertiser + telco scoped) ────────────────────────────────────

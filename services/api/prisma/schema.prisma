@@ -31,6 +31,7 @@ model Advertiser {
   telcoId        String
   name           String
   industry       String
+  type           String  @default("ENTERPRISE")
   status         String
   risk           String
   accountManager String?
@@ -109,6 +110,17 @@ model AuditEvent {
   userAgent String?
   createdAt String
 
+  @@index([telcoId])
+}
+
+model TelcoCapabilityAvailability {
+  id            String @id
+  telcoId       String
+  capabilityId  String
+  status        String
+  updatedAt     String
+
+  @@unique([telcoId, capabilityId])
   @@index([telcoId])
 }
 

@@ -10,6 +10,7 @@ export async function seedPrisma(prisma: PrismaClient, passwordHash: string): Pr
   const seed = buildSeed(passwordHash);
 
   await prisma.$transaction([
+    prisma.telcoCapabilityAvailability.deleteMany(),
     prisma.campaignApproval.deleteMany(),
     prisma.auditEvent.deleteMany(),
     prisma.notification.deleteMany(),
