@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   CAPABILITY_FAMILIES,
   CAPABILITY_STATUSES,
+  PREVIEW_RENDERERS,
   type AdCapability,
 } from '@telyad/types';
 import {
@@ -69,5 +70,22 @@ describe('capability universe (48)', () => {
     const future = getCapability('network_event_journey') as AdCapability;
     expect(future.defaultNetworkStatus).toBe('FUTURE_CAPABILITY');
     expect(networkAvailableCapabilities().find((c) => c.id === future.id)).toBeUndefined();
+  });
+
+  it('every capability maps to a known preview renderer, none generic', () => {
+    for (const c of all) {
+      expect(PREVIEW_RENDERERS, c.id).toContain(c.previewRenderer);
+      expect(c.previewRenderer, c.id).not.toBe('generic');
+    }
+  });
+
+  it('every capability has a non-empty sample (at least one field set)', () => {
+    for (const c of all) {
+      expect(c.sample, c.id).toBeTruthy();
+      const setFields = Object.entries(c.sample).filter(([, v]) =>
+        Array.isArray(v) ? v.length > 0 : v !== undefined && v !== null && v !== '',
+      );
+      expect(setFields.length, c.id).toBeGreaterThan(0);
+    }
   });
 });

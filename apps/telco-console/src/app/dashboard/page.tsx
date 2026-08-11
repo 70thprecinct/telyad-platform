@@ -45,6 +45,7 @@ export default function DashboardPage() {
   const pending = campaigns.filter((c) => c.status === 'PENDING_TELCO_APPROVAL').length;
   const live = campaigns.filter((c) => c.status === 'LIVE').length;
   const reach = campaigns.reduce((s, c) => s + c.estimatedReach, 0);
+  const showRevenue = canSeeRevenue && !!report;
 
   return (
     <ConsoleShell active="dashboard">
@@ -54,24 +55,31 @@ export default function DashboardPage() {
           title="Executive Overview"
           desc="Commercial and operational health of advertiser activity on MTN Nigeria's network. Aggregated metrics only — no subscriber PII. Demonstration data."
         />
+
         <KpiGrid>
+          {showRevenue && report ? (
+            <>
+              <Kpi
+                label="Total ad revenue"
+                value={fmtMinor(report.totalRevenueMinor, report.currency, true)}
+              />
+              <Kpi
+                label="Projected monthly"
+                value={fmtMinor(report.projectedMonthlyRevenueMinor, report.currency, true)}
+              />
+            </>
+          ) : (
+            <Kpi label="Combined est. campaign reach" value={compactNumber(reach)} />
+          )}
+          <Kpi label="Subscriber reach" value="78.4M" delta="1.2%" dir="up" />
           <Kpi label="Campaigns on network" value={campaigns.length} />
+          <Kpi label="Live campaigns" value={live} />
           <Kpi
             label="Pending approval"
             value={pending}
             delta={pending > 0 ? 'action needed' : 'clear'}
             dir="up"
           />
-          <Kpi label="Live campaigns" value={live} />
-          <Kpi label="Subscriber reach" value="78.4M" delta="1.2%" dir="up" />
-          {canSeeRevenue && report ? (
-            <Kpi
-              label="Total ad revenue"
-              value={fmtMinor(report.totalRevenueMinor, report.currency, true)}
-            />
-          ) : (
-            <Kpi label="Combined est. campaign reach" value={compactNumber(reach)} />
-          )}
         </KpiGrid>
 
         {pending > 0 && (
@@ -88,14 +96,8 @@ export default function DashboardPage() {
           </Card>
         )}
 
-        {canSeeRevenue && report && (
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-              gap: 16,
-            }}
-          >
+        {showRevenue && report && (
+          <div className="tly-grid-2">
             <Card>
               <CardHead
                 title="Revenue by capability family"
@@ -105,7 +107,11 @@ export default function DashboardPage() {
             </Card>
             <Card>
               <CardHead title="Top industries" sub="By attributed ad revenue" />
-              <SliceTable label="Industry" slices={report.byIndustry.slice(0, 8)} currency={report.currency} />
+              <SliceTable
+                label="Industry"
+                slices={report.byIndustry.slice(0, 8)}
+                currency={report.currency}
+              />
             </Card>
           </div>
         )}
@@ -113,6 +119,7 @@ export default function DashboardPage() {
         <Card>
           <CardHead
             title="Campaigns on MTN Nigeria"
+            sub="Live advertiser activity across the network"
             action={
               pending > 0 ? (
                 <Button size="sm" variant="ghost" onClick={() => router.push('/approvals')}>
@@ -131,8 +138,12 @@ export default function DashboardPage() {
                 <tr key={c.id}>
                   <td style={{ fontWeight: 600 }}>{c.name}</td>
                   <td className="tly-faint">{c.formatId.toUpperCase()}</td>
-                  <td className="tly-mono">{compactNumber(c.estimatedReach)}</td>
-                  <td className="tly-mono">{formatMoney(c.budget.total, { compact: true })}</td>
+                  <td className="tly-mono" style={{ textAlign: 'right' }}>
+                    {compactNumber(c.estimatedReach)}
+                  </td>
+                  <td className="tly-mono" style={{ textAlign: 'right' }}>
+                    {formatMoney(c.budget.total, { compact: true })}
+                  </td>
                   <td>
                     <StatusBadge status={c.status} />
                   </td>
