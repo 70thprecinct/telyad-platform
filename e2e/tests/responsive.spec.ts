@@ -42,9 +42,12 @@ for (const vp of VIEWPORTS) {
     // Campaign wizard remains usable: handset preview and controls present, no overflow.
     await page.goto(`${ADVERTISER_URL}/campaigns/new`);
     await expect(page.getByRole('heading', { name: 'New campaign' })).toBeVisible();
-    await expect(page.locator('.tly-phone')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Next →' })).toBeVisible();
-    expect(await noHorizontalOverflow(page), 'wizard has no horizontal overflow').toBeTruthy();
+    expect(await noHorizontalOverflow(page), 'wizard step 1 has no horizontal overflow').toBeTruthy();
+    // Advance to capability selection and confirm it is usable + no overflow.
+    await page.getByRole('button', { name: 'Next →' }).click();
+    await expect(page.getByTestId('capability-selector')).toBeVisible();
+    expect(await noHorizontalOverflow(page), 'capability selector has no horizontal overflow').toBeTruthy();
 
     await page.screenshot({ path: `screenshots/responsive-${vp.name}.png`, fullPage: true }).catch(() => undefined);
     await ctx.close();

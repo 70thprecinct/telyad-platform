@@ -29,40 +29,33 @@ test('Wednesday demo journey: advertiser submit → MTN approve → advertiser s
     await expect(adv.getByRole('heading', { name: 'New campaign' })).toBeVisible();
   });
 
-  await test.step('step 1 — format & name', async () => {
-    await adv.getByRole('button', { name: /STK Push Notification/ }).click();
+  await test.step('step 1 — objective & name', async () => {
     await adv.getByLabel('Campaign name').fill(campaignName);
-    await shot(adv, '02-format-selection');
+    await shot(adv, '02-objective');
     await adv.getByRole('button', { name: 'Next →' }).click();
   });
 
-  await test.step('step 2 — creative', async () => {
-    await adv.getByLabel(/STK Menu Title/).fill('Toyota Highlander');
-    await adv.getByLabel(/Push Message Body/).fill('Book your Highlander test drive today.');
-    await adv.getByLabel(/Menu Option 1/).fill('Book Test Drive');
-    await adv.getByLabel(/Service Name/).fill('Toyota NG');
-    await shot(adv, '03-creative-preview');
+  await test.step('step 2 — select capabilities (all 48 available)', async () => {
+    await expect(adv.getByTestId('capability-selector')).toBeVisible();
+    await adv.getByRole('button', { name: 'Use recommended set' }).click();
+    await expect(adv.getByTestId('selected-capabilities')).toBeVisible();
+    await shot(adv, '03-capabilities');
     await adv.getByRole('button', { name: 'Next →' }).click();
   });
 
-  await test.step('step 3 — audience + reach estimate', async () => {
-    await adv.getByRole('button', { name: 'Lagos', exact: true }).click();
-    await adv.getByRole('button', { name: 'automotive', exact: true }).click();
-    await adv.getByRole('button', { name: 'premium', exact: true }).click();
-    // The deterministic reach estimate panel is present.
-    await expect(adv.getByText('eligible subscribers')).toBeVisible();
-    await shot(adv, '04-audience-builder');
+  await test.step('step 3 — audience match (eligible/target/forecast)', async () => {
+    await expect(adv.getByTestId('audience-match')).toBeVisible();
+    await shot(adv, '04-audience-match');
     await adv.getByRole('button', { name: 'Next →' }).click();
   });
 
-  await test.step('step 4 — budget', async () => {
-    await expect(adv.getByText('Budget & schedule')).toBeVisible();
+  await test.step('step 4 — creative & language', async () => {
+    await adv.getByTestId('creative-body').fill('Win with Maltina — join the family promo today!');
+    await shot(adv, '05-creative-language');
     await adv.getByRole('button', { name: 'Next →' }).click();
   });
 
   await test.step('step 5 — review & submit', async () => {
-    await expect(adv.getByText('Review & submit')).toBeVisible();
-    await shot(adv, '05-review');
     await adv.getByRole('button', { name: 'Submit for approval' }).click();
   });
 
