@@ -6,4 +6,6 @@ export * from './entities';
 export * from './capability';
 export * from './intelligence';
 export * from './metrics';
+export * from './preview';
+export * from './audience-match';
 export * from './dto';

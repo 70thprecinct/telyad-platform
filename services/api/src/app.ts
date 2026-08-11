@@ -15,7 +15,8 @@ import {
 } from '@telyad/types';
 import { permissionsFor } from '@telyad/auth';
 import { applyEvent, InvalidTransitionError, TELCO_APPROVAL_QUEUE_STATUSES } from '@telyad/campaign-engine';
-import { estimateAudience } from '@telyad/audience';
+import { estimateAudience, estimateAudienceMatch } from '@telyad/audience';
+import type { AudienceCriteria, AudienceMatchInput } from '@telyad/types';
 import {
   getCapability,
   listCapabilities,
@@ -149,6 +150,54 @@ export function buildApp({ store, logger = false }: AppOptions): FastifyInstance
     const parsed = audienceDefinitionSchema.safeParse(req.body);
     if (!parsed.success) return reply.code(400).send({ error: 'Invalid audience definition' });
     return { estimate: estimateAudience(parsed.data) };
+  });
+
+  // Audience-match: eligible / selected target / forecast for selected capabilities.
+  app.post('/audience/match', { preHandler: authenticate }, async (req, reply) => {
+    const body = req.body as {
+      criteria?: AudienceCriteria;
+      capabilityIds?: string[];
+      selectedTarget?: number;
+    };
+    if (!body?.criteria || !Array.isArray(body.capabilityIds) || body.capabilityIds.length === 0) {
+      return reply.code(400).send({ error: 'criteria and at least one capabilityId are required' });
+    }
+    const caps = body.capabilityIds.map((id) => getCapability(id)).filter((c): c is NonNullable<typeof c> => !!c);
+    if (caps.length === 0) return reply.code(400).send({ error: 'No valid capabilities selected' });
+
+    const input: AudienceMatchInput = {
+      criteria: body.criteria,
+      selectedTarget: typeof body.selectedTarget === 'number' ? body.selectedTarget : undefined,
+      capabilities: caps.map((c) => ({
+        id: c.id,
+        name: c.name,
+        deviceClass: c.deviceClass,
+        pricingModel: c.pricingModels[0] ?? 'CPM',
+        networkStatus: c.defaultNetworkStatus,
+      })),
+    };
+    const result = estimateAudienceMatch(input);
+
+    // Privacy (spec §24): never expose exact small counts. When too narrow,
+    // return only the flag + threshold, no precise figures.
+    if (result.privacy.tooNarrow) {
+      return {
+        match: {
+          estimatorVersion: result.estimatorVersion,
+          basePool: result.basePool,
+          funnel: [],
+          eligibleAudience: 0,
+          selectedTarget: 0,
+          forecastReach: { low: 0, point: 0, high: 0 },
+          frequency: 0,
+          estimatedCostMinor: 0,
+          perFormat: [],
+          privacy: result.privacy,
+          currency: 'NGN' as const,
+        },
+      };
+    }
+    return { match: result };
   });
 
   app.get('/telcos', { preHandler: authenticate }, async (req, reply) => {

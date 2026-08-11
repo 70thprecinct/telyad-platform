@@ -14,6 +14,8 @@
  * integration, regulatory requirements and network approval.
  */
 
+import type { PreviewContent, PreviewRenderer } from './preview';
+
 // ── Where an ad appears ──────────────────────────────────────────────────────
 export const PLACEMENTS = [
   'sms',
@@ -199,8 +201,10 @@ export interface AdCapability {
   description: string;
   bestUseCases: string[];
   recommendedSectors: string[];
-  /** Which handset preview to render (reuse the concrete format renderers). */
-  previewRenderer: string;
+  /** Capability-specific subscriber-experience renderer (no generic fallback). */
+  previewRenderer: PreviewRenderer;
+  /** Deterministic representative sample content for the marketplace preview. */
+  sample: PreviewContent;
   characterLimit?: number;
   frequencyConcept?: string;
   sequenceConcept?: string;
