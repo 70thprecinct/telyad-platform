@@ -10,7 +10,8 @@ import { defineConfig, devices } from '@playwright/test';
 
 const CI = !!process.env.CI;
 const JWT_SECRET = process.env.JWT_SECRET ?? 'e2e-only-secret-0123456789abcdef';
-const DEMO_USER_PASSWORD = process.env.DEMO_USER_PASSWORD ?? 'Demo!Passw0rd';
+// Not a secret — must match the API's dev seed default so local login works.
+const DEMO_USER_PASSWORD = process.env.DEMO_USER_PASSWORD ?? 'dev-demo-password-not-secret';
 
 export const ADVERTISER_URL = 'http://localhost:3001';
 export const TELCO_URL = 'http://localhost:3002';
