@@ -38,6 +38,8 @@ function rowToCampaign(r: {
   submittedAt: string | null;
   approvedAt: string | null;
   approvedByTelcoName: string | null;
+  audienceSnapshotJson: string | null;
+  capabilityPlanJson: string | null;
 }): Campaign {
   return {
     id: asId<'CampaignId'>(r.id),
@@ -58,6 +60,12 @@ function rowToCampaign(r: {
     submittedAt: r.submittedAt,
     approvedAt: r.approvedAt,
     approvedByTelcoName: r.approvedByTelcoName,
+    audienceSnapshot: r.audienceSnapshotJson
+      ? (JSON.parse(r.audienceSnapshotJson) as Campaign['audienceSnapshot'])
+      : null,
+    capabilityPlan: r.capabilityPlanJson
+      ? (JSON.parse(r.capabilityPlanJson) as Campaign['capabilityPlan'])
+      : [],
   };
 }
 
@@ -81,6 +89,8 @@ function campaignToRow(c: Campaign) {
     submittedAt: c.submittedAt,
     approvedAt: c.approvedAt,
     approvedByTelcoName: c.approvedByTelcoName,
+    audienceSnapshotJson: c.audienceSnapshot ? JSON.stringify(c.audienceSnapshot) : null,
+    capabilityPlanJson: c.capabilityPlan.length ? JSON.stringify(c.capabilityPlan) : null,
   };
 }
 

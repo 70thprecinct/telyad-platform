@@ -30,6 +30,20 @@ import type {
   WalletId,
 } from './ids';
 import type { AudienceDefinition } from './audience';
+import type { AudienceEstimateSnapshot } from './audience-match';
+
+/** One selected capability persisted as part of a campaign's media plan. */
+export interface CampaignCapability {
+  capabilityId: string;
+  name: string;
+  /** Network availability status captured at submission time. */
+  statusAtSubmission: string;
+  allocation: number;
+  eligible: number;
+  forecast: number;
+  costMinor: number;
+  sortOrder: number;
+}
 
 /** Every telco-owned resource carries a telcoId (spec §11, multi-tenant). */
 export interface Tenanted {
@@ -155,6 +169,14 @@ export interface Campaign extends Tenanted {
   submittedAt: string | null;
   approvedAt: string | null;
   approvedByTelcoName: string | null;
+  /**
+   * Immutable planning snapshot computed server-side at submission (WP02C.1).
+   * MTN reviews exactly this — never a live recalculation. Null for older/draft
+   * campaigns created before a plan was computed.
+   */
+  audienceSnapshot: AudienceEstimateSnapshot | null;
+  /** Full multi-capability plan persisted with the campaign (may be empty). */
+  capabilityPlan: CampaignCapability[];
 }
 
 export interface CampaignMetric {

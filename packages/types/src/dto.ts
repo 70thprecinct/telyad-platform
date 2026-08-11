@@ -65,6 +65,10 @@ export const createCampaignSchema = z.object({
   creativeFields: z.record(z.string()),
   smsFallback: z.string().max(160).optional(),
   budget: budgetSchema,
+  /** Full multi-capability selection (WP02C.1). Server computes the plan. */
+  capabilityIds: z.array(z.string().min(1)).optional(),
+  /** Desired target size; the server clamps it to the eligible audience. */
+  selectedTarget: z.number().int().nonnegative().optional(),
 });
 export type CreateCampaignRequest = z.infer<typeof createCampaignSchema>;
 

@@ -104,9 +104,13 @@ describe('persistence survives restart (Prisma store)', () => {
           endDate: '2026-08-28',
           deliverySpeed: 'standard',
         },
+        capabilityIds: ['standard_sms', 'ussd_pre_session', 'rewarded_data'],
+        selectedTarget: 500_000,
       },
     });
     expect(created.statusCode).toBe(201);
+    expect(created.json().campaign.audienceSnapshot).toBeTruthy();
+    expect(created.json().campaign.capabilityPlan).toHaveLength(3);
     campaignId = created.json().campaign.id;
     const submitted = await app.inject({
       method: 'POST',
@@ -122,6 +126,9 @@ describe('persistence survives restart (Prisma store)', () => {
     const res = await app.inject({ method: 'GET', url: `/campaigns/${campaignId}`, headers: auth(token) });
     expect(res.statusCode).toBe(200);
     expect(res.json().campaign.status).toBe('PENDING_TELCO_APPROVAL');
+    // The audience snapshot + multi-capability plan survive the restart.
+    expect(res.json().campaign.audienceSnapshot?.eligibleAudience).toBeGreaterThan(0);
+    expect(res.json().campaign.capabilityPlan).toHaveLength(3);
   });
 
   it('MTN approves; approval persists', async () => {
