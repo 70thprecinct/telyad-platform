@@ -4,5 +4,6 @@ export * from './enums';
 export * from './audience';
 export * from './entities';
 export * from './capability';
+export * from './intelligence';
 export * from './metrics';
 export * from './dto';
