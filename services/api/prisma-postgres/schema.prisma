@@ -1,0 +1,136 @@
+// TelyAd persistence schema.
+//
+// Provider is SQLite for the demo (zero external services, single file). The
+// schema is written to be PostgreSQL-portable: swap `provider = "postgresql"`
+// and point DATABASE_URL at Postgres for production. Complex objects (audience,
+// budget) are stored as JSON strings so the schema is identical on both engines.
+// Money is stored as integer minor units. Every telco-owned row carries telcoId.
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Telco {
+  id              String  @id
+  name            String
+  country         String
+  status          String
+  revenueShareBps Int
+  currency        String
+  partnerSince    String?
+  createdAt       String
+}
+
+model Advertiser {
+  id             String  @id
+  telcoId        String
+  name           String
+  industry       String
+  type           String  @default("ENTERPRISE")
+  status         String
+  risk           String
+  accountManager String?
+  since          String?
+  createdAt      String
+
+  @@index([telcoId])
+}
+
+model User {
+  id           String  @id
+  name         String
+  email        String  @unique
+  realm        String
+  role         String
+  telcoId      String?
+  advertiserId String?
+  status       String
+  lastLoginAt  String?
+  passwordHash String
+
+  @@index([telcoId])
+  @@index([advertiserId])
+}
+
+model Campaign {
+  id                  String  @id
+  telcoId             String
+  advertiserId        String
+  name                String
+  objective           String
+  formatId            String
+  status              String
+  audienceJson        String
+  estimatedReach      Int
+  budgetJson          String
+  complianceScore     Int
+  riskScore           Int
+  createdBy           String
+  createdAt           String
+  updatedAt           String
+  submittedAt         String?
+  approvedAt          String?
+  approvedByTelcoName String?
+
+  @@index([telcoId])
+  @@index([advertiserId])
+  @@index([status])
+}
+
+model CampaignApproval {
+  id             String @id
+  campaignId     String
+  telcoId        String
+  decision       String
+  approverUserId String
+  approverName   String
+  comments       String
+  decidedAt      String
+
+  @@index([campaignId])
+  @@index([telcoId])
+}
+
+model AuditEvent {
+  id        String  @id
+  telcoId   String?
+  userId    String?
+  userName  String
+  role      String
+  action    String
+  target    String
+  before    String?
+  after     String?
+  ip        String?
+  userAgent String?
+  createdAt String
+
+  @@index([telcoId])
+}
+
+model TelcoCapabilityAvailability {
+  id            String @id
+  telcoId       String
+  capabilityId  String
+  status        String
+  updatedAt     String
+
+  @@unique([telcoId, capabilityId])
+  @@index([telcoId])
+}
+
+model Notification {
+  id            String  @id
+  telcoId       String?
+  audienceRealm String
+  severity      String
+  title         String
+  body          String
+  read          Boolean
+  createdAt     String
+}
