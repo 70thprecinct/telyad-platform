@@ -149,6 +149,7 @@ export class PrismaStore implements Store {
       ...a,
       id: asId<'AdvertiserId'>(a.id),
       telcoId: asId<'TelcoId'>(a.telcoId),
+      type: a.type as Advertiser['type'],
       status: a.status as Advertiser['status'],
       risk: a.risk as Advertiser['risk'],
     }));
@@ -160,6 +161,7 @@ export class PrismaStore implements Store {
           ...a,
           id: asId<'AdvertiserId'>(a.id),
           telcoId: asId<'TelcoId'>(a.telcoId),
+          type: a.type as Advertiser['type'],
           status: a.status as Advertiser['status'],
           risk: a.risk as Advertiser['risk'],
         }

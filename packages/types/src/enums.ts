@@ -48,6 +48,15 @@ export type TelcoStatus = (typeof TELCO_STATUSES)[number];
 export const ADVERTISER_STATUSES = ['Pending', 'Active', 'Suspended', 'Rejected'] as const;
 export type AdvertiserStatus = (typeof ADVERTISER_STATUSES)[number];
 
+export const ADVERTISER_TYPES = [
+  'ENTERPRISE',
+  'AGENCY',
+  'SME',
+  'LOCAL_BUSINESS',
+  'VAS_PROVIDER',
+] as const;
+export type AdvertiserType = (typeof ADVERTISER_TYPES)[number];
+
 export const RISK_LEVELS = ['Low', 'Medium', 'High'] as const;
 export type RiskLevel = (typeof RISK_LEVELS)[number];
 
@@ -62,6 +71,7 @@ export type Realm = (typeof REALMS)[number];
 export const ADVERTISER_ROLES = [
   'Advertiser Admin',
   'Campaign Manager',
+  'Creative Manager',
   'Analyst',
   'Finance',
   'Read Only',
@@ -70,11 +80,14 @@ export type AdvertiserRole = (typeof ADVERTISER_ROLES)[number];
 
 export const TELCO_ROLES = [
   'Telco Super Admin',
+  'Commercial Manager',
   'Operations Manager',
   'Marketing Manager',
-  'Compliance Officer',
   'Campaign Reviewer',
+  'Compliance Officer',
   'Finance Officer',
+  'Audience Analyst',
+  'Technical Operations',
   'Support',
   'Read Only',
 ] as const;
@@ -100,10 +113,16 @@ export const PERMISSIONS = [
   'campaign:approve',
   'campaign:reject',
   'campaign:launch',
+  'creative:manage',
   'advertiser:approve',
   'advertiser:suspend',
   'wallet:manage',
   'compliance:view',
+  'compliance:enforce',
+  'inventory:manage',
+  'revenue:view',
+  'audience:view',
+  'platform:health:view',
   'users:manage',
   'audit:view',
   'reports:export',

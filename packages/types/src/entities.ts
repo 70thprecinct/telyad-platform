@@ -2,6 +2,7 @@ import type {
   AdFormatCategory,
   AdFormatId,
   AdvertiserStatus,
+  AdvertiserType,
   AnyRole,
   CampaignObjective,
   CampaignStatus,
@@ -51,6 +52,7 @@ export interface Advertiser extends Tenanted {
   id: AdvertiserId;
   name: string;
   industry: string;
+  type: AdvertiserType;
   status: AdvertiserStatus;
   risk: RiskLevel;
   accountManager: string | null;

@@ -31,6 +31,7 @@ model Advertiser {
   telcoId        String
   name           String
   industry       String
+  type           String  @default("ENTERPRISE")
   status         String
   risk           String
   accountManager String?
