@@ -109,6 +109,9 @@ importers:
 
   apps/telco-console:
     dependencies:
+      '@telyad/ad-formats':
+        specifier: workspace:*
+        version: link:../../packages/ad-formats
       '@telyad/types':
         specifier: workspace:*
         version: link:../../packages/types

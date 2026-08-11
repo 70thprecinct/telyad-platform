@@ -3,9 +3,11 @@ import { useCallback, useEffect, useState } from 'react';
 import {
   compactNumber,
   formatMoney,
+  CAPABILITY_STATUS_LABELS,
   type Advertiser,
   type Campaign,
   type CampaignApproval,
+  type AudienceEstimateSnapshot,
 } from '@telyad/types';
 import {
   Badge,
@@ -20,6 +22,7 @@ import {
   Textarea,
   useToast,
 } from '@telyad/ui';
+import { getCapability } from '@telyad/ad-formats';
 import { ConsoleShell } from '@/components/ConsoleShell';
 import { api, ApiError } from '@/lib/api';
 
@@ -106,55 +109,7 @@ export default function ApprovalsPage() {
       ) : (
         <div data-testid="approval-queue">
           {queue.map((c) => (
-            <Card key={c.id} data-testid="approval-card">
-              <CardHead
-                title={c.name}
-                sub={`${advName(c.advertiserId)} · ${c.objective} · ${c.formatId.toUpperCase()}`}
-                action={<Badge tone="warning">Pending approval</Badge>}
-              />
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 260px', gap: 18 }}>
-                <div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 12 }}>
-                    <Metric label="Advertiser" value={advName(c.advertiserId)} />
-                    <Metric label="Budget" value={formatMoney(c.budget.total, { compact: true })} />
-                    <Metric label="Estimated eligible audience" value={compactNumber(c.estimatedReach)} />
-                    <Metric label="Pricing / dates" value={`${c.budget.pricingModel} · ${c.budget.startDate}→${c.budget.endDate}`} />
-                    <Metric
-                      label="Compliance score"
-                      value={`${c.complianceScore}/100`}
-                      tone={c.complianceScore > 80 ? 'success' : 'warning'}
-                    />
-                    <Metric label="Risk score" value={`${c.riskScore}/100`} tone={c.riskScore < 20 ? 'success' : 'danger'} />
-                  </div>
-                  <div className="tly-card-sub" style={{ marginBottom: 6 }}>Audience definition (aggregate — no subscriber identities)</div>
-                  <div className="tly-faint" style={{ fontSize: 12, lineHeight: 1.6, marginBottom: 10 }}>
-                    {[
-                      c.audience.geographies.join(', ') || 'All Nigeria',
-                      c.audience.ageBands.join(', '),
-                      c.audience.interests.join(', '),
-                      c.audience.subscriberTiers.join(', '),
-                    ]
-                      .filter(Boolean)
-                      .join(' · ')}
-                  </div>
-                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 14 }}>
-                    <Badge tone={c.audience.exclusions.includes('dnd') ? 'success' : 'warning'}>
-                      {c.audience.exclusions.includes('dnd') ? 'DND suppression applied' : 'DND suppression NOT set'}
-                    </Badge>
-                    <Badge tone="info">Consent-gated delivery</Badge>
-                  </div>
-                  <div style={{ display: 'flex', gap: 10 }}>
-                    <Button variant="success" data-testid="approve-button" onClick={() => open(c, 'APPROVED')}>
-                      Approve
-                    </Button>
-                    <Button variant="danger" data-testid="reject-button" onClick={() => open(c, 'REJECTED')}>
-                      Reject
-                    </Button>
-                  </div>
-                </div>
-                <ExperiencePreview renderer={FMT_RENDERER[c.formatId] ?? 'sms'} content={{ brand: advName(c.advertiserId), title: c.name, body: 'Subscriber sees this campaign creative on delivery.', cta: 'Learn more' }} />
-              </div>
-            </Card>
+            <CampaignReview key={c.id} c={c} advName={advName} onDecide={open} />
           ))}
         </div>
       )}
@@ -214,6 +169,249 @@ export default function ApprovalsPage() {
         </Field>
       </Modal>
     </ConsoleShell>
+  );
+}
+
+function CampaignReview({
+  c,
+  advName,
+  onDecide,
+}: {
+  c: Campaign;
+  advName: (id: string) => string;
+  onDecide: (c: Campaign, d: 'APPROVED' | 'REJECTED') => void;
+}) {
+  const snapshot = c.audienceSnapshot;
+  const plan = [...(c.capabilityPlan ?? [])].sort((a, b) => a.sortOrder - b.sortOrder);
+  const hasPlan = plan.length > 0;
+  const [activeId, setActiveId] = useState<string>(plan[0]?.capabilityId ?? '');
+
+  const activeCap = hasPlan ? getCapability(activeId) : undefined;
+
+  return (
+    <Card data-testid="approval-card">
+      <CardHead
+        title={c.name}
+        sub={`${advName(c.advertiserId)} · ${c.objective} · ${c.formatId.toUpperCase()}`}
+        action={<Badge tone="warning">Pending approval</Badge>}
+      />
+
+      {snapshot && <AudiencePlan c={c} snapshot={snapshot} />}
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 260px', gap: 18, alignItems: 'start' }}>
+        <div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 12 }}>
+            <Metric label="Advertiser" value={advName(c.advertiserId)} />
+            <Metric label="Budget" value={formatMoney(c.budget.total, { compact: true })} />
+            <Metric label="Estimated eligible audience" value={compactNumber(c.estimatedReach)} />
+            <Metric label="Pricing / dates" value={`${c.budget.pricingModel} · ${c.budget.startDate}→${c.budget.endDate}`} />
+            <Metric
+              label="Compliance score"
+              value={`${c.complianceScore}/100`}
+              tone={c.complianceScore > 80 ? 'success' : 'warning'}
+            />
+            <Metric label="Risk score" value={`${c.riskScore}/100`} tone={c.riskScore < 20 ? 'success' : 'danger'} />
+          </div>
+          <div className="tly-card-sub" style={{ marginBottom: 6 }}>Audience definition (aggregate — no subscriber identities)</div>
+          <div className="tly-faint" style={{ fontSize: 12, lineHeight: 1.6, marginBottom: 10 }}>
+            {[
+              c.audience.geographies.join(', ') || 'All Nigeria',
+              c.audience.ageBands.join(', '),
+              c.audience.interests.join(', '),
+              c.audience.subscriberTiers.join(', '),
+            ]
+              .filter(Boolean)
+              .join(' · ')}
+          </div>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 14 }}>
+            <Badge tone={c.audience.exclusions.includes('dnd') ? 'success' : 'warning'}>
+              {c.audience.exclusions.includes('dnd') ? 'DND suppression applied' : 'DND suppression NOT set'}
+            </Badge>
+            <Badge tone="info">Consent-gated delivery</Badge>
+          </div>
+          <div style={{ display: 'flex', gap: 10 }}>
+            <Button variant="success" data-testid="approve-button" onClick={() => onDecide(c, 'APPROVED')}>
+              Approve
+            </Button>
+            <Button variant="danger" data-testid="reject-button" onClick={() => onDecide(c, 'REJECTED')}>
+              Reject
+            </Button>
+          </div>
+        </div>
+
+        <div>
+          <div className="tly-card-sub" style={{ marginBottom: 6 }}>Subscriber experience</div>
+          {hasPlan ? (
+            <>
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 10 }}>
+                {plan.map((p) => {
+                  const on = p.capabilityId === activeId;
+                  return (
+                    <button
+                      key={p.capabilityId}
+                      type="button"
+                      data-testid="mtn-capability-tab"
+                      onClick={() => setActiveId(p.capabilityId)}
+                      style={{
+                        cursor: 'pointer',
+                        fontSize: 11,
+                        padding: '4px 9px',
+                        borderRadius: 999,
+                        border: `1px solid ${on ? 'var(--tly-accent, var(--tly-text))' : 'var(--tly-border, rgba(128,128,128,.3))'}`,
+                        background: on ? 'var(--tly-accent-soft, rgba(128,128,128,.14))' : 'transparent',
+                        color: on ? 'var(--tly-text)' : 'var(--tly-faint, inherit)',
+                        fontWeight: on ? 600 : 400,
+                      }}
+                    >
+                      {getCapability(p.capabilityId)?.name ?? p.name}
+                    </button>
+                  );
+                })}
+              </div>
+              <div data-testid="mtn-experience-preview">
+                <ExperiencePreview
+                  renderer={activeCap?.previewRenderer ?? 'sms'}
+                  content={activeCap?.sample ?? {}}
+                />
+              </div>
+            </>
+          ) : (
+            <ExperiencePreview
+              renderer={FMT_RENDERER[c.formatId] ?? 'sms'}
+              content={{ brand: advName(c.advertiserId), title: c.name, body: 'Subscriber sees this campaign creative on delivery.', cta: 'Learn more' }}
+            />
+          )}
+        </div>
+      </div>
+
+      {hasPlan && (
+        <div data-testid="mtn-capability-plan" style={{ marginTop: 18 }}>
+          <div className="tly-card-sub" style={{ marginBottom: 6 }}>Selected capabilities</div>
+          <Table head={['Capability', 'Network status', 'Allocation', 'Forecast', 'Cost']}>
+            {plan.map((p) => (
+              <tr key={p.capabilityId}>
+                <td>{p.name}</td>
+                <td>
+                  <Badge tone={statusTone(p.statusAtSubmission)}>
+                    {CAPABILITY_STATUS_LABELS[p.statusAtSubmission as keyof typeof CAPABILITY_STATUS_LABELS] ?? p.statusAtSubmission}
+                  </Badge>
+                </td>
+                <td className="tly-mono">{compactNumber(p.allocation)}</td>
+                <td className="tly-mono">{compactNumber(p.forecast)}</td>
+                <td className="tly-mono">{formatMoney({ minor: p.costMinor, currency: 'NGN' }, { compact: true })}</td>
+              </tr>
+            ))}
+          </Table>
+        </div>
+      )}
+    </Card>
+  );
+}
+
+function statusTone(status: string): 'success' | 'warning' | 'info' | 'danger' {
+  if (status === 'LIVE') return 'success';
+  if (status === 'PILOT') return 'info';
+  if (status === 'DISABLED') return 'danger';
+  return 'warning';
+}
+
+function AudiencePlan({ c, snapshot }: { c: Campaign; snapshot: AudienceEstimateSnapshot }) {
+  const cr = snapshot.criteria;
+  const coverage =
+    snapshot.eligibleAudience > 0
+      ? Math.round((snapshot.selectedTarget / snapshot.eligibleAudience) * 100)
+      : 0;
+  const permitted = [...cr.affinities, ...cr.dataUse, ...cr.spendBands].filter(Boolean);
+  const languages = snapshot.languageStrategy.length ? snapshot.languageStrategy : cr.languages;
+
+  const summary: Array<[string, string]> = [
+    ['Geography', cr.geographies.join(', ') || 'National'],
+    ['Device strategy', cr.devices.join('+') || 'All devices'],
+    ['Permitted criteria', permitted.join(', ') || 'No additional filters'],
+    ['Language strategy', languages.join(', ') || 'All languages'],
+    ['Objective', c.objective],
+    ['Buying mode', 'Audience-led'],
+    ['Estimated', new Date(snapshot.estimatedAt).toLocaleString()],
+    ['Estimator', snapshot.estimatorVersion],
+  ];
+
+  return (
+    <div
+      data-testid="mtn-audience-snapshot"
+      style={{
+        border: '1px solid var(--tly-border, rgba(128,128,128,.25))',
+        borderRadius: 12,
+        padding: 16,
+        marginBottom: 16,
+        background: 'var(--tly-surface-2, rgba(128,128,128,.05))',
+      }}
+    >
+      <div className="tly-card-sub" style={{ marginBottom: 12 }}>Audience plan (aggregate demonstration estimate)</div>
+
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'flex-end', marginBottom: 14 }}>
+        <div style={{ minWidth: 200 }}>
+          <div className="tly-faint" style={{ fontSize: 10.5, letterSpacing: 0.4, textTransform: 'uppercase' }}>
+            Estimated eligible audience
+          </div>
+          <div className="tly-mono" style={{ fontSize: 34, fontWeight: 700, lineHeight: 1.1 }}>
+            {compactNumber(snapshot.eligibleAudience)}
+          </div>
+        </div>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
+            gap: 12,
+            flex: 1,
+            minWidth: 260,
+          }}
+        >
+          <PlanMetric label="Selected target" value={compactNumber(snapshot.selectedTarget)} />
+          <PlanMetric
+            label="Forecast unique reach"
+            value={`${compactNumber(snapshot.forecastReach.low)}–${compactNumber(snapshot.forecastReach.high)}`}
+          />
+          <PlanMetric label="Estimated frequency" value={`${snapshot.frequency}×`} />
+          <PlanMetric label="Target coverage" value={`${coverage}%`} />
+          <PlanMetric
+            label="Estimated media cost"
+            value={formatMoney({ minor: snapshot.estimatedCostMinor, currency: 'NGN' }, { compact: true })}
+          />
+        </div>
+      </div>
+
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+          gap: 8,
+          fontSize: 12,
+          lineHeight: 1.5,
+        }}
+      >
+        {summary.map(([label, value]) => (
+          <div key={label}>
+            <span className="tly-faint">{label}: </span>
+            <span>{value}</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="tly-faint" style={{ fontSize: 10.5, marginTop: 12 }}>
+        Audience estimates use demonstration aggregate data.
+      </div>
+    </div>
+  );
+}
+
+function PlanMetric({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <div className="tly-faint" style={{ fontSize: 10.5, letterSpacing: 0.4, textTransform: 'uppercase' }}>
+        {label}
+      </div>
+      <div className="tly-mono" style={{ fontSize: 16, fontWeight: 600 }}>{value}</div>
+    </div>
   );
 }
 

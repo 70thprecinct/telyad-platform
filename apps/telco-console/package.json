@@ -11,6 +11,7 @@
     "clean": "rm -rf .next .turbo"
   },
   "dependencies": {
+    "@telyad/ad-formats": "workspace:*",
     "@telyad/types": "workspace:*",
     "@telyad/ui": "workspace:*",
     "next": "^15.1.3",
