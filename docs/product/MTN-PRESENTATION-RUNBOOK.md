@@ -56,25 +56,40 @@ have the three URLs bookmarked. Pre-open the two login pages.
 
 ---
 
-## 2. Demo sequence (click‑by‑click)
+## 2. Demo sequence (click‑by‑click) — WP02B
 
-**Advertiser (`:3001`)**
-1. Sign in as the Toyota advertiser → **Dashboard**.
-2. **+ New Campaign**.
-3. Step 1 — Format **STK Push Notification**; name *Toyota Highlander Test Drive*; objective *Acquisition*. **Next**.
-4. Step 2 — Creative: menu title, body, CTA, service name. Point out the **live handset preview**. **Next**.
-5. Step 3 — Audience: **Lagos**, **Abuja FCT**, **automotive**, **premium**, keep **dnd** exclusion. Point out the **estimated eligible audience** — aggregate only, no subscriber identities. **Next**.
-6. Step 4 — Budget: CPM, daily + total, dates. **Next**.
-7. Step 5 — Review. **Submit for approval** → status becomes **Pending approval**.
+Primary brand: **Maltina Family Moments** (FMCG). Full narrative in
+`MTN-EXECUTIVE-DEMO.md`.
 
-**MTN Operations (`:3002`)**
-8. Sign in as MTN Operations → **Dashboard** (note the pending-approval count).
-9. **Campaign Approval** → the Toyota campaign is in the queue with advertiser, audience definition, estimated audience, compliance & risk scores, DND status.
-10. **Approve** → enter a comment → **Confirm approval**. (Rejecting requires a comment.)
+**MTN Operations (`:3002`) — set the scene**
+1. Sign in as MTN Commercial (`commercial@mtn.example`) → **Executive Overview**:
+   ad revenue, revenue by capability family, pending approvals.
+
+**Advertiser (`:3001`) — the pitch**
+2. Sign in as the Maltina advertiser (`chidi@maltina.example`).
+3. **Ad Format Marketplace** — filter by family; open a capability detail; show
+   the 48-capability portfolio and network-status pills (LIVE vs "Network
+   Enablement Required").
+4. **AI Intelligence** — enter a Maltina brief (FMCG, Awareness, ₦20M, national,
+   English+Pidgin, 28 days) → **Generate media plan** → explain the mix →
+   **Apply to Campaign**.
+5. **New Campaign** wizard — audience (aggregate estimate, no identities);
+   creative + **Languages & localisation** (generate Pidgin/Yoruba variants,
+   note "human review required"); budget; review; **Submit for approval**.
+
+**MTN Operations (`:3002`) — govern & approve**
+6. **Campaign Approval** → the campaign shows advertiser, audience definition,
+   compliance/DND. **Approve** with a comment (rejection requires one).
+7. **Inventory & Ad Formats** — show governance; toggle a capability's status
+   (persists + audited).
+8. **Revenue & Commercials** + **AI Intelligence** — revenue by family/industry,
+   inventory utilisation, opportunities.
 
 **Advertiser return (`:3001`)**
-11. Reopen the campaign → **“Approved by MTN Nigeria”** banner.
-12. Show **Campaign analytics** (deterministic demo data) on the campaign.
+9. Reopen the campaign → **“Approved by MTN Nigeria”** + **Campaign analytics**.
+
+> The original single-brand Toyota flow (advertiser `bola@toyota.example`)
+> still works and is what the automated Playwright journey exercises.
 
 **Optional — Tely Master Admin (`:3003`):** global dashboard, telco directory, commercial terms (cross-telco, aggregate only).
 
