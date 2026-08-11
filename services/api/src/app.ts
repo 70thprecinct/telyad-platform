@@ -20,6 +20,7 @@ import { listFormats, validateCreative } from '@telyad/ad-formats';
 import type { AuthTokenPayload } from '@telyad/auth';
 import type { Store } from './store/store';
 import { signToken, verifyPassword, verifyToken } from './auth';
+import { deriveCampaignMetrics } from './analytics';
 import { env } from './env';
 
 declare module 'fastify' {
@@ -99,8 +100,18 @@ export function buildApp({ store, logger = false }: AppOptions): FastifyInstance
     await store.addAuditEvent(event);
   };
 
-  // ── health ─────────────────────────────────────────────────────────────────
+  // ── health & readiness ──────────────────────────────────────────────────────
+  // Liveness: the process is up. No dependencies checked, no secrets exposed.
   app.get('/health', async () => ({ ok: true, env: env.envLabel }));
+
+  // Readiness: the backing store is reachable. 503 if not (for load balancers).
+  app.get('/ready', async (_req, reply) => {
+    const storeKind = process.env.STORE === 'memory' ? 'memory' : 'prisma';
+    const dbReachable = await store.ping();
+    return reply
+      .code(dbReachable ? 200 : 503)
+      .send({ ready: dbReachable, store: storeKind, db: dbReachable ? 'reachable' : 'unreachable' });
+  });
 
   // ── auth ───────────────────────────────────────────────────────────────────
   app.post('/auth/login', async (req, reply) => {
@@ -155,6 +166,13 @@ export function buildApp({ store, logger = false }: AppOptions): FastifyInstance
     const c = await store.getCampaign((req.params as { id: string }).id);
     if (!c || !canAccessCampaign(req.auth!, c)) return reply.code(404).send({ error: 'Not found' });
     return { campaign: c };
+  });
+
+  // Deterministic demo analytics for a campaign (scoped).
+  app.get('/campaigns/:id/metrics', { preHandler: authenticate }, async (req, reply) => {
+    const c = await store.getCampaign((req.params as { id: string }).id);
+    if (!c || !canAccessCampaign(req.auth!, c)) return reply.code(404).send({ error: 'Not found' });
+    return { metrics: deriveCampaignMetrics(c) };
   });
 
   app.post('/campaigns', { preHandler: authenticate }, async (req, reply) => {
@@ -243,6 +261,10 @@ export function buildApp({ store, logger = false }: AppOptions): FastifyInstance
     });
     if (!parsed.success) return reply.code(400).send({ error: 'Invalid decision payload' });
     const wantsApprove = parsed.data.decision === 'APPROVED';
+    // A rejection must carry a reason (spec §13).
+    if (!wantsApprove && parsed.data.comments.trim().length === 0) {
+      return reply.code(400).send({ error: 'A comment is required when rejecting a campaign' });
+    }
     if (!require(req, reply, wantsApprove ? 'campaign:approve' : 'campaign:reject')) return;
 
     const a = req.auth!;
@@ -290,6 +312,13 @@ export function buildApp({ store, logger = false }: AppOptions): FastifyInstance
     const a = req.auth!;
     if (a.realm !== 'telco') return reply.code(403).send({ error: 'Telco console only' });
     return { advertisers: await store.listAdvertisers(a.telcoId ?? '__none__') };
+  });
+
+  app.get('/telco/approvals', { preHandler: authenticate }, async (req, reply) => {
+    if (!require(req, reply, 'campaign:view')) return;
+    const a = req.auth!;
+    if (a.realm !== 'telco') return reply.code(403).send({ error: 'Telco console only' });
+    return { approvals: await store.listApprovals({ telcoId: a.telcoId ?? '__none__' }) };
   });
 
   app.get('/telco/audit', { preHandler: authenticate }, async (req, reply) => {

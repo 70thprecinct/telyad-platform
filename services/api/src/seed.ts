@@ -5,52 +5,24 @@
 import { PrismaClient } from '@prisma/client';
 import { hashPassword } from './auth';
 import { env } from './env';
-import { buildSeed } from './store/seed-data';
+import { seedPrisma } from './store/seed-prisma';
 
 async function main(): Promise<void> {
+  // Fail safe: in production, refuse to seed users with the insecure default
+  // password. A real DEMO_USER_PASSWORD must be provided (spec §18).
+  if (process.env.NODE_ENV === 'production' && !process.env.DEMO_USER_PASSWORD) {
+    throw new Error('DEMO_USER_PASSWORD must be set when seeding in production.');
+  }
   const prisma = new PrismaClient();
-  const seed = buildSeed(hashPassword(env.demoPassword));
-
-  // Idempotent reseed.
-  await prisma.$transaction([
-    prisma.campaignApproval.deleteMany(),
-    prisma.auditEvent.deleteMany(),
-    prisma.notification.deleteMany(),
-    prisma.campaign.deleteMany(),
-    prisma.user.deleteMany(),
-    prisma.advertiser.deleteMany(),
-    prisma.telco.deleteMany(),
+  await seedPrisma(prisma, hashPassword(env.demoPassword));
+  const [telcos, advertisers, users, campaigns] = await Promise.all([
+    prisma.telco.count(),
+    prisma.advertiser.count(),
+    prisma.user.count(),
+    prisma.campaign.count(),
   ]);
-
-  await prisma.telco.createMany({ data: seed.telcos });
-  await prisma.advertiser.createMany({ data: seed.advertisers });
-  await prisma.user.createMany({ data: seed.users });
-  await prisma.campaign.createMany({
-    data: seed.campaigns.map((c) => ({
-      id: c.id,
-      telcoId: c.telcoId,
-      advertiserId: c.advertiserId,
-      name: c.name,
-      objective: c.objective,
-      formatId: c.formatId,
-      status: c.status,
-      audienceJson: JSON.stringify(c.audience),
-      estimatedReach: c.estimatedReach,
-      budgetJson: JSON.stringify(c.budget),
-      complianceScore: c.complianceScore,
-      riskScore: c.riskScore,
-      createdBy: c.createdBy,
-      createdAt: c.createdAt,
-      updatedAt: c.updatedAt,
-      submittedAt: c.submittedAt,
-      approvedAt: c.approvedAt,
-      approvedByTelcoName: c.approvedByTelcoName,
-    })),
-  });
-  await prisma.notification.createMany({ data: seed.notifications });
-
   console.log(
-    `Seeded ${seed.telcos.length} telcos, ${seed.advertisers.length} advertisers, ${seed.users.length} users, ${seed.campaigns.length} campaigns.`,
+    `Seeded ${telcos} telcos, ${advertisers} advertisers, ${users} users, ${campaigns} campaigns.`,
   );
   await prisma.$disconnect();
 }

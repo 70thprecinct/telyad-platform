@@ -97,7 +97,11 @@ pnpm lint         # ESLint across every package
 pnpm typecheck    # tsc --noEmit across every package
 pnpm test         # unit + integration tests (Vitest)
 pnpm build        # production builds (Turborepo)
+pnpm e2e:install  # one-time: install the Playwright Chromium browser
+pnpm test:e2e     # build + Playwright browser E2E (demo journey + responsive)
 ```
+
+For the live demo, follow the [MTN Presentation Runbook](./docs/product/MTN-PRESENTATION-RUNBOOK.md).
 
 ## The Wednesday demo flow
 

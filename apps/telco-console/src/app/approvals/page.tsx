@@ -1,6 +1,12 @@
 'use client';
-import { useEffect, useState } from 'react';
-import { compactNumber, formatMoney, type Campaign } from '@telyad/types';
+import { useCallback, useEffect, useState } from 'react';
+import {
+  compactNumber,
+  formatMoney,
+  type Advertiser,
+  type Campaign,
+  type CampaignApproval,
+} from '@telyad/types';
 import {
   Badge,
   Button,
@@ -10,6 +16,7 @@ import {
   Modal,
   PageHeader,
   PhonePreview,
+  Table,
   Textarea,
   useToast,
 } from '@telyad/ui';
@@ -19,26 +26,34 @@ import { api, ApiError } from '@/lib/api';
 export default function ApprovalsPage() {
   const { toast } = useToast();
   const [queue, setQueue] = useState<Campaign[]>([]);
-  const [loaded, setLoaded] = useState(false);
+  const [advertisers, setAdvertisers] = useState<Record<string, Advertiser>>({});
+  const [history, setHistory] = useState<CampaignApproval[]>([]);
+  const [state, setState] = useState<'loading' | 'ready' | 'error'>('loading');
   const [active, setActive] = useState<Campaign | null>(null);
   const [decision, setDecision] = useState<'APPROVED' | 'REJECTED' | null>(null);
   const [comments, setComments] = useState('');
   const [busy, setBusy] = useState(false);
 
-  function refresh() {
-    api
-      .approvalQueue()
-      .then((r) => setQueue(r.campaigns))
-      .catch(() => setQueue([]))
-      .finally(() => setLoaded(true));
-  }
-  useEffect(refresh, []);
+  const refresh = useCallback(() => {
+    setState('loading');
+    Promise.all([api.approvalQueue(), api.advertisers(), api.approvals()])
+      .then(([q, adv, appr]) => {
+        setQueue(q.campaigns);
+        setAdvertisers(Object.fromEntries(adv.advertisers.map((a) => [a.id, a])));
+        setHistory(appr.approvals);
+        setState('ready');
+      })
+      .catch(() => setState('error'));
+  }, []);
+  useEffect(refresh, [refresh]);
 
   function open(c: Campaign, d: 'APPROVED' | 'REJECTED') {
     setActive(c);
     setDecision(d);
     setComments(d === 'APPROVED' ? 'Compliant, low risk. Approved for delivery.' : '');
   }
+
+  const rejectBlocked = decision === 'REJECTED' && comments.trim().length === 0;
 
   async function confirm() {
     if (!active || !decision) return;
@@ -60,6 +75,8 @@ export default function ApprovalsPage() {
     }
   }
 
+  const advName = (id: string) => advertisers[id]?.name ?? id;
+
   return (
     <ConsoleShell active="approvals">
       <PageHeader
@@ -68,62 +85,96 @@ export default function ApprovalsPage() {
         desc="Every campaign enters this queue before it can go live on MTN Nigeria. Approve or reject with a recorded comment; each decision writes an audit event."
       />
 
-      {!loaded ? (
-        <div className="tly-faint">Loading queue…</div>
+      {state === 'error' ? (
+        <Card>
+          <div className="tly-empty" data-testid="approvals-error">
+            <div style={{ fontWeight: 600, marginBottom: 6 }}>Couldn’t load the approval queue</div>
+            <div style={{ fontSize: 12.5, marginBottom: 12 }}>The API may be unavailable.</div>
+            <Button variant="ghost" onClick={refresh}>Retry</Button>
+          </div>
+        </Card>
+      ) : state === 'loading' ? (
+        <div className="tly-faint" data-testid="approvals-loading">Loading queue…</div>
       ) : queue.length === 0 ? (
         <Card>
-          <div className="tly-empty">No campaigns awaiting approval.</div>
+          <div className="tly-empty" data-testid="approvals-empty">No campaigns awaiting approval.</div>
         </Card>
       ) : (
-        queue.map((c) => (
-          <Card key={c.id}>
-            <CardHead
-              title={c.name}
-              sub={`${c.objective} · ${c.formatId.toUpperCase()}`}
-              action={<Badge tone="warning">Pending approval</Badge>}
-            />
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 260px', gap: 18 }}>
-              <div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 12 }}>
-                  <Metric label="Budget" value={formatMoney(c.budget.total, { compact: true })} />
-                  <Metric label="Estimated reach" value={compactNumber(c.estimatedReach)} />
-                  <Metric label="Scheduled" value={`${c.budget.startDate} → ${c.budget.endDate}`} />
-                  <Metric label="Pricing" value={c.budget.pricingModel} />
-                  <Metric
-                    label="Compliance score"
-                    value={`${c.complianceScore}/100`}
-                    tone={c.complianceScore > 80 ? 'success' : 'warning'}
-                  />
-                  <Metric
-                    label="Risk score"
-                    value={`${c.riskScore}/100`}
-                    tone={c.riskScore < 20 ? 'success' : 'danger'}
-                  />
+        <div data-testid="approval-queue">
+          {queue.map((c) => (
+            <Card key={c.id} data-testid="approval-card">
+              <CardHead
+                title={c.name}
+                sub={`${advName(c.advertiserId)} · ${c.objective} · ${c.formatId.toUpperCase()}`}
+                action={<Badge tone="warning">Pending approval</Badge>}
+              />
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 260px', gap: 18 }}>
+                <div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 12 }}>
+                    <Metric label="Advertiser" value={advName(c.advertiserId)} />
+                    <Metric label="Budget" value={formatMoney(c.budget.total, { compact: true })} />
+                    <Metric label="Estimated eligible audience" value={compactNumber(c.estimatedReach)} />
+                    <Metric label="Pricing / dates" value={`${c.budget.pricingModel} · ${c.budget.startDate}→${c.budget.endDate}`} />
+                    <Metric
+                      label="Compliance score"
+                      value={`${c.complianceScore}/100`}
+                      tone={c.complianceScore > 80 ? 'success' : 'warning'}
+                    />
+                    <Metric label="Risk score" value={`${c.riskScore}/100`} tone={c.riskScore < 20 ? 'success' : 'danger'} />
+                  </div>
+                  <div className="tly-card-sub" style={{ marginBottom: 6 }}>Audience definition (aggregate — no subscriber identities)</div>
+                  <div className="tly-faint" style={{ fontSize: 12, lineHeight: 1.6, marginBottom: 10 }}>
+                    {[
+                      c.audience.geographies.join(', ') || 'All Nigeria',
+                      c.audience.ageBands.join(', '),
+                      c.audience.interests.join(', '),
+                      c.audience.subscriberTiers.join(', '),
+                    ]
+                      .filter(Boolean)
+                      .join(' · ')}
+                  </div>
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 14 }}>
+                    <Badge tone={c.audience.exclusions.includes('dnd') ? 'success' : 'warning'}>
+                      {c.audience.exclusions.includes('dnd') ? 'DND suppression applied' : 'DND suppression NOT set'}
+                    </Badge>
+                    <Badge tone="info">Consent-gated delivery</Badge>
+                  </div>
+                  <div style={{ display: 'flex', gap: 10 }}>
+                    <Button variant="success" data-testid="approve-button" onClick={() => open(c, 'APPROVED')}>
+                      Approve
+                    </Button>
+                    <Button variant="danger" data-testid="reject-button" onClick={() => open(c, 'REJECTED')}>
+                      Reject
+                    </Button>
+                  </div>
                 </div>
-                <div className="tly-card-sub" style={{ marginBottom: 6 }}>Audience (aggregate — no subscriber identities)</div>
-                <div className="tly-faint" style={{ fontSize: 12, lineHeight: 1.6 }}>
-                  {[
-                    c.audience.geographies.join(', ') || 'All Nigeria',
-                    c.audience.ageBands.join(', '),
-                    c.audience.interests.join(', '),
-                    `Excludes: ${c.audience.exclusions.join(', ') || 'none'}`,
-                  ]
-                    .filter(Boolean)
-                    .join(' · ')}
-                </div>
-                <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
-                  <Button variant="success" onClick={() => open(c, 'APPROVED')}>
-                    Approve
-                  </Button>
-                  <Button variant="danger" onClick={() => open(c, 'REJECTED')}>
-                    Reject
-                  </Button>
-                </div>
+                <PhonePreview formatId={c.formatId} fields={{}} />
               </div>
-              <PhonePreview formatId={c.formatId} fields={{}} />
-            </div>
-          </Card>
-        ))
+            </Card>
+          ))}
+        </div>
+      )}
+
+      {history.length > 0 && (
+        <Card>
+          <CardHead title="Recent approval history" sub="Most recent first" />
+          <Table head={['Decision', 'Approver', 'Comment', 'When']}>
+            {history
+              .slice()
+              .reverse()
+              .slice(0, 8)
+              .map((h) => (
+                <tr key={h.id}>
+                  <td>
+                    <Badge tone={h.decision === 'APPROVED' ? 'success' : 'danger'}>{h.decision}</Badge>
+                  </td>
+                  <td>{h.approverName}</td>
+                  <td className="tly-faint">{h.comments || '—'}</td>
+                  <td className="tly-mono tly-faint">{new Date(h.decidedAt).toLocaleString()}</td>
+                </tr>
+              ))}
+          </Table>
+        </Card>
       )}
 
       <Modal
@@ -135,7 +186,12 @@ export default function ApprovalsPage() {
             <Button variant="ghost" onClick={() => setActive(null)}>
               Cancel
             </Button>
-            <Button variant={decision === 'APPROVED' ? 'success' : 'danger'} onClick={confirm} disabled={busy}>
+            <Button
+              variant={decision === 'APPROVED' ? 'success' : 'danger'}
+              onClick={confirm}
+              disabled={busy || rejectBlocked}
+              data-testid="confirm-decision"
+            >
               {busy ? 'Recording…' : decision === 'APPROVED' ? 'Confirm approval' : 'Confirm rejection'}
             </Button>
           </>
@@ -144,8 +200,13 @@ export default function ApprovalsPage() {
         <p className="tly-dim" style={{ fontSize: 12.5 }}>
           {active?.name} — your name, the timestamp, this comment and the decision are recorded as an audit event.
         </p>
-        <Field label="Comment">
-          <Textarea value={comments} onChange={(e) => setComments(e.target.value)} placeholder="Reason / notes" />
+        <Field label="Comment" error={rejectBlocked ? 'A comment is required to reject.' : undefined}>
+          <Textarea
+            value={comments}
+            onChange={(e) => setComments(e.target.value)}
+            placeholder="Reason / notes"
+            data-testid="decision-comment"
+          />
         </Field>
       </Modal>
     </ConsoleShell>

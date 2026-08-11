@@ -36,7 +36,7 @@ export default function LoginPage() {
         background: 'radial-gradient(ellipse at top, rgba(255,204,8,0.08), transparent 55%), var(--tly-bg)',
       }}
     >
-      <form onSubmit={onSubmit} className="tly-card" style={{ width: 400, marginBottom: 0 }}>
+      <form onSubmit={onSubmit} className="tly-card" style={{ width: 'min(400px, 92vw)', marginBottom: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
           <div className="tly-brand-mark">M</div>
           <div className="tly-brand-name" style={{ fontSize: 18 }}>

@@ -31,7 +31,11 @@ export const env = {
     return v;
   })(),
   jwtExpiresIn: optional('JWT_EXPIRES_IN', '12h'),
-  /** Demo user password — supplied at seed time, never committed. */
-  demoPassword: optional('DEMO_USER_PASSWORD', 'Demo!Passw0rd'),
+  /**
+   * Demo user password used only for seeding. Real value comes from
+   * DEMO_USER_PASSWORD; the dev placeholder below is not a secret and seeding in
+   * production refuses to use it (see seed.ts).
+   */
+  demoPassword: optional('DEMO_USER_PASSWORD', 'dev-demo-password-not-secret'),
   envLabel: optional('TELYAD_ENV_LABEL', 'Demonstration Environment'),
 };

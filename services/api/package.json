@@ -17,6 +17,7 @@
     "db:migrate": "prisma migrate dev",
     "db:reset": "prisma db push --force-reset && pnpm db:seed",
     "db:seed": "tsx src/seed.ts",
+    "e2e:serve": "rm -f prisma/e2e.db prisma/e2e.db-journal && prisma db push --skip-generate && tsx src/seed.ts && tsx src/server.ts",
     "clean": "rm -rf dist .turbo prisma/generated"
   },
   "dependencies": {

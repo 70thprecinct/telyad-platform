@@ -27,6 +27,9 @@ export interface CampaignFilter {
  * never by the client.
  */
 export interface Store {
+  /** Readiness probe — true if the backing store is reachable. */
+  ping(): Promise<boolean>;
+
   // auth / directory
   getUserByEmail(email: string): Promise<StoredUser | null>;
   getUserById(id: string): Promise<StoredUser | null>;

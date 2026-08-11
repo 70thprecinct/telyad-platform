@@ -3,4 +3,5 @@ export * from './ids';
 export * from './enums';
 export * from './audience';
 export * from './entities';
+export * from './metrics';
 export * from './dto';

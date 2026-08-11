@@ -71,9 +71,9 @@ export function AppShell(props: AppShellProps) {
       <div className="tly-main">
         <header className="tly-topbar">
           <button
-            className="tly-btn tly-btn-ghost tly-btn-sm"
-            style={{ display: 'none' }}
-            aria-label="menu"
+            className="tly-btn tly-btn-ghost tly-btn-sm tly-hamburger"
+            aria-label="Toggle menu"
+            data-testid="menu-toggle"
             onClick={() => setOpen((v) => !v)}
           >
             ☰
@@ -86,7 +86,7 @@ export function AppShell(props: AppShellProps) {
             {props.topbarRight}
             <div className="tly-user-chip">
               <div className="tly-avatar">{props.user.initials}</div>
-              <div>
+              <div className="tly-user-text">
                 <div style={{ fontSize: 12, fontWeight: 600 }}>{props.user.name}</div>
                 <div style={{ fontSize: 10, color: 'var(--tly-text-faint)' }}>{props.user.role}</div>
               </div>
