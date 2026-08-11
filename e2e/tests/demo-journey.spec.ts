@@ -92,6 +92,17 @@ test('Wednesday demo journey: advertiser submit → MTN approve → advertiser s
     await expect(card).toBeVisible();
     await shot(mtn, '08-approval-queue');
 
+    await test.step('MTN reviews the persisted snapshot + full capability plan', async () => {
+      // The submitted audience snapshot and multi-capability plan are shown.
+      await expect(card.getByTestId('mtn-audience-snapshot')).toBeVisible();
+      await expect(card.getByTestId('mtn-capability-plan')).toBeVisible();
+      const tabs = card.getByTestId('mtn-capability-tab');
+      expect(await tabs.count()).toBeGreaterThan(1);
+      // Switching a capability changes the subscriber-experience preview.
+      await tabs.nth(1).click();
+      await expect(card.getByTestId('mtn-experience-preview')).toBeVisible();
+    });
+
     await test.step('review + approve', async () => {
       await card.getByTestId('approve-button').click();
       await mtn.getByTestId('decision-comment').fill('Compliant, low risk. Approved for delivery.');
