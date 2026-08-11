@@ -14,8 +14,48 @@ Concise operational guide for the live demo. Keep this open during the meeting.
 | MTN Operations | http://localhost:3002 |
 | Tely Master Admin | http://localhost:3003 |
 
-Deployed URLs (if deployed): `advertiser.telyad.com`, `mtn.telyad.com`,
-`admin.telyad.com`, API at `api.telyad.com`.
+Deployed URLs (once deployed — see `docs/deployment/DEPLOYMENT.md`):
+`https://advertiser.telyad.com`, `https://mtn.telyad.com`,
+`https://admin.telyad.com`, API `https://api.telyad.com`.
+
+---
+
+## 0b. Live deployment — 30 minutes before (primary path)
+
+1. **Open the domains** in the browser; confirm each loads over HTTPS with a
+   valid certificate (no warnings, no mixed content).
+2. **API health:**
+   ```bash
+   curl -s https://api.telyad.com/health   # {"ok":true,...}
+   curl -s https://api.telyad.com/ready    # {"ready":true,"store":"prisma","db":"reachable"}
+   ```
+3. **Database readiness:** `/ready` returns `db:"reachable"`.
+4. **Login check:** sign in to all three apps with the demo accounts (below).
+5. **Restore demo state (explicit, safe):**
+   ```bash
+   DEMO_MODE=on pnpm --filter @telyad/api demo:reset   # deterministic demo data
+   ```
+   (Run as a one-off job on the host, or against the hosted DB. `demo:reset`
+   refuses unless `DEMO_MODE=on` and never resets the schema.)
+6. **Pre-open browser tabs** (below) and hard-refresh each (clear cache if a
+   stale build is suspected).
+
+### Browser tabs to pre-open
+1. MTN Executive Overview (`mtn.telyad.com`)
+2. Advertiser Dashboard (`advertiser.telyad.com`)
+3. Ad Format Marketplace
+4. Maltina campaign (advertiser)
+5. MTN Approval queue
+6. MTN AI Intelligence
+7. Revenue Intelligence
+
+### Recovery shortcuts
+- **Reset demo:** `DEMO_MODE=on pnpm --filter @telyad/api demo:reset`.
+- **Restart API:** redeploy/restart on the host; campaign/approval/audit state
+  persists (hosted Postgres).
+- **Fallback preview URL:** use the Vercel preview deployment URL if a custom
+  domain misbehaves.
+- **Fallback local:** run the full stack locally (§1) with persistent SQLite.
 
 ---
 
