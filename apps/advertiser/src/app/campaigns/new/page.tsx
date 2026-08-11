@@ -246,6 +246,7 @@ export default function NewCampaignPage() {
       return;
     }
     setMatching(true);
+    let cancelled = false;
     const handle = setTimeout(() => {
       api
         .audienceMatch({
@@ -254,20 +255,51 @@ export default function NewCampaignPage() {
           selectedTarget: selectedTarget ?? undefined,
         })
         .then(({ match: m }) => {
+          if (cancelled) return;
           setMatch(m);
           if (!m.privacy.tooNarrow) {
-            setSelectedTarget((prev) => {
-              if (prev === null) return m.selectedTarget;
-              if (prev > m.eligibleAudience) return m.eligibleAudience;
-              return prev;
-            });
+            // Clamp the target to the eligible audience; default it once when unset.
+            setSelectedTarget((prev) =>
+              prev === null ? m.selectedTarget : Math.min(prev, m.eligibleAudience),
+            );
           }
         })
-        .catch(() => setMatch(null))
-        .finally(() => setMatching(false));
+        .catch(() => {
+          if (!cancelled) setMatch(null);
+        })
+        .finally(() => {
+          if (!cancelled) setMatching(false);
+        });
     }, 250);
-    return () => clearTimeout(handle);
-  }, [criteria, selectedIds, selectedTarget]);
+    return () => {
+      cancelled = true;
+      clearTimeout(handle);
+    };
+    // Intentionally NOT keyed on selectedTarget: the slider recomputes via a
+    // separate lightweight effect below, so setting the default target here
+    // never triggers a refetch loop.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [criteria, selectedIds]);
+
+  // Recompute forecast/cost when the advertiser changes the target (debounced),
+  // without re-running the full eligibility funnel.
+  useEffect(() => {
+    if (selectedIds.length === 0 || selectedTarget === null) return;
+    let cancelled = false;
+    const handle = setTimeout(() => {
+      api
+        .audienceMatch({ criteria, capabilityIds: selectedIds, selectedTarget })
+        .then(({ match: m }) => {
+          if (!cancelled && !m.privacy.tooNarrow) setMatch(m);
+        })
+        .catch(() => undefined);
+    }, 300);
+    return () => {
+      cancelled = true;
+      clearTimeout(handle);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedTarget]);
 
   // ── Capability filtering ────────────────────────────────────────────────────
   const objectiveOptions = useMemo(() => {
@@ -390,22 +422,34 @@ export default function NewCampaignPage() {
     return 'sms';
   }
 
-  function creativeFields(): Record<string, string> {
-    const out: Record<string, string> = {};
-    const put = (k: string, v: string) => {
-      if (v.trim()) out[k] = v.trim();
-    };
-    put('brand', creative.brand);
-    put('headline', creative.headline);
-    put('body', creative.body);
-    put('cta', creative.cta);
-    put('offer', creative.offer);
-    put('reward', creative.reward);
-    put('code', creative.code);
-    put('question', creative.question);
-    put('options', creative.options);
-    if (Object.keys(out).length === 0) out.body = 'Sample creative';
-    return out;
+  // Map the generic creative into the concrete primary-format's required schema
+  // so the persisted campaign passes server-side creative validation.
+  function creativeFields(fmt: AdFormatId): Record<string, string> {
+    const brand = (creative.brand?.trim() || 'TelyAd').slice(0, 40);
+    const body = (creative.body?.trim() || creative.headline?.trim() || 'Sample creative').slice(0, 300);
+    const cta = creative.cta?.trim() || 'Learn more';
+    const headline = creative.headline?.trim() || brand;
+    const base: Record<string, string> = { brand, body, cta };
+    if (creative.offer?.trim()) base.offer = creative.offer.trim();
+    if (creative.reward?.trim()) base.reward = creative.reward.trim();
+    switch (fmt) {
+      case 'sms':
+        return {
+          ...base,
+          senderId: (brand.replace(/[^A-Za-z0-9]/g, '') || 'TelyAd').slice(0, 11),
+          message: body.slice(0, 160),
+        };
+      case 'ussd':
+        return { ...base, shortCode: '*123#', menuText: (creative.options?.trim() || body).slice(0, 182) };
+      case 'stk':
+        return { ...base, menuTitle: headline.slice(0, 20), option1: cta, serviceName: brand.slice(0, 20) };
+      case 'wap':
+        return { ...base, title: headline.slice(0, 30), url: 'http://mtn.ng/offer', body: body.slice(0, 120) };
+      case 'obd':
+        return { ...base, script: body, language: 'English (Nigerian)' };
+      default:
+        return base;
+    }
   }
 
   function toAudienceDefinition(): AudienceDefinition {
@@ -441,7 +485,7 @@ export default function NewCampaignPage() {
       objective,
       formatId: primaryFormatId(),
       audience: toAudienceDefinition(),
-      creativeFields: creativeFields(),
+      creativeFields: creativeFields(primaryFormatId()),
       budget: {
         pricingModel: 'CPM',
         dailyCap: { minor: 50_000_00, currency: 'NGN' },

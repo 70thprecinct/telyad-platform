@@ -20,6 +20,11 @@ test('Wednesday demo journey: advertiser submit → MTN approve → advertiser s
   // ── Advertiser ─────────────────────────────────────────────────────────────
   const advCtx = await browser.newContext();
   const adv = await advCtx.newPage();
+  adv.on('response', async (r) => {
+    if (r.url().includes('/campaigns') && r.request().method() === 'POST' && !r.ok()) {
+      console.log('CAMPAIGN POST FAILED', r.status(), r.url(), await r.text().catch(() => ''));
+    }
+  });
 
   await test.step('advertiser login', () => login(adv, ADVERTISER_URL, 'bola@toyota.example'));
   await shot(adv, '01-advertiser-dashboard');
@@ -44,7 +49,11 @@ test('Wednesday demo journey: advertiser submit → MTN approve → advertiser s
   });
 
   await test.step('step 3 — audience match (eligible/target/forecast)', async () => {
-    await expect(adv.getByTestId('audience-match')).toBeVisible();
+    const match = adv.getByTestId('audience-match');
+    await expect(match).toBeVisible();
+    // Wait for the estimate to finish computing (loading dots clear) so we don't
+    // advance mid-request.
+    await expect(match).not.toContainText('●●●', { timeout: 15000 });
     await shot(adv, '04-audience-match');
     await adv.getByRole('button', { name: 'Next →' }).click();
   });
@@ -57,6 +66,7 @@ test('Wednesday demo journey: advertiser submit → MTN approve → advertiser s
 
   await test.step('step 5 — review & submit', async () => {
     await adv.getByRole('button', { name: 'Submit for approval' }).click();
+    await adv.waitForURL(/\/campaigns\/[0-9a-f-]+$/, { timeout: 20000 });
   });
 
   await test.step('advertiser sees Pending MTN approval', async () => {
