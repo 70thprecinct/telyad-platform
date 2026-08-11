@@ -15,13 +15,17 @@ import {
   Field,
   Modal,
   PageHeader,
-  PhonePreview,
+  ExperiencePreview,
   Table,
   Textarea,
   useToast,
 } from '@telyad/ui';
 import { ConsoleShell } from '@/components/ConsoleShell';
 import { api, ApiError } from '@/lib/api';
+
+const FMT_RENDERER: Record<string, 'stk' | 'sms' | 'ussd' | 'wap_push' | 'voice_call'> = {
+  stk: 'stk', sms: 'sms', ussd: 'ussd', wap: 'wap_push', obd: 'voice_call',
+};
 
 export default function ApprovalsPage() {
   const { toast } = useToast();
@@ -148,7 +152,7 @@ export default function ApprovalsPage() {
                     </Button>
                   </div>
                 </div>
-                <PhonePreview formatId={c.formatId} fields={{}} />
+                <ExperiencePreview renderer={FMT_RENDERER[c.formatId] ?? 'sms'} content={{ brand: advName(c.advertiserId), title: c.name, body: 'Subscriber sees this campaign creative on delivery.', cta: 'Learn more' }} />
               </div>
             </Card>
           ))}
