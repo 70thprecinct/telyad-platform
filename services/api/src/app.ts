@@ -1,5 +1,10 @@
 import { randomUUID } from 'node:crypto';
-import Fastify, { type FastifyInstance, type FastifyReply, type FastifyRequest } from 'fastify';
+import Fastify, {
+  type FastifyError,
+  type FastifyInstance,
+  type FastifyReply,
+  type FastifyRequest,
+} from 'fastify';
 import cors from '@fastify/cors';
 import {
   approvalDecisionSchema,
@@ -58,6 +63,15 @@ export function buildApp({ store, logger = false }: AppOptions): FastifyInstance
   const app = Fastify({ logger });
 
   app.register(cors, { origin: env.corsOrigins, credentials: true });
+
+  // Safe error handler: log the real error server-side, return a generic message.
+  app.setErrorHandler((err: FastifyError, req, reply) => {
+    req.log.error({ err: err.message, url: req.url, method: req.method }, 'request error');
+    const status = typeof err.statusCode === 'number' ? err.statusCode : 500;
+    reply.code(status >= 400 && status < 600 ? status : 500).send({
+      error: status >= 500 || !err.message ? 'Internal error' : err.message,
+    });
+  });
 
   // ── auth middleware ────────────────────────────────────────────────────────
   const authenticate = async (req: FastifyRequest, reply: FastifyReply): Promise<void> => {
@@ -126,8 +140,11 @@ export function buildApp({ store, logger = false }: AppOptions): FastifyInstance
     if (!parsed.success) return reply.code(400).send({ error: 'Invalid credentials payload' });
     const user = await store.getUserByEmail(parsed.data.email);
     if (!user || !verifyPassword(parsed.data.password, user.passwordHash)) {
+      // Log the attempt (email only — never the password) for ops visibility.
+      req.log.warn({ email: parsed.data.email }, 'auth: login failed');
       return reply.code(401).send({ error: 'Invalid email or password' });
     }
+    req.log.info({ userId: user.id, realm: user.realm }, 'auth: login ok');
     const payload: AuthTokenPayload = {
       sub: user.id,
       email: user.email,
@@ -226,6 +243,7 @@ export function buildApp({ store, logger = false }: AppOptions): FastifyInstance
       before,
       after: status,
     });
+    req.log.info({ capabilityId, from: before, to: status, by: a.sub }, 'inventory: status changed');
     return { capabilityId, status };
   });
 
@@ -363,6 +381,7 @@ export function buildApp({ store, logger = false }: AppOptions): FastifyInstance
     };
     const saved = await store.createCampaign(campaign);
     await audit(req, { action: 'Created campaign', target: saved.name, before: null, after: 'DRAFT' });
+    req.log.info({ campaignId: saved.id, advertiserId: saved.advertiserId }, 'campaign: created');
     return reply.code(201).send({ campaign: saved });
   });
 
@@ -384,6 +403,7 @@ export function buildApp({ store, logger = false }: AppOptions): FastifyInstance
         before: c.status,
         after: next,
       });
+      req.log.info({ campaignId: id, from: c.status, to: next }, 'campaign: submitted');
       return { campaign: updated };
     } catch (e) {
       if (e instanceof InvalidTransitionError) return reply.code(409).send({ error: e.message });
@@ -449,6 +469,10 @@ export function buildApp({ store, logger = false }: AppOptions): FastifyInstance
         before: c.status,
         after: next,
       });
+      req.log.info(
+        { campaignId: c.id, decision: parsed.data.decision, to: next, approver: a.sub },
+        'campaign: approval decision',
+      );
       return { campaign: updated, approval };
     } catch (e) {
       if (e instanceof InvalidTransitionError) return reply.code(409).send({ error: e.message });
