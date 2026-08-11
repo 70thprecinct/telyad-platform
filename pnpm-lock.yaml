@@ -76,8 +76,79 @@ importers:
         specifier: ^5.7.2
         version: 5.9.3
 
+  apps/platform-admin:
+    dependencies:
+      '@telyad/types':
+        specifier: workspace:*
+        version: link:../../packages/types
+      '@telyad/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      next:
+        specifier: ^15.1.3
+        version: 15.5.23(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      react:
+        specifier: ^19.0.0
+        version: 19.2.8
+      react-dom:
+        specifier: ^19.0.0
+        version: 19.2.8(react@19.2.8)
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.2
+        version: 22.20.1
+      '@types/react':
+        specifier: ^19.0.2
+        version: 19.2.18
+      '@types/react-dom':
+        specifier: ^19.0.2
+        version: 19.2.4(@types/react@19.2.18)
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+
   apps/telco-console:
     dependencies:
+      '@telyad/types':
+        specifier: workspace:*
+        version: link:../../packages/types
+      '@telyad/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      next:
+        specifier: ^15.1.3
+        version: 15.5.23(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      react:
+        specifier: ^19.0.0
+        version: 19.2.8
+      react-dom:
+        specifier: ^19.0.0
+        version: 19.2.8(react@19.2.8)
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.2
+        version: 22.20.1
+      '@types/react':
+        specifier: ^19.0.2
+        version: 19.2.18
+      '@types/react-dom':
+        specifier: ^19.0.2
+        version: 19.2.4(@types/react@19.2.18)
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+
+  apps/telydial:
+    dependencies:
+      '@telyad/ad-formats':
+        specifier: workspace:*
+        version: link:../../packages/ad-formats
+      '@telyad/audience':
+        specifier: workspace:*
+        version: link:../../packages/audience
+      '@telyad/campaign-engine':
+        specifier: workspace:*
+        version: link:../../packages/campaign-engine
       '@telyad/types':
         specifier: workspace:*
         version: link:../../packages/types
