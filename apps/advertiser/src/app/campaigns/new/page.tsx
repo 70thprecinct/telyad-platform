@@ -486,6 +486,8 @@ export default function NewCampaignPage() {
       formatId: primaryFormatId(),
       audience: toAudienceDefinition(),
       creativeFields: creativeFields(primaryFormatId()),
+      capabilityIds: selectedIds,
+      selectedTarget: selectedTarget ?? undefined,
       budget: {
         pricingModel: 'CPM',
         dailyCap: { minor: 50_000_00, currency: 'NGN' },
