@@ -1,10 +1,25 @@
 import type {
+  AdCapability,
   Advertiser,
   AuditEvent,
   AuthUser,
   Campaign,
   CampaignApproval,
+  CapabilityStatus,
+  RevenueIntelligenceReport,
 } from '@telyad/types';
+
+export interface InventoryItem {
+  capability: AdCapability;
+  effectiveStatus: CapabilityStatus;
+  isOverridden: boolean;
+}
+
+export interface AiInsight {
+  kind: string;
+  title: string;
+  detail: string;
+}
 
 const BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000';
 const TOKEN_KEY = 'telyad_telco_token';
@@ -67,4 +82,15 @@ export const api = {
   advertisers: () => request<{ advertisers: Advertiser[] }>('/telco/advertisers'),
   approvals: () => request<{ approvals: CampaignApproval[] }>('/telco/approvals'),
   audit: () => request<{ events: AuditEvent[] }>('/telco/audit'),
+  capabilities: () => request<{ capabilities: AdCapability[] }>('/capabilities'),
+  inventory: () => request<{ items: InventoryItem[] }>('/telco/inventory'),
+  setCapabilityStatus: (id: string, status: CapabilityStatus) =>
+    request<{ capabilityId: string; status: CapabilityStatus }>(`/telco/inventory/${id}/status`, {
+      method: 'POST',
+      body: JSON.stringify({ status }),
+    }),
+  revenueIntelligence: () =>
+    request<{ report: RevenueIntelligenceReport }>('/telco/revenue-intelligence'),
+  aiIntelligence: () =>
+    request<{ insights: AiInsight[]; report: RevenueIntelligenceReport }>('/telco/ai-intelligence'),
 };
