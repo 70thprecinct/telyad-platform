@@ -340,6 +340,9 @@ importers:
       '@telyad/demo-data':
         specifier: workspace:*
         version: link:../../packages/demo-data
+      '@telyad/intelligence':
+        specifier: workspace:*
+        version: link:../../packages/intelligence
       '@telyad/types':
         specifier: workspace:*
         version: link:../../packages/types
