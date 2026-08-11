@@ -1,0 +1,37 @@
+@import '@telyad/ui/styles.css';
+
+/* MTN Telco Operations theme — MTN yellow on dark (from the approved prototype). */
+:root {
+  --tly-bg: #070c12;
+  --tly-card: #0e151d;
+  --tly-card-2: #131c26;
+  --tly-card-3: #18222e;
+  --tly-primary: #ffcc08;
+  --tly-primary-dim: rgba(255, 204, 8, 0.16);
+  --tly-primary-contrast: #241b00;
+  --tly-secondary: #4f6ef7;
+  --tly-info-dim: rgba(255, 204, 8, 0.12);
+  --tly-text: #e9edf6;
+  --tly-text-dim: #8c9aae;
+  --tly-text-faint: #576070;
+  --tly-radius: 12px;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--tly-bg);
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: #1c2840;
+  border-radius: 8px;
+}

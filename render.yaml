@@ -1,0 +1,48 @@
+# Render blueprint — managed PostgreSQL + the TelyAd API.
+# One reliable, custom-domain-capable, rollback-friendly host for the API and DB.
+# The three Next.js apps deploy to Vercel (see docs/deployment/DEPLOYMENT.md).
+#
+# Usage: connect this repo as a Render Blueprint. Set the two `sync: false`
+# secrets (DEMO_USER_PASSWORD) in the dashboard. After first deploy, run a
+# one-off "pnpm demo:reset" shell to load the demonstration data.
+
+databases:
+  - name: telyad-db
+    databaseName: telyad
+    postgresMajorVersion: '16'
+    plan: free
+
+services:
+  - type: web
+    name: telyad-api
+    runtime: docker
+    dockerfilePath: ./services/api/Dockerfile
+    dockerContext: .
+    plan: free
+    healthCheckPath: /ready
+    autoDeploy: false
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: APP_ENV
+        value: production
+      - key: STORE
+        value: prisma
+      - key: DEMO_MODE
+        value: 'on'
+      - key: API_PORT
+        value: '4000'
+      - key: DATABASE_URL
+        fromDatabase:
+          name: telyad-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DEMO_USER_PASSWORD
+        sync: false
+      - key: ALLOWED_ORIGINS
+        value: https://advertiser.telyad.com,https://mtn.telyad.com,https://admin.telyad.com
+      - key: API_BASE_URL
+        value: https://api.telyad.com
+      - key: TELYAD_ENV_LABEL
+        value: Demonstration Environment

@@ -1,0 +1,32 @@
+@import '@telyad/ui/styles.css';
+
+/* TelyDial — violet accent on the shared dark shell (MVAS acquisition module). */
+:root {
+  --tly-bg: #0b0e14;
+  --tly-card: #131722;
+  --tly-card-2: #1a2030;
+  --tly-card-3: #212939;
+  --tly-primary: #7c6cf0;
+  --tly-primary-dim: rgba(124, 108, 240, 0.16);
+  --tly-primary-contrast: #0b0720;
+  --tly-secondary: #2a78d6;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--tly-bg);
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: #1c2840;
+  border-radius: 8px;
+}

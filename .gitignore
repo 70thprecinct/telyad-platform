@@ -1,0 +1,39 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# builds
+dist/
+.next/
+out/
+build/
+*.tsbuildinfo
+
+# turbo
+.turbo/
+
+# test
+coverage/
+
+# env & secrets — never commit
+.env
+.env.*
+!.env.example
+
+# prisma local db
+*.db
+*.db-journal
+services/api/prisma/*.db*
+
+# e2e artifacts
+e2e/screenshots/
+e2e/playwright-report/
+e2e/test-results/
+e2e/.playwright/
+
+# os / editor
+.DS_Store
+*.log
+.idea/
+.vscode/*
+!.vscode/extensions.json

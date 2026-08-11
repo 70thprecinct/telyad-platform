@@ -1,0 +1,1596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tely Ads Manager — MTN Nigeria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#0B0E14; --card:#131722; --card2:#1A2030; --card3:#212939;
+  --border:rgba(255,255,255,0.08); --bsoft:rgba(255,255,255,0.05);
+  --primary:#FF6A3D; --pdim:rgba(255,106,61,0.16);
+  --blue:#4F6EF7; --bdim:rgba(79,110,247,0.16);
+  --green:#00D97E; --gdim:rgba(0,217,126,0.14);
+  --yellow:#FFB547; --ydim:rgba(255,181,71,0.14);
+  --red:#FF5E5E; --rdim:rgba(255,94,94,0.14);
+  --purple:#A78BFA; --purpdim:rgba(167,139,250,0.14);
+  --cyan:#22D3EE; --cyandim:rgba(34,211,238,0.14);
+  --text:#F0F2F7; --dim:#97A0B8; --faint:#5C6478;
+  --df:'Space Grotesk',sans-serif; --fb:'Inter',sans-serif; --fm:'JetBrains Mono',monospace;
+  --r:14px; --rs:10px; --rx:20px;
+  --sidebar:230px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--fb);font-size:14px;-webkit-font-smoothing:antialiased;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;cursor:pointer;border:none;}
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:#252C3D;border-radius:6px;}
+.hidden{display:none!important;}
+
+/* ── LOGIN ─────────────────────────── */
+#login-screen{position:fixed;inset:0;z-index:999;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at 20% 10%,rgba(255,106,61,.12),transparent 50%),
+             radial-gradient(ellipse at 80% 80%,rgba(79,110,247,.10),transparent 50%),var(--bg);}
+.lcard{width:420px;background:var(--card);border:1px solid var(--border);border-radius:var(--rx);padding:40px 36px;}
+.lbrand{display:flex;align-items:center;gap:10px;margin-bottom:28px;}
+.lbrand .logo{width:36px;height:36px;background:var(--primary);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.lbrand .name{font-family:var(--df);font-size:20px;font-weight:700;}
+.lbrand .name span{color:var(--primary);}
+.ltitle{font-family:var(--df);font-size:22px;font-weight:700;margin-bottom:6px;}
+.lsub{color:var(--dim);font-size:13px;margin-bottom:28px;}
+.lfield{margin-bottom:16px;}
+.lfield label{display:block;font-size:12px;font-weight:600;color:var(--dim);margin-bottom:6px;letter-spacing:.04em;text-transform:uppercase;}
+.lfield input{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:var(--rs);padding:11px 14px;color:var(--text);font-size:14px;outline:none;transition:border-color .2s;}
+.lfield input:focus{border-color:var(--primary);}
+.lbtn{width:100%;background:var(--primary);color:#fff;border-radius:var(--rs);padding:13px;font-size:15px;font-weight:700;font-family:var(--df);margin-top:8px;transition:opacity .2s;}
+.lbtn:hover{opacity:.88;}
+.lnet{display:inline-flex;align-items:center;gap:6px;background:var(--gdim);border:1px solid rgba(0,217,126,.3);border-radius:20px;padding:4px 12px;font-size:12px;color:var(--green);margin-bottom:24px;}
+.lnet::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--green);}
+
+/* ── APP SHELL ─────────────────────── */
+#app{display:flex;height:100vh;overflow:hidden;}
+#app.hidden{display:none;}
+
+/* ── SIDEBAR ───────────────────────── */
+#sidebar{width:var(--sidebar);background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;}
+.sbrand{display:flex;align-items:center;gap:9px;padding:20px 18px 16px;}
+.sbrand .logo{width:32px;height:32px;background:var(--primary);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.sbrand .name{font-family:var(--df);font-size:17px;font-weight:700;} .sbrand .name span{color:var(--primary);}
+.snet-badge{margin:0 12px 16px;background:var(--gdim);border:1px solid rgba(0,217,126,.25);border-radius:8px;padding:8px 12px;}
+.snet-badge .nl{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:var(--green);letter-spacing:.03em;}
+.snet-badge .nl::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+.snet-badge .nn{font-size:12px;font-weight:700;color:var(--text);margin-top:2px;}
+.snav{flex:1;padding:4px 8px;}
+.sgroup{margin-bottom:20px;}
+.sgroup-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);padding:0 10px;margin-bottom:6px;}
+.sitem{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:var(--rs);cursor:pointer;transition:background .15s;color:var(--dim);font-size:13px;font-weight:500;user-select:none;}
+.sitem:hover{background:var(--card2);color:var(--text);}
+.sitem.active{background:var(--pdim);color:var(--primary);font-weight:600;}
+.sitem .ico{font-size:16px;width:22px;text-align:center;flex-shrink:0;}
+.sbadge{margin-left:auto;background:var(--primary);color:#fff;font-size:10px;font-weight:700;border-radius:10px;padding:1px 7px;}
+.sbadge.blue{background:var(--blue);}
+.sfooter{padding:12px;border-top:1px solid var(--border);}
+.savatar{display:flex;align-items:center;gap:9px;padding:8px;border-radius:var(--rs);cursor:pointer;}
+.savatar:hover{background:var(--card2);}
+.savatar-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--blue));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;}
+.savatar-info .name{font-size:13px;font-weight:600;}
+.savatar-info .role{font-size:11px;color:var(--dim);}
+
+/* ── MAIN ──────────────────────────── */
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.topbar{height:56px;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:16px;flex-shrink:0;}
+.topbar-title{font-family:var(--df);font-size:17px;font-weight:700;flex:1;}
+.topbar-title span{color:var(--dim);font-weight:500;font-size:14px;margin-left:8px;}
+.tbtn{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--rs);font-size:13px;font-weight:600;transition:all .15s;}
+.tbtn.primary{background:var(--primary);color:#fff;}
+.tbtn.primary:hover{background:#e85a2e;}
+.tbtn.ghost{background:var(--card2);border:1px solid var(--border);color:var(--text);}
+.tbtn.ghost:hover{border-color:var(--primary);color:var(--primary);}
+.content{flex:1;overflow-y:auto;padding:24px;}
+
+/* ── CARDS / GRIDS ─────────────────── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;}
+.card-sm{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;}
+.section-title{font-family:var(--df);font-size:16px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.section-title .st-ico{font-size:18px;}
+
+/* ── STAT CARDS ────────────────────── */
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;position:relative;overflow:hidden;}
+.stat-card::before{content:"";position:absolute;top:0;right:0;width:80px;height:80px;border-radius:50%;opacity:.08;transform:translate(20px,-20px);}
+.stat-card.orange::before{background:var(--primary);}
+.stat-card.blue::before{background:var(--blue);}
+.stat-card.green::before{background:var(--green);}
+.stat-card.yellow::before{background:var(--yellow);}
+.stat-card.purple::before{background:var(--purple);}
+.stat-card.cyan::before{background:var(--cyan);}
+.stat-emo{font-size:24px;margin-bottom:10px;}
+.stat-val{font-family:var(--df);font-size:26px;font-weight:700;margin-bottom:2px;}
+.stat-label{font-size:12px;color:var(--dim);font-weight:500;}
+.stat-delta{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:600;margin-top:8px;padding:2px 8px;border-radius:20px;}
+.stat-delta.up{background:var(--gdim);color:var(--green);}
+.stat-delta.down{background:var(--rdim);color:var(--red);}
+
+/* ── TABLE ─────────────────────────── */
+.tbl{width:100%;border-collapse:collapse;}
+.tbl th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);padding:10px 14px;border-bottom:1px solid var(--border);}
+.tbl td{padding:12px 14px;border-bottom:1px solid var(--bsoft);font-size:13px;vertical-align:middle;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:var(--card2);}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;}
+.pill.active{background:var(--gdim);color:var(--green);}
+.pill.paused{background:var(--ydim);color:var(--yellow);}
+.pill.draft{background:var(--bdim);color:var(--blue);}
+.pill.ended{background:rgba(255,255,255,.06);color:var(--dim);}
+.ch-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;}
+.ch-pill.stk{background:rgba(167,139,250,.15);color:var(--purple);}
+.ch-pill.sms{background:var(--gdim);color:var(--green);}
+.ch-pill.obd{background:var(--ydim);color:var(--yellow);}
+.ch-pill.wap{background:var(--cyandim);color:var(--cyan);}
+.ch-pill.ussd{background:var(--bdim);color:var(--blue);}
+
+/* ── PROGRESS ──────────────────────── */
+.pbar-wrap{background:var(--card3);border-radius:4px;height:6px;overflow:hidden;}
+.pbar{height:100%;border-radius:4px;background:var(--primary);}
+.pbar.blue{background:var(--blue);}
+.pbar.green{background:var(--green);}
+.pbar.purple{background:var(--purple);}
+.pbar.yellow{background:var(--yellow);}
+.pbar.cyan{background:var(--cyan);}
+
+/* ══════════════════════════════════
+   CAMPAIGN WIZARD
+══════════════════════════════════ */
+.wizard-overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;}
+.wizard-panel{width:960px;max-width:96vw;max-height:92vh;background:var(--card);border:1px solid var(--border);border-radius:var(--rx);display:flex;flex-direction:column;overflow:hidden;}
+.wizard-header{padding:20px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.wizard-title{font-family:var(--df);font-size:18px;font-weight:700;}
+.wizard-close{width:32px;height:32px;border-radius:8px;background:var(--card2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--dim);}
+.wizard-close:hover{color:var(--text);}
+/* Steps indicator */
+.wizard-steps{display:flex;align-items:center;gap:0;padding:0 28px;border-bottom:1px solid var(--border);background:var(--card2);flex-shrink:0;}
+.wstep{display:flex;align-items:center;gap:8px;padding:14px 0;flex:1;cursor:pointer;position:relative;}
+.wstep:not(:last-child)::after{content:"";position:absolute;right:0;top:50%;transform:translateY(-50%);width:1px;height:24px;background:var(--border);}
+.wstep-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;background:var(--card3);color:var(--faint);transition:all .2s;}
+.wstep-label{font-size:12px;font-weight:600;color:var(--faint);transition:color .2s;}
+.wstep-emo{font-size:14px;}
+.wstep.active .wstep-num{background:var(--primary);color:#fff;}
+.wstep.active .wstep-label{color:var(--text);}
+.wstep.done .wstep-num{background:var(--gdim);color:var(--green);}
+.wstep.done .wstep-label{color:var(--green);}
+/* Wizard body */
+.wizard-body{display:flex;flex:1;overflow:hidden;}
+.wizard-left{flex:1;overflow-y:auto;padding:24px 28px;}
+.wizard-right{width:300px;border-left:1px solid var(--border);background:var(--card2);padding:20px;display:flex;flex-direction:column;gap:16px;overflow-y:auto;flex-shrink:0;}
+/* Step content */
+.step-pane{display:none;}
+.step-pane.active{display:block;}
+/* Channel selector */
+.channel-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;}
+.ch-card{border:2px solid var(--border);border-radius:var(--r);padding:18px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
+.ch-card:hover{border-color:var(--dim);background:var(--card2);}
+.ch-card.selected{border-color:var(--primary);background:var(--pdim);}
+.ch-card.selected::after{content:"✓";position:absolute;top:10px;right:12px;font-size:14px;font-weight:700;color:var(--primary);}
+.ch-card .ch-emo{font-size:32px;margin-bottom:10px;}
+.ch-card .ch-name{font-family:var(--df);font-size:14px;font-weight:700;margin-bottom:4px;}
+.ch-card .ch-desc{font-size:12px;color:var(--dim);line-height:1.5;}
+.ch-card .ch-badge{display:inline-block;margin-top:8px;background:var(--purpdim);color:var(--purple);font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;letter-spacing:.03em;}
+.ch-card .ch-badge.green{background:var(--gdim);color:var(--green);}
+/* Form fields */
+.field{margin-bottom:20px;}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--dim);margin-bottom:6px;letter-spacing:.04em;text-transform:uppercase;}
+.field .field-hint{font-size:11px;color:var(--faint);margin-bottom:6px;font-weight:normal;text-transform:none;letter-spacing:0;}
+.field input,.field select,.field textarea{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:var(--rs);padding:10px 14px;color:var(--text);font-size:14px;outline:none;transition:border-color .2s;font-family:var(--fb);}
+.field input:focus,.field select,.field textarea:focus{border-color:var(--primary);}
+.field select{cursor:pointer;}
+.field textarea{resize:vertical;min-height:90px;line-height:1.5;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.field-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+/* Toggle group */
+.tgl-group{display:flex;gap:8px;flex-wrap:wrap;}
+.tgl{padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--dim);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;}
+.tgl:hover{border-color:var(--dim);color:var(--text);}
+.tgl.on{border-color:var(--primary);background:var(--pdim);color:var(--primary);font-weight:600;}
+/* Range */
+.range-row{display:flex;align-items:center;gap:12px;}
+.range-row input[type=range]{flex:1;accent-color:var(--primary);}
+.range-val{font-family:var(--dm);font-size:13px;font-weight:700;color:var(--primary);min-width:50px;text-align:right;}
+/* Audience chips */
+.chip-wrap{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;background:var(--bdim);color:var(--blue);cursor:pointer;border:1px solid transparent;transition:all .15s;}
+.chip:hover{border-color:var(--blue);}
+.chip.on{background:var(--blue);color:#fff;}
+/* Budget row */
+.budget-tabs{display:flex;gap:8px;margin-bottom:14px;}
+.btab{padding:7px 16px;border-radius:8px;border:1px solid var(--border);background:var(--card2);color:var(--dim);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;}
+.btab.on{background:var(--primary);color:#fff;border-color:var(--primary);}
+/* Summary boxes */
+.sum-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--bsoft);}
+.sum-row:last-child{border-bottom:none;}
+.sum-label{font-size:13px;color:var(--dim);}
+.sum-val{font-size:13px;font-weight:700;}
+/* Phone preview */
+.phone-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;}
+.phone-frame{width:200px;height:360px;background:#0a0a0a;border:6px solid #1a1a1a;border-radius:30px;position:relative;overflow:hidden;box-shadow:0 0 0 1px #333,0 20px 40px rgba(0,0,0,.5);}
+.phone-notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:80px;height:22px;background:#0a0a0a;border-radius:0 0 14px 14px;z-index:2;}
+.phone-screen{height:100%;background:#111;padding:28px 8px 8px;overflow:hidden;}
+/* STK Push preview */
+.stk-preview{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:4px;}
+.stk-dialog{background:#1e1e1e;border-radius:10px;padding:10px;width:100%;}
+.stk-header{background:linear-gradient(135deg,#7c3aed,#a78bfa);border-radius:7px;padding:6px 8px;margin-bottom:8px;text-align:center;}
+.stk-header .sh-title{font-size:9px;font-weight:700;color:#fff;letter-spacing:.04em;}
+.stk-header .sh-net{font-size:8px;color:rgba(255,255,255,.7);}
+.stk-msg{font-size:8px;color:#ccc;line-height:1.5;margin-bottom:8px;padding:0 2px;}
+.stk-btns{display:flex;flex-direction:column;gap:4px;}
+.stk-btn{background:#2d2d2d;border-radius:5px;padding:5px 6px;font-size:8px;text-align:center;color:#e0e0e0;cursor:pointer;}
+.stk-btn.primary{background:linear-gradient(90deg,#7c3aed,#a78bfa);color:#fff;font-weight:700;}
+/* SMS preview */
+.sms-preview{height:100%;display:flex;flex-direction:column;justify-content:flex-end;padding:4px;}
+.sms-bubble{background:#1c7aff;border-radius:14px 14px 4px 14px;padding:8px 10px;font-size:8px;line-height:1.5;color:#fff;margin-bottom:6px;max-width:90%;}
+.sms-meta{font-size:7px;color:#666;text-align:left;margin-top:4px;}
+/* OBD preview */
+.obd-preview{height:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;}
+.obd-dial{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#fbbf24,#f59e0b);display:flex;align-items:center;justify-content:center;font-size:28px;box-shadow:0 0 20px rgba(251,191,36,.3);}
+.obd-info{text-align:center;font-size:9px;color:#aaa;line-height:1.5;}
+.obd-num{font-size:11px;font-weight:700;color:#fff;font-family:monospace;}
+.obd-btns{display:flex;gap:8px;margin-top:4px;}
+.obd-btn{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;}
+.obd-btn.accept{background:#00D97E;}
+.obd-btn.decline{background:#FF5E5E;}
+/* WAP preview */
+.wap-preview{height:100%;display:flex;flex-direction:column;background:#fff;border-radius:4px;overflow:hidden;}
+.wap-bar{background:#2c2c2c;padding:4px 6px;font-size:7px;color:#aaa;display:flex;align-items:center;gap:4px;}
+.wap-bar-dot{width:5px;height:5px;border-radius:50%;background:#e0e0e0;}
+.wap-content{flex:1;padding:8px;background:#f5f5f5;}
+.wap-banner{background:#1565C0;border-radius:4px;padding:6px;text-align:center;margin-bottom:6px;}
+.wap-banner .wb-title{font-size:9px;font-weight:700;color:#fff;}
+.wap-banner .wb-sub{font-size:7px;color:rgba(255,255,255,.8);}
+.wap-cta{background:#1565C0;border-radius:4px;padding:5px;text-align:center;font-size:8px;font-weight:700;color:#fff;margin-top:6px;}
+/* USSD preview */
+.ussd-preview{height:100%;display:flex;flex-direction:column;background:#000;padding:4px;}
+.ussd-header{background:#003300;padding:4px 6px;border-radius:4px;font-size:8px;color:#00ff00;font-family:monospace;margin-bottom:4px;}
+.ussd-body{flex:1;font-size:8px;color:#00ff00;font-family:monospace;line-height:1.6;padding:4px 2px;}
+.ussd-input-row{background:#001100;border:1px solid #004400;border-radius:4px;padding:4px 6px;font-size:8px;color:#00ff00;font-family:monospace;}
+/* Wizard footer */
+.wizard-footer{padding:16px 28px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:var(--card);}
+.wf-estimate{font-size:12px;color:var(--dim);}
+.wf-estimate strong{color:var(--text);}
+.wf-btns{display:flex;gap:10px;}
+.wbtn{padding:10px 22px;border-radius:var(--rs);font-size:14px;font-weight:700;font-family:var(--df);transition:all .15s;}
+.wbtn.back{background:var(--card2);border:1px solid var(--border);color:var(--dim);}
+.wbtn.back:hover{border-color:var(--dim);color:var(--text);}
+.wbtn.next{background:var(--primary);color:#fff;}
+.wbtn.next:hover{background:#e85a2e;}
+.wbtn.launch{background:linear-gradient(90deg,var(--primary),var(--blue));color:#fff;}
+.wbtn.launch:hover{opacity:.9;}
+/* Preview label */
+.preview-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);text-align:center;}
+.preview-ch-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;margin:0 auto;}
+
+/* ── AI TOOLS ──────────────────────── */
+.ai-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.ai-card{background:var(--card2);border:1px solid var(--border);border-radius:var(--r);padding:16px;cursor:pointer;transition:all .2s;}
+.ai-card:hover{border-color:var(--primary);transform:translateY(-2px);}
+.ai-emo{font-size:24px;margin-bottom:8px;}
+.ai-name{font-size:13px;font-weight:700;margin-bottom:4px;}
+.ai-desc{font-size:12px;color:var(--dim);line-height:1.5;}
+.ai-input-wrap{background:var(--card2);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-top:16px;}
+.ai-input-row{display:flex;gap:10px;}
+.ai-input{flex:1;background:var(--card3);border:1px solid var(--border);border-radius:var(--rs);padding:10px 14px;color:var(--text);font-size:14px;outline:none;}
+.ai-input:focus{border-color:var(--primary);}
+.ai-go{background:var(--primary);color:#fff;border-radius:var(--rs);padding:10px 18px;font-size:14px;font-weight:700;font-family:var(--df);}
+.ai-go:hover{background:#e85a2e;}
+
+/* ── CHART AREA ────────────────────── */
+.chart-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:20px;}
+.chart-wrap{position:relative;height:220px;margin-top:12px;}
+
+/* ── NOTIFICATION ITEMS ─────────────── */
+.notif-item{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--bsoft);}
+.notif-item:last-child{border-bottom:none;}
+.notif-emo{font-size:24px;flex-shrink:0;}
+.notif-body .nb-title{font-size:13px;font-weight:600;margin-bottom:3px;}
+.notif-body .nb-desc{font-size:12px;color:var(--dim);}
+.notif-body .nb-time{font-size:11px;color:var(--faint);margin-top:4px;}
+.notif-dot{width:8px;height:8px;border-radius:50%;background:var(--primary);flex-shrink:0;margin-top:4px;}
+
+/* ── EMPTY STATE ────────────────────── */
+.empty-state{text-align:center;padding:60px 20px;color:var(--dim);}
+.empty-emo{font-size:48px;margin-bottom:16px;}
+.empty-title{font-family:var(--df);font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px;}
+.empty-desc{font-size:14px;color:var(--dim);}
+
+/* ── MISC ───────────────────────────── */
+.divider{height:1px;background:var(--border);margin:20px 0;}
+.badge-tag{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;}
+.badge-tag.new{background:var(--pdim);color:var(--primary);}
+.badge-tag.beta{background:var(--purpdim);color:var(--purple);}
+.right-panel-label{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-bottom:10px;}
+.info-box{background:var(--card3);border:1px solid var(--border);border-radius:var(--rs);padding:12px;}
+.info-box .ib-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;}
+.info-box .ib-label{font-size:12px;color:var(--dim);}
+.info-box .ib-val{font-size:12px;font-weight:700;}
+.stk-spec-box{background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.25);border-radius:var(--rs);padding:12px;margin-top:10px;}
+.stk-spec-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:12px;}
+.stk-spec-row .sk{color:var(--dim);}
+.stk-spec-row .sv{font-weight:700;color:var(--purple);}
+
+/* ══════════════════════════════════
+   MOBILE / RESPONSIVE
+══════════════════════════════════ */
+.hamburger-btn{display:none;width:34px;height:34px;border-radius:8px;background:var(--card2);border:1px solid var(--border);align-items:center;justify-content:center;color:var(--dim);font-size:16px;flex-shrink:0;}
+.sidebar-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:90;display:none;}
+.sidebar-backdrop.show{display:block;}
+
+@media (max-width:1100px){
+  .grid3,.grid4,.ai-grid{grid-template-columns:1fr 1fr;}
+}
+
+@media (max-width:900px){
+  .hamburger-btn{display:flex;}
+  #sidebar{
+    position:fixed; top:0; left:0; height:100vh; z-index:100; width:230px;
+    transform:translateX(-100%); transition:transform .22s ease; box-shadow:0 0 0 1px var(--border);
+  }
+  #sidebar.show{transform:translateX(0);}
+  .topbar{padding:0 14px;gap:10px;}
+  .topbar-title{font-size:15px;}
+  .topbar-title span{display:none;}
+  .tbtn.ghost{display:none;}
+  .content{padding:16px 14px;}
+  .grid2,.grid3,.grid4,.ai-grid{grid-template-columns:1fr 1fr;}
+  .field-row,.field-row3{grid-template-columns:1fr;}
+  .channel-grid{grid-template-columns:1fr;}
+  .tbl{display:block;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;}
+  .tbl thead,.tbl tbody{display:table;width:100%;}
+  /* Wizard: stack the form and phone-preview panel instead of side-by-side */
+  .wizard-panel{max-height:96vh;}
+  .wizard-body{flex-direction:column;overflow-y:auto;}
+  .wizard-left{padding:18px 16px;overflow:visible;}
+  .wizard-right{width:auto;border-left:none;border-top:1px solid var(--border);flex-shrink:0;}
+  .wizard-steps{padding:0 12px;overflow-x:auto;}
+  .wstep-label{font-size:10.5px;white-space:nowrap;}
+  .wizard-header{padding:16px 18px;}
+  .wizard-footer{padding:12px 16px;flex-wrap:wrap;gap:10px;}
+  .wf-estimate{order:2;width:100%;text-align:center;}
+}
+
+@media (max-width:560px){
+  .lcard{width:92vw;padding:30px 22px;}
+  .grid2,.grid3,.grid4,.ai-grid{grid-template-columns:1fr;}
+  .stat-val{font-size:22px;}
+  .topbar-title{font-size:13.5px;}
+  .savatar-info .role{display:none;}
+  .wstep-label{display:none;}
+  .wstep{padding:12px 0;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN ══════════════════════════════ -->
+<div id="login-screen">
+  <div class="lcard">
+    <div class="lbrand">
+      <div class="logo">📡</div>
+      <div class="name">Tely<span>Ads</span></div>
+    </div>
+    <div class="lnet">🌍 MTN Nigeria Network</div>
+    <div class="ltitle">Welcome back 👋</div>
+    <div class="lsub">Sign in to your Tely Ads Manager account</div>
+    <div class="lfield">
+      <label>📧 Email Address</label>
+      <input type="email" value="osa@playtek.co.uk" placeholder="you@company.com">
+    </div>
+    <div class="lfield">
+      <label>🔑 Password</label>
+      <input type="password" value="••••••••••" placeholder="Enter password">
+    </div>
+    <button class="lbtn" onclick="doLogin()">🚀 Sign In to Ads Manager</button>
+  </div>
+</div>
+
+<!-- ══ APP ════════════════════════════════ -->
+<div id="app" class="hidden">
+  <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="closeSidebar()"></div>
+  <!-- Sidebar -->
+  <div id="sidebar">
+    <div class="sbrand">
+      <div class="logo">📡</div>
+      <div class="name">Tely<span>Ads</span></div>
+    </div>
+    <div class="snet-badge">
+      <div class="nl">LIVE NETWORK</div>
+      <div class="nn">🇳🇬 MTN Nigeria</div>
+    </div>
+    <nav class="snav">
+      <div class="sgroup">
+        <div class="sgroup-label">Overview</div>
+        <div class="sitem active" onclick="nav('dashboard')"><span class="ico">📊</span> Dashboard</div>
+        <div class="sitem" onclick="nav('campaigns')"><span class="ico">🚀</span> Campaigns <span class="sbadge">4</span></div>
+        <div class="sitem" onclick="nav('analytics')"><span class="ico">📈</span> Analytics</div>
+      </div>
+      <div class="sgroup">
+        <div class="sgroup-label">Targeting</div>
+        <div class="sitem" onclick="nav('audience')"><span class="ico">🎯</span> Audience</div>
+        <div class="sitem" onclick="nav('segments')"><span class="ico">🧬</span> Segments <span class="sbadge blue">2</span></div>
+        <div class="sitem" onclick="nav('reach')"><span class="ico">📡</span> Reach & Verify</div>
+      </div>
+      <div class="sgroup">
+        <div class="sgroup-label">Delivery</div>
+        <div class="sitem" onclick="nav('channels')"><span class="ico">📲</span> Channels</div>
+        <div class="sitem" onclick="nav('creatives')"><span class="ico">🎨</span> Creatives</div>
+        <div class="sitem" onclick="nav('ai')"><span class="ico">🤖</span> AI Tools <span class="sbadge">New</span></div>
+      </div>
+      <div class="sgroup">
+        <div class="sgroup-label">Account</div>
+        <div class="sitem" onclick="nav('billing')"><span class="ico">💳</span> Billing & Budget</div>
+        <div class="sitem" onclick="nav('notifications')"><span class="ico">🔔</span> Notifications <span class="sbadge">3</span></div>
+        <div class="sitem" onclick="nav('settings')"><span class="ico">⚙️</span> Settings</div>
+      </div>
+    </nav>
+    <div class="sfooter">
+      <div class="savatar">
+        <div class="savatar-av">OU</div>
+        <div class="savatar-info">
+          <div class="name">Osa Umweni</div>
+          <div class="role">🏢 Playtek Technologies</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <div id="main">
+    <div class="topbar">
+      <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Toggle menu">☰</button>
+      <div class="topbar-title" id="page-title">📊 Dashboard <span>Overview</span></div>
+      <button class="tbtn ghost" onclick="openWizard()">+ New Campaign</button>
+      <button class="tbtn primary" onclick="openWizard()">🚀 Launch Campaign</button>
+    </div>
+    <div class="content" id="content-area"></div>
+  </div>
+</div>
+
+<!-- ══ CAMPAIGN WIZARD ════════════════════ -->
+<div class="wizard-overlay hidden" id="wizard">
+  <div class="wizard-panel">
+    <div class="wizard-header">
+      <div class="wizard-title">🚀 Create New Campaign</div>
+      <div class="wizard-close" onclick="closeWizard()">✕</div>
+    </div>
+    <div class="wizard-steps">
+      <div class="wstep active" id="ws1" onclick="goStep(1)">
+        <div class="wstep-num">1</div>
+        <div class="wstep-label">📲 Channel</div>
+      </div>
+      <div class="wstep" id="ws2" onclick="goStep(2)">
+        <div class="wstep-num">2</div>
+        <div class="wstep-label">✏️ Creative</div>
+      </div>
+      <div class="wstep" id="ws3" onclick="goStep(3)">
+        <div class="wstep-num">3</div>
+        <div class="wstep-label">🎯 Audience</div>
+      </div>
+      <div class="wstep" id="ws4" onclick="goStep(4)">
+        <div class="wstep-num">4</div>
+        <div class="wstep-label">💰 Budget</div>
+      </div>
+      <div class="wstep" id="ws5" onclick="goStep(5)">
+        <div class="wstep-num">5</div>
+        <div class="wstep-label">✅ Review</div>
+      </div>
+    </div>
+    <div class="wizard-body">
+      <!-- Left pane -->
+      <div class="wizard-left">
+
+        <!-- STEP 1: Channel -->
+        <div class="step-pane active" id="step1">
+          <div class="section-title"><span class="st-ico">📲</span> Select Delivery Channel</div>
+          <p style="color:var(--dim);font-size:13px;margin-bottom:16px;">Choose how your message reaches MTN Nigeria subscribers. Each channel uses a different delivery mechanism and billing model.</p>
+          <div class="channel-grid">
+
+            <!-- STK PUSH -->
+            <div class="ch-card selected" onclick="selectChannel('stk',this)" id="ch-stk">
+              <div class="ch-emo">📱</div>
+              <div class="ch-name">STK Push Notification</div>
+              <div class="ch-desc">SIM Toolkit (STK) applet push — delivered directly via the SIM card menu, bypassing the internet. Native to all MTN SIMs with no data required.</div>
+              <div class="ch-badge">🔮 SIM Toolkit</div>
+              <div style="margin-top:10px;font-size:11px;color:var(--dim);">
+                <span style="color:var(--purple)">⚡ Delivery:</span> SIM OTA / STK applet<br>
+                <span style="color:var(--purple)">📊 Pricing:</span> CPM · CPA<br>
+                <span style="color:var(--purple)">🔍 Verify:</span> MTN Product ID
+              </div>
+            </div>
+
+            <!-- SMS -->
+            <div class="ch-card" onclick="selectChannel('sms',this)" id="ch-sms">
+              <div class="ch-emo">💬</div>
+              <div class="ch-name">SMS Campaign</div>
+              <div class="ch-desc">Carrier-grade SMS delivered with DND compliance filtering and MTN's own sending infrastructure. Supports alphanumeric sender IDs.</div>
+              <div class="ch-badge green">✅ Standard</div>
+              <div style="margin-top:10px;font-size:11px;color:var(--dim);">
+                <span style="color:var(--green)">⚡ Delivery:</span> MTN SMS Gateway<br>
+                <span style="color:var(--green)">📊 Pricing:</span> CPM · CPC<br>
+                <span style="color:var(--green)">🔍 Verify:</span> Click tracking
+              </div>
+            </div>
+
+            <!-- OBD -->
+            <div class="ch-card" onclick="selectChannel('obd',this)" id="ch-obd">
+              <div class="ch-emo">📞</div>
+              <div class="ch-name">OBD Voice Call</div>
+              <div class="ch-desc">Outbound Dialler — automated voice message delivered as an inbound call to the subscriber. Full ARCON compliance with opt-out IVR.</div>
+              <div class="ch-badge">🎙️ Voice</div>
+              <div style="margin-top:10px;font-size:11px;color:var(--dim);">
+                <span style="color:var(--yellow)">⚡ Delivery:</span> IVR / Voice Gateway<br>
+                <span style="color:var(--yellow)">📊 Pricing:</span> CPM · CPL<br>
+                <span style="color:var(--yellow)">🔍 Verify:</span> Call duration
+              </div>
+            </div>
+
+            <!-- WAP PUSH -->
+            <div class="ch-card" onclick="selectChannel('wap',this)" id="ch-wap">
+              <div class="ch-emo">🌐</div>
+              <div class="ch-name">WAP Push</div>
+              <div class="ch-desc">Push a WAP message with a clickable URL to subscriber's native inbox. Reaches feature phones and budget smartphones without data plans.</div>
+              <div class="ch-badge" style="background:var(--cyandim);color:var(--cyan);">🌊 WAP / Push</div>
+              <div style="margin-top:10px;font-size:11px;color:var(--dim);">
+                <span style="color:var(--cyan)">⚡ Delivery:</span> WAP Push over SMS<br>
+                <span style="color:var(--cyan)">📊 Pricing:</span> CPM · CPC<br>
+                <span style="color:var(--cyan)">🔍 Verify:</span> URL click
+              </div>
+            </div>
+
+            <!-- USSD -->
+            <div class="ch-card" onclick="selectChannel('ussd',this)" id="ch-ussd" style="grid-column:span 2;">
+              <div style="display:flex;gap:16px;align-items:flex-start;">
+                <div class="ch-emo" style="flex-shrink:0;">*#</div>
+                <div>
+                  <div class="ch-name">USSD Campaign</div>
+                  <div class="ch-desc">Interactive Unstructured Supplementary Service Data sessions via short code. Zero-data, session-based, real-time subscriber interaction. Ideal for subscriber acquisition and opt-in flows.</div>
+                  <div style="margin-top:10px;font-size:11px;color:var(--dim);">
+                    <span style="color:var(--blue)">⚡ Delivery:</span> USSD short code (*8022# or branded) &nbsp;&nbsp;
+                    <span style="color:var(--blue)">📊 Pricing:</span> CPA · CPL &nbsp;&nbsp;
+                    <span style="color:var(--blue)">🔍 Verify:</span> MTN Product ID session
+                  </div>
+                </div>
+                <div class="ch-badge" style="flex-shrink:0;background:var(--bdim);color:var(--blue);">📟 USSD</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- STEP 2: Creative -->
+        <div class="step-pane" id="step2">
+          <div class="section-title"><span class="st-ico">✏️</span> Campaign Creative</div>
+
+          <!-- STK creative fields (shown/hidden by channel) -->
+          <div id="creative-stk">
+            <div style="background:var(--purpdim);border:1px solid rgba(167,139,250,.3);border-radius:var(--rs);padding:12px;margin-bottom:20px;display:flex;gap:10px;align-items:flex-start;">
+              <span style="font-size:20px;">📱</span>
+              <div>
+                <div style="font-size:13px;font-weight:700;color:var(--purple);margin-bottom:3px;">STK Push — SIM Toolkit Creative Guide</div>
+                <div style="font-size:12px;color:var(--dim);">STK push renders inside the subscriber's SIM card menu. Text is limited to <strong>160 characters</strong> per menu item. Menu options are numbered buttons (max 3). No images or rich media — plain text only. Works on all MTN SIMs regardless of handset.</div>
+              </div>
+            </div>
+            <div class="field">
+              <label>📱 STK Menu Title</label>
+              <div class="field-hint">Shown as the main header in the SIM card menu — max 20 characters</div>
+              <input type="text" placeholder="e.g. 🎮 MTN Game Zone" maxlength="20" value="🎮 MTN Game Zone">
+            </div>
+            <div class="field">
+              <label>📝 Push Message Body</label>
+              <div class="field-hint">Main message shown in the STK dialog — max 160 characters</div>
+              <textarea placeholder="Dial *8022# to play and win big with MTN Games! Predict scores, play trivia and win airtime daily.">Dial *8022# to play and win big with MTN Games! Predict scores, play trivia and win airtime daily.</textarea>
+            </div>
+            <div class="field">
+              <label>🔘 Menu Option 1 (Primary CTA)</label>
+              <input type="text" placeholder="e.g. ✅ Play Now — *8022#" value="✅ Play Now — *8022#">
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>🔘 Menu Option 2</label>
+                <input type="text" placeholder="ℹ️ Learn More" value="ℹ️ Learn More">
+              </div>
+              <div class="field">
+                <label>🔘 Menu Option 3 (Exit)</label>
+                <input type="text" placeholder="❌ Not Now" value="❌ Not Now">
+              </div>
+            </div>
+            <div class="field">
+              <label>🔗 USSD Action (on select)</label>
+              <div class="field-hint">Short code or MSISDN launched when subscriber selects Option 1</div>
+              <input type="text" placeholder="*8022#" value="*8022#">
+            </div>
+            <div class="field">
+              <label>📛 MTN Sender / Service Name</label>
+              <div class="field-hint">Appears as the STK sender identity — must be NCC-approved</div>
+              <input type="text" placeholder="MTN Games" value="MTN Games">
+            </div>
+          </div>
+
+          <!-- SMS creative (hidden unless SMS selected) -->
+          <div id="creative-sms" class="hidden">
+            <div class="field">
+              <label>📛 Sender ID</label>
+              <input type="text" placeholder="e.g. PlaytekAds" value="MTNOffers">
+            </div>
+            <div class="field">
+              <label>💬 SMS Message</label>
+              <div class="field-hint">Max 160 characters for single SMS. Over 160 splits to multi-part.</div>
+              <textarea placeholder="Your SMS message here...">Hi! Get exclusive MTN offers today. Reply YES to subscribe or dial *8022# to explore. Stop=OPT OUT</textarea>
+            </div>
+            <div class="field">
+              <label>🔗 Click-to-Action URL (optional)</label>
+              <input type="text" placeholder="https://...">
+            </div>
+          </div>
+
+          <!-- OBD creative -->
+          <div id="creative-obd" class="hidden">
+            <div class="field">
+              <label>🎙️ Voice Script</label>
+              <textarea placeholder="Write the script that will be converted to voice...">Hello, this is MTN Nigeria. You have an exclusive offer waiting for you. Press 1 to learn more, or press 2 to opt out.</textarea>
+            </div>
+            <div class="field">
+              <label>🗣️ Voice Language</label>
+              <select>
+                <option>English (Nigerian)</option>
+                <option>Yoruba</option>
+                <option>Hausa</option>
+                <option>Igbo</option>
+                <option>Pidgin English</option>
+              </select>
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>🕐 IVR Timeout (secs)</label>
+                <input type="number" value="8">
+              </div>
+              <div class="field">
+                <label>🔁 Retry Attempts</label>
+                <input type="number" value="2">
+              </div>
+            </div>
+          </div>
+
+          <!-- WAP Push creative -->
+          <div id="creative-wap" class="hidden">
+            <div class="field">
+              <label>📰 WAP Push Title</label>
+              <input type="text" placeholder="Offer headline..." value="🔥 Exclusive MTN Deal!">
+            </div>
+            <div class="field">
+              <label>🔗 WAP Push URL</label>
+              <input type="text" placeholder="http://..." value="http://mtn.ng/offer">
+            </div>
+            <div class="field">
+              <label>📝 Push Body Text</label>
+              <textarea>Tap to claim your exclusive MTN data bundle. Limited time offer!</textarea>
+            </div>
+          </div>
+
+          <!-- USSD creative -->
+          <div id="creative-ussd" class="hidden">
+            <div class="field">
+              <label>📟 USSD Short Code</label>
+              <input type="text" value="*8022#">
+            </div>
+            <div class="field">
+              <label>📝 Welcome Menu Text</label>
+              <textarea>Welcome to MTN Games!\n1. Play Predictor\n2. Play Trivia\n3. Win Airtime\n0. Exit</textarea>
+            </div>
+            <div class="field">
+              <label>💡 Session Timeout (seconds)</label>
+              <input type="number" value="120">
+            </div>
+          </div>
+
+          <div class="field">
+            <label>📛 Campaign Name</label>
+            <input type="text" placeholder="e.g. MTN Game Zone — STK Push Q3" value="MTN Game Zone — STK Push Q3 2026">
+          </div>
+        </div>
+
+        <!-- STEP 3: Audience -->
+        <div class="step-pane" id="step3">
+          <div class="section-title"><span class="st-ico">🎯</span> Audience Targeting</div>
+          <div class="field">
+            <label>📍 Geographic Targeting</label>
+            <div class="chip-wrap" id="geo-chips">
+              <div class="chip on" onclick="toggleChip(this)">🇳🇬 All Nigeria</div>
+              <div class="chip" onclick="toggleChip(this)">🏙️ Lagos</div>
+              <div class="chip" onclick="toggleChip(this)">🏛️ Abuja FCT</div>
+              <div class="chip" onclick="toggleChip(this)">⚡ Kano</div>
+              <div class="chip" onclick="toggleChip(this)">🌊 Rivers</div>
+              <div class="chip" onclick="toggleChip(this)">🌿 Oyo</div>
+              <div class="chip" onclick="toggleChip(this)">🏔️ Kaduna</div>
+              <div class="chip" onclick="toggleChip(this)">🌞 Anambra</div>
+              <div class="chip" onclick="toggleChip(this)">🌴 Delta</div>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>👥 Age Range</label>
+              <select>
+                <option>All Ages</option>
+                <option>18–24 🧑</option>
+                <option selected>25–34 👨</option>
+                <option>35–44 🧔</option>
+                <option>45–54 👴</option>
+                <option>55+ 👵</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>⚧️ Gender</label>
+              <select>
+                <option>All Genders</option>
+                <option>Male 👨</option>
+                <option>Female 👩</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label>📱 Device Type</label>
+            <div class="tgl-group">
+              <div class="tgl on" onclick="toggleTgl(this)">📱 All Devices</div>
+              <div class="tgl" onclick="toggleTgl(this)">🤳 Smartphones</div>
+              <div class="tgl" onclick="toggleTgl(this)">📟 Feature Phones</div>
+            </div>
+          </div>
+          <div class="field">
+            <label>💎 Subscriber Tier</label>
+            <div class="tgl-group">
+              <div class="tgl on" onclick="toggleTgl(this)">⭐ All</div>
+              <div class="tgl" onclick="toggleTgl(this)">👑 Premium</div>
+              <div class="tgl" onclick="toggleTgl(this)">🥈 Standard</div>
+              <div class="tgl" onclick="toggleTgl(this)">🥉 Basic</div>
+            </div>
+          </div>
+          <div class="field">
+            <label>🎮 Interest Categories</label>
+            <div class="chip-wrap">
+              <div class="chip on" onclick="toggleChip(this)">⚽ Sports & Gaming</div>
+              <div class="chip on" onclick="toggleChip(this)">📺 Entertainment</div>
+              <div class="chip" onclick="toggleChip(this)">💼 Business</div>
+              <div class="chip" onclick="toggleChip(this)">🎵 Music</div>
+              <div class="chip" onclick="toggleChip(this)">🛒 Shopping</div>
+              <div class="chip" onclick="toggleChip(this)">📰 News</div>
+              <div class="chip" onclick="toggleChip(this)">✈️ Travel</div>
+              <div class="chip" onclick="toggleChip(this)">💰 Finance</div>
+            </div>
+          </div>
+          <div class="field">
+            <label>📊 Estimated Reach</label>
+            <div class="range-row">
+              <input type="range" min="10000" max="5000000" value="1200000" step="10000" oninput="document.getElementById('reach-val').textContent=Number(this.value).toLocaleString()">
+              <span class="range-val" id="reach-val">1,200,000</span>
+            </div>
+            <div style="font-size:11px;color:var(--faint);margin-top:6px;">🎯 Matching your targeting criteria on MTN Nigeria network</div>
+          </div>
+          <div class="field">
+            <label>🚫 Exclusion Lists</label>
+            <select>
+              <option>None</option>
+              <option>Recent Subscribers (30d)</option>
+              <option>DND Registered</option>
+              <option>High Churn Risk</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- STEP 4: Budget -->
+        <div class="step-pane" id="step4">
+          <div class="section-title"><span class="st-ico">💰</span> Budget & Schedule</div>
+          <div class="field">
+            <label>💳 Pricing Model</label>
+            <div class="budget-tabs">
+              <div class="btab on" onclick="toggleBtab(this)">📊 CPM</div>
+              <div class="btab" onclick="toggleBtab(this)">🖱️ CPC</div>
+              <div class="btab" onclick="toggleBtab(this)">✅ CPA</div>
+              <div class="btab" onclick="toggleBtab(this)">👤 CPL</div>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>💸 Daily Budget (₦)</label>
+              <input type="number" value="50000" placeholder="50,000">
+            </div>
+            <div class="field">
+              <label>🏦 Total Campaign Budget (₦)</label>
+              <input type="number" value="500000" placeholder="500,000">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>📅 Start Date</label>
+              <input type="date" value="2026-07-07">
+            </div>
+            <div class="field">
+              <label>📅 End Date</label>
+              <input type="date" value="2026-07-21">
+            </div>
+          </div>
+          <div class="field">
+            <label>🕐 Delivery Hours</label>
+            <div class="tgl-group">
+              <div class="tgl on" onclick="toggleTgl(this)">🌍 All Day</div>
+              <div class="tgl" onclick="toggleTgl(this)">🌅 Morning (6–12)</div>
+              <div class="tgl" onclick="toggleTgl(this)">☀️ Afternoon (12–18)</div>
+              <div class="tgl" onclick="toggleTgl(this)">🌙 Evening (18–22)</div>
+              <div class="tgl" onclick="toggleTgl(this)">🌃 Night (22–6)</div>
+            </div>
+          </div>
+          <div class="field">
+            <label>📊 Frequency Cap</label>
+            <div class="range-row">
+              <input type="range" min="1" max="10" value="3" oninput="document.getElementById('freq-val').textContent=this.value+'× / day'">
+              <span class="range-val" id="freq-val">3× / day</span>
+            </div>
+          </div>
+          <div class="field">
+            <label>⚡ Delivery Speed</label>
+            <div class="tgl-group">
+              <div class="tgl on" onclick="toggleTgl(this)">🐢 Standard (Even delivery)</div>
+              <div class="tgl" onclick="toggleTgl(this)">🚀 Accelerated (Spend fast)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 5: Review -->
+        <div class="step-pane" id="step5">
+          <div class="section-title"><span class="st-ico">✅</span> Review & Launch</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="info-box">
+              <div style="font-size:12px;font-weight:700;color:var(--dim);margin-bottom:10px;letter-spacing:.06em;text-transform:uppercase;">📲 Campaign Details</div>
+              <div class="ib-row"><span class="ib-label">Channel</span><span class="ib-val"><span style="color:var(--purple)">📱 STK Push</span></span></div>
+              <div class="ib-row"><span class="ib-label">Campaign Name</span><span class="ib-val">MTN Game Zone Q3</span></div>
+              <div class="ib-row"><span class="ib-label">SIM Menu Title</span><span class="ib-val">🎮 MTN Game Zone</span></div>
+              <div class="ib-row"><span class="ib-label">CTA Action</span><span class="ib-val">*8022#</span></div>
+              <div class="ib-row"><span class="ib-label">MTN Product ID</span><span class="ib-val" style="color:var(--green);">✅ Verified</span></div>
+            </div>
+            <div class="info-box">
+              <div style="font-size:12px;font-weight:700;color:var(--dim);margin-bottom:10px;letter-spacing:.06em;text-transform:uppercase;">🎯 Audience</div>
+              <div class="ib-row"><span class="ib-label">Geography</span><span class="ib-val">🇳🇬 All Nigeria</span></div>
+              <div class="ib-row"><span class="ib-label">Age Range</span><span class="ib-val">25–34</span></div>
+              <div class="ib-row"><span class="ib-label">Device</span><span class="ib-val">📱 All Devices</span></div>
+              <div class="ib-row"><span class="ib-label">Est. Reach</span><span class="ib-val" style="color:var(--primary);">1,200,000</span></div>
+              <div class="ib-row"><span class="ib-label">Interest</span><span class="ib-val">⚽ Sports · 📺 Entertainment</span></div>
+            </div>
+            <div class="info-box">
+              <div style="font-size:12px;font-weight:700;color:var(--dim);margin-bottom:10px;letter-spacing:.06em;text-transform:uppercase;">💰 Budget</div>
+              <div class="ib-row"><span class="ib-label">Pricing Model</span><span class="ib-val">📊 CPM</span></div>
+              <div class="ib-row"><span class="ib-label">Daily Budget</span><span class="ib-val">₦50,000</span></div>
+              <div class="ib-row"><span class="ib-label">Total Budget</span><span class="ib-val">₦500,000</span></div>
+              <div class="ib-row"><span class="ib-label">Run Dates</span><span class="ib-val">7–21 Jul 2026</span></div>
+              <div class="ib-row"><span class="ib-label">Freq Cap</span><span class="ib-val">3× / day</span></div>
+            </div>
+            <div class="info-box">
+              <div style="font-size:12px;font-weight:700;color:var(--dim);margin-bottom:10px;letter-spacing:.06em;text-transform:uppercase;">📈 Projections</div>
+              <div class="ib-row"><span class="ib-label">Est. Impressions</span><span class="ib-val" style="color:var(--blue);">~4.8M</span></div>
+              <div class="ib-row"><span class="ib-label">Est. Clicks</span><span class="ib-val">~192,000</span></div>
+              <div class="ib-row"><span class="ib-label">Est. CPM</span><span class="ib-val">₦104</span></div>
+              <div class="ib-row"><span class="ib-label">Campaign Score</span><span class="ib-val" style="color:var(--green);">⭐ 92/100</span></div>
+            </div>
+          </div>
+          <!-- STK compliance check -->
+          <div class="stk-spec-box" style="margin-top:16px;">
+            <div style="font-size:13px;font-weight:700;color:var(--purple);margin-bottom:10px;">📱 STK Push Compliance Check</div>
+            <div class="stk-spec-row"><span class="sk">SIM Toolkit Support</span><span class="sv">✅ All MTN SIMs (OTA enabled)</span></div>
+            <div class="stk-spec-row"><span class="sk">DND Filter Applied</span><span class="sv">✅ Excluded 14,320 DND numbers</span></div>
+            <div class="stk-spec-row"><span class="sk">NCC VAS Compliance</span><span class="sv">✅ Double opt-in gate enabled</span></div>
+            <div class="stk-spec-row"><span class="sk">MTN Product ID</span><span class="sv">✅ #MTN-8022-GAMES verified</span></div>
+            <div class="stk-spec-row"><span class="sk">Menu Character Count</span><span class="sv">✅ 18/20 chars</span></div>
+            <div class="stk-spec-row"><span class="sk">Body Character Count</span><span class="sv">✅ 98/160 chars</span></div>
+          </div>
+          <div style="background:var(--gdim);border:1px solid rgba(0,217,126,.25);border-radius:var(--rs);padding:12px;margin-top:14px;display:flex;gap:10px;align-items:flex-start;">
+            <span style="font-size:20px;">🟢</span>
+            <div style="font-size:13px;color:var(--text);">Campaign is <strong>ready to launch</strong>. All compliance checks passed. Estimated delivery begins within 2 hours of approval by the Tely platform team.</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right pane — live phone preview -->
+      <div class="wizard-right">
+        <div class="preview-label">📱 Live Preview</div>
+        <div id="preview-ch-badge" class="preview-ch-badge" style="background:rgba(167,139,250,.15);color:var(--purple);">📱 STK Push</div>
+        <div class="phone-wrap">
+          <div class="phone-frame">
+            <div class="phone-notch"></div>
+            <div class="phone-screen" id="phone-preview">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--faint);text-align:center;">Actual rendering depends on<br>handset SIM menu implementation</div>
+        </div>
+        <div class="right-panel-label">📊 Channel Stats</div>
+        <div class="info-box">
+          <div class="ib-row"><span class="ib-label">📡 Avg Delivery Rate</span><span class="ib-val" style="color:var(--green);" id="stat-delivery">98.4%</span></div>
+          <div class="ib-row"><span class="ib-label">👆 Avg Interaction</span><span class="ib-val" id="stat-ctr">4.2%</span></div>
+          <div class="ib-row"><span class="ib-label">💵 Floor CPM (₦)</span><span class="ib-val" id="stat-cpm">₦80</span></div>
+          <div class="ib-row"><span class="ib-label">⚡ Data Required</span><span class="ib-val" id="stat-data" style="color:var(--green);">None ✅</span></div>
+        </div>
+        <div class="right-panel-label">🔮 TelySignal™ Score</div>
+        <div class="info-box">
+          <div style="font-size:12px;color:var(--dim);margin-bottom:8px;">Audience quality score powered by carrier intelligence</div>
+          <div style="font-family:var(--df);font-size:28px;font-weight:700;color:var(--primary);">87<span style="font-size:14px;color:var(--dim)">/100</span></div>
+          <div style="font-size:11px;color:var(--green);margin-top:4px;">⭐ High-intent segment detected</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wizard-footer">
+      <div class="wf-estimate">💰 Est. reach: <strong>1,200,000</strong> subscribers · Budget: <strong>₦500,000</strong></div>
+      <div class="wf-btns">
+        <button class="wbtn back" id="wbtn-back" onclick="prevStep()">← Back</button>
+        <button class="wbtn next" id="wbtn-next" onclick="nextStep()">Next Step →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── STATE ──
+let currentPage = 'dashboard';
+let wizardStep = 1;
+let selectedChannel = 'stk';
+let charts = {};
+
+// ── LOGIN ──
+function doLogin(){
+  document.getElementById('login-screen').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+  nav('dashboard');
+  renderPhonePreview();
+}
+
+// ── SIDEBAR (mobile) ──
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('show');
+  document.getElementById('sidebar-backdrop').classList.toggle('show');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('show');
+  document.getElementById('sidebar-backdrop').classList.remove('show');
+}
+
+// ── NAV ──
+function nav(page){
+  currentPage = page;
+  document.querySelectorAll('.sitem').forEach(el=>el.classList.remove('active'));
+  event && event.currentTarget && event.currentTarget.classList.add('active');
+  // Update active based on onclick match
+  document.querySelectorAll('.sitem').forEach(el=>{
+    if(el.getAttribute('onclick')===`nav('${page}')`){el.classList.add('active');}
+  });
+  const titles={
+    dashboard:'📊 Dashboard <span>Overview</span>',
+    campaigns:'🚀 Campaigns <span>All Campaigns</span>',
+    analytics:'📈 Analytics <span>Performance</span>',
+    audience:'🎯 Audience <span>Builder</span>',
+    segments:'🧬 Segments <span>Saved</span>',
+    reach:'📡 Reach & Verify',
+    channels:'📲 Channels',
+    creatives:'🎨 Creatives',
+    ai:'🤖 AI Tools',
+    billing:'💳 Billing & Budget',
+    notifications:'🔔 Notifications',
+    settings:'⚙️ Settings'
+  };
+  document.getElementById('page-title').innerHTML = titles[page]||page;
+  const area = document.getElementById('content-area');
+  if(page==='dashboard') renderDashboard(area);
+  else if(page==='campaigns') renderCampaigns(area);
+  else if(page==='analytics') renderAnalytics(area);
+  else if(page==='audience') renderAudience(area);
+  else if(page==='ai') renderAI(area);
+  else if(page==='billing') renderBilling(area);
+  else if(page==='notifications') renderNotifications(area);
+  else if(page==='channels') renderChannels(area);
+  else renderGeneric(area,page);
+  closeSidebar();
+}
+
+// ── DASHBOARD ──
+function renderDashboard(el){
+  el.innerHTML=`
+<div class="grid4" style="margin-bottom:20px;">
+  <div class="stat-card orange">
+    <div class="stat-emo">💸</div>
+    <div class="stat-val">₦2.84M</div>
+    <div class="stat-label">Total Spend (MTD)</div>
+    <div class="stat-delta up">↑ 18.4% vs last month</div>
+  </div>
+  <div class="stat-card blue">
+    <div class="stat-emo">👁️</div>
+    <div class="stat-val">47.2M</div>
+    <div class="stat-label">Total Impressions</div>
+    <div class="stat-delta up">↑ 22.1%</div>
+  </div>
+  <div class="stat-card green">
+    <div class="stat-emo">✅</div>
+    <div class="stat-val">192,400</div>
+    <div class="stat-label">Conversions (CPA)</div>
+    <div class="stat-delta up">↑ 31.7%</div>
+  </div>
+  <div class="stat-card yellow">
+    <div class="stat-emo">👆</div>
+    <div class="stat-val">4.07%</div>
+    <div class="stat-label">Avg Interaction Rate</div>
+    <div class="stat-delta up">↑ 0.8pp</div>
+  </div>
+</div>
+
+<div class="grid4" style="margin-bottom:20px;">
+  <div class="stat-card purple">
+    <div class="stat-emo">📱</div>
+    <div class="stat-val">12.1M</div>
+    <div class="stat-label">STK Push Delivered</div>
+    <div class="stat-delta up">↑ 44.2%</div>
+  </div>
+  <div class="stat-card green">
+    <div class="stat-emo">💬</div>
+    <div class="stat-val">18.4M</div>
+    <div class="stat-label">SMS Delivered</div>
+    <div class="stat-delta up">↑ 9.1%</div>
+  </div>
+  <div class="stat-card cyan">
+    <div class="stat-emo">🌐</div>
+    <div class="stat-val">8.7M</div>
+    <div class="stat-label">WAP Push Sent</div>
+    <div class="stat-delta down">↓ 2.3%</div>
+  </div>
+  <div class="stat-card blue">
+    <div class="stat-emo">*#</div>
+    <div class="stat-val">8.0M</div>
+    <div class="stat-label">USSD Sessions</div>
+    <div class="stat-delta up">↑ 15.6%</div>
+  </div>
+</div>
+
+<div class="grid2" style="margin-bottom:20px;">
+  <div class="chart-card">
+    <div class="section-title"><span class="st-ico">📈</span> Daily Spend — Last 14 Days</div>
+    <div class="chart-wrap"><canvas id="spendChart"></canvas></div>
+  </div>
+  <div class="chart-card">
+    <div class="section-title"><span class="st-ico">📊</span> Channel Mix by Impressions</div>
+    <div class="chart-wrap"><canvas id="channelChart"></canvas></div>
+  </div>
+</div>
+
+<div class="card" style="margin-bottom:20px;">
+  <div class="section-title"><span class="st-ico">🚀</span> Active Campaigns</div>
+  <table class="tbl">
+    <thead><tr>
+      <th>Campaign</th><th>Channel</th><th>Status</th><th>Impressions</th><th>Conv.</th><th>CPA ₦</th><th>Budget Used</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>🎮 MTN Game Zone Q3</strong><br><span style="color:var(--faint);font-size:11px;">70TH Precinct / *8022#</span></td>
+        <td><span class="ch-pill stk">📱 STK Push</span></td>
+        <td><span class="pill active">● Active</span></td>
+        <td>12,140,000</td><td>48,220</td><td>₦58.60</td>
+        <td>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="pbar-wrap" style="width:80px;"><div class="pbar purple" style="width:62%"></div></div>
+            <span style="font-size:12px;color:var(--dim);">62%</span>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td><strong>💬 Total Goals Acquisition</strong><br><span style="color:var(--faint);font-size:11px;">70TH Precinct / Subscriber Acq.</span></td>
+        <td><span class="ch-pill sms">💬 SMS</span></td>
+        <td><span class="pill active">● Active</span></td>
+        <td>18,420,000</td><td>72,110</td><td>₦39.10</td>
+        <td>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="pbar-wrap" style="width:80px;"><div class="pbar green" style="width:78%"></div></div>
+            <span style="font-size:12px;color:var(--dim);">78%</span>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td><strong>📞 Predictor Voice Push</strong><br><span style="color:var(--faint);font-size:11px;">OBD Outbound Voice</span></td>
+        <td><span class="ch-pill obd">📞 OBD</span></td>
+        <td><span class="pill paused">⏸ Paused</span></td>
+        <td>4,200,000</td><td>12,440</td><td>₦80.40</td>
+        <td>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="pbar-wrap" style="width:80px;"><div class="pbar yellow" style="width:43%"></div></div>
+            <span style="font-size:12px;color:var(--dim);">43%</span>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td><strong>*# USSD Subs Flow</strong><br><span style="color:var(--faint);font-size:11px;">Correct Score / *8022#</span></td>
+        <td><span class="ch-pill ussd">*# USSD</span></td>
+        <td><span class="pill active">● Active</span></td>
+        <td>8,040,000</td><td>59,640</td><td>₦46.20</td>
+        <td>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="pbar-wrap" style="width:80px;"><div class="pbar blue" style="width:55%"></div></div>
+            <span style="font-size:12px;color:var(--dim);">55%</span>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="grid2">
+  <div class="card">
+    <div class="section-title"><span class="st-ico">⚡</span> Quick Actions</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <button class="tbtn primary" style="justify-content:flex-start;" onclick="openWizard()">🚀 Launch New Campaign</button>
+      <button class="tbtn ghost" style="justify-content:flex-start;" onclick="nav('audience')">🎯 Build New Audience</button>
+      <button class="tbtn ghost" style="justify-content:flex-start;" onclick="nav('ai')">🤖 AI Campaign Generator</button>
+      <button class="tbtn ghost" style="justify-content:flex-start;" onclick="nav('analytics')">📈 View Full Analytics</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-title"><span class="st-ico">🔔</span> Recent Alerts</div>
+    <div class="notif-item">
+      <div class="notif-emo">⚠️</div>
+      <div class="notif-body">
+        <div class="nb-title">STK Push delivery slowed</div>
+        <div class="nb-desc">MTN Game Zone saw 8% below-target delivery between 02:00–04:00 WAT</div>
+        <div class="nb-time">🕐 2 hours ago</div>
+      </div>
+    </div>
+    <div class="notif-item">
+      <div class="notif-emo">✅</div>
+      <div class="notif-body">
+        <div class="nb-title">Budget milestone reached</div>
+        <div class="nb-desc">Total Goals SMS campaign hit 75% of budget. Projected to end 1 Jul.</div>
+        <div class="nb-time">🕐 6 hours ago</div>
+      </div>
+    </div>
+    <div class="notif-item">
+      <div class="notif-emo">📊</div>
+      <div class="notif-body">
+        <div class="nb-title">New TelySignal™ segment ready</div>
+        <div class="nb-desc">High-intent sports gamblers — 280K subscribers identified</div>
+        <div class="nb-time">🕐 Yesterday</div>
+      </div>
+    </div>
+  </div>
+</div>`;
+  setTimeout(()=>{
+    const c1 = document.getElementById('spendChart');
+    const c2 = document.getElementById('channelChart');
+    if(!c1||!c2) return;
+    const labels = ['18 Jun','19','20','21','22','23','24','25','26','27','28','29','30 Jun','1 Jul'];
+    if(charts.spend) charts.spend.destroy();
+    charts.spend = new Chart(c1,{type:'line',data:{labels,datasets:[{
+      label:'Daily Spend (₦)',
+      data:[148000,162000,175000,158000,192000,188000,210000,225000,198000,231000,245000,238000,258000,212000],
+      borderColor:'#FF6A3D',backgroundColor:'rgba(255,106,61,.08)',fill:true,tension:.4,pointRadius:3
+    }]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#97A0B8',font:{size:11}}},x:{grid:{display:false},ticks:{color:'#97A0B8',font:{size:10}}}}}});
+    if(charts.channel) charts.channel.destroy();
+    charts.channel = new Chart(c2,{type:'doughnut',data:{
+      labels:['📱 STK Push','💬 SMS','🌐 WAP Push','*# USSD','📞 OBD'],
+      datasets:[{data:[25.6,39.0,18.4,16.9,0.1],backgroundColor:['#A78BFA','#00D97E','#22D3EE','#4F6EF7','#FFB547'],borderWidth:0,hoverOffset:6}]
+    },options:{responsive:true,maintainAspectRatio:false,cutout:'68%',plugins:{legend:{position:'right',labels:{color:'#97A0B8',font:{size:11},padding:10}}}}});
+  },50);
+}
+
+// ── CAMPAIGNS ──
+function renderCampaigns(el){
+  el.innerHTML=`
+<div class="grid4" style="margin-bottom:20px;">
+  <div class="stat-card orange"><div class="stat-emo">🚀</div><div class="stat-val">4</div><div class="stat-label">Active Campaigns</div></div>
+  <div class="stat-card blue"><div class="stat-emo">⏸️</div><div class="stat-val">2</div><div class="stat-label">Paused</div></div>
+  <div class="stat-card green"><div class="stat-emo">✅</div><div class="stat-val">18</div><div class="stat-label">Completed</div></div>
+  <div class="stat-card yellow"><div class="stat-emo">📝</div><div class="stat-val">3</div><div class="stat-label">Drafts</div></div>
+</div>
+<div class="card">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+    <div class="section-title" style="margin-bottom:0;"><span class="st-ico">🚀</span> All Campaigns</div>
+    <button class="tbtn primary" onclick="openWizard()">+ New Campaign</button>
+  </div>
+  <table class="tbl">
+    <thead><tr><th>Campaign</th><th>Channel</th><th>Status</th><th>Reach</th><th>Impressions</th><th>Conv.</th><th>Spend (₦)</th><th>Actions</th></tr></thead>
+    <tbody>
+      <tr><td><strong>📱 MTN Game Zone Q3</strong><br><span style="color:var(--faint);font-size:11px;">Created 1 Jul · 70TH Precinct</span></td><td><span class="ch-pill stk">📱 STK Push</span></td><td><span class="pill active">● Active</span></td><td>1,200,000</td><td>12,140,000</td><td>48,220</td><td>₦282,440</td><td><button class="tbtn ghost" style="padding:4px 10px;font-size:12px;">⚙️ Edit</button></td></tr>
+      <tr><td><strong>💬 Total Goals SMS Acq.</strong><br><span style="color:var(--faint);font-size:11px;">Created 20 Jun · Subscriber Acq.</span></td><td><span class="ch-pill sms">💬 SMS</span></td><td><span class="pill active">● Active</span></td><td>2,800,000</td><td>18,420,000</td><td>72,110</td><td>₦781,200</td><td><button class="tbtn ghost" style="padding:4px 10px;font-size:12px;">⚙️ Edit</button></td></tr>
+      <tr><td><strong>*# Correct Score USSD</strong><br><span style="color:var(--faint);font-size:11px;">Created 14 Jun</span></td><td><span class="ch-pill ussd">*# USSD</span></td><td><span class="pill active">● Active</span></td><td>900,000</td><td>8,040,000</td><td>59,640</td><td>₦412,000</td><td><button class="tbtn ghost" style="padding:4px 10px;font-size:12px;">⚙️ Edit</button></td></tr>
+      <tr><td><strong>🌐 WAP Predictor Push</strong><br><span style="color:var(--faint);font-size:11px;">Created 10 Jun</span></td><td><span class="ch-pill wap">🌐 WAP Push</span></td><td><span class="pill active">● Active</span></td><td>1,100,000</td><td>8,700,000</td><td>22,400</td><td>₦320,000</td><td><button class="tbtn ghost" style="padding:4px 10px;font-size:12px;">⚙️ Edit</button></td></tr>
+      <tr><td><strong>📞 Predictor Voice Push</strong><br><span style="color:var(--faint);font-size:11px;">Created 5 Jun</span></td><td><span class="ch-pill obd">📞 OBD</span></td><td><span class="pill paused">⏸ Paused</span></td><td>500,000</td><td>4,200,000</td><td>12,440</td><td>₦198,000</td><td><button class="tbtn ghost" style="padding:4px 10px;font-size:12px;">⚙️ Edit</button></td></tr>
+      <tr><td><strong>📱 Easter STK Push Fest</strong><br><span style="color:var(--faint);font-size:11px;">Created 15 Apr</span></td><td><span class="ch-pill stk">📱 STK Push</span></td><td><span class="pill ended">◼ Ended</span></td><td>3,200,000</td><td>28,400,000</td><td>112,000</td><td>₦1,420,000</td><td><button class="tbtn ghost" style="padding:4px 10px;font-size:12px;">📊 Report</button></td></tr>
+      <tr><td><strong>💬 Q2 Subscriber Drive</strong><br><span style="color:var(--faint);font-size:11px;">Draft · Not submitted</span></td><td><span class="ch-pill sms">💬 SMS</span></td><td><span class="pill draft">● Draft</span></td><td>—</td><td>—</td><td>—</td><td>—</td><td><button class="tbtn primary" style="padding:4px 10px;font-size:12px;" onclick="openWizard()">🚀 Launch</button></td></tr>
+    </tbody>
+  </table>
+</div>`;
+}
+
+// ── ANALYTICS ──
+function renderAnalytics(el){
+  el.innerHTML=`
+<div class="grid4" style="margin-bottom:20px;">
+  <div class="stat-card orange"><div class="stat-emo">💰</div><div class="stat-val">₦2.84M</div><div class="stat-label">Total Spend (MTD)</div><div class="stat-delta up">↑ 18.4%</div></div>
+  <div class="stat-card purple"><div class="stat-emo">📱</div><div class="stat-val">47.2M</div><div class="stat-label">Total Impressions</div><div class="stat-delta up">↑ 22%</div></div>
+  <div class="stat-card green"><div class="stat-emo">✅</div><div class="stat-val">4.07%</div><div class="stat-label">Avg Interaction Rate</div><div class="stat-delta up">↑ 0.8pp</div></div>
+  <div class="stat-card blue"><div class="stat-emo">🏆</div><div class="stat-val">₦58.60</div><div class="stat-label">Avg CPA</div><div class="stat-delta down">↓ 12% (better)</div></div>
+</div>
+<div class="card" style="margin-bottom:20px;">
+  <div class="section-title"><span class="st-ico">📊</span> Channel Performance Breakdown</div>
+  <table class="tbl">
+    <thead><tr><th>Channel</th><th>Impressions</th><th>Interactions</th><th>Rate</th><th>Conversions</th><th>CPA (₦)</th><th>Spend (₦)</th></tr></thead>
+    <tbody>
+      <tr><td><span class="ch-pill stk">📱 STK Push</span></td><td>12,140,000</td><td>509,880</td><td><strong style="color:var(--green)">4.20%</strong></td><td>48,220</td><td>₦58.60</td><td>₦282,440</td></tr>
+      <tr><td><span class="ch-pill sms">💬 SMS</span></td><td>18,420,000</td><td>645,900</td><td><strong style="color:var(--green)">3.51%</strong></td><td>72,110</td><td>₦39.10</td><td>₦781,200</td></tr>
+      <tr><td><span class="ch-pill ussd">*# USSD</span></td><td>8,040,000</td><td>514,560</td><td><strong style="color:var(--green)">6.40%</strong></td><td>59,640</td><td>₦46.20</td><td>₦412,000</td></tr>
+      <tr><td><span class="ch-pill wap">🌐 WAP Push</span></td><td>8,700,000</td><td>208,800</td><td><strong style="color:var(--yellow)">2.40%</strong></td><td>22,400</td><td>₦62.80</td><td>₦320,000</td></tr>
+      <tr><td><span class="ch-pill obd">📞 OBD</span></td><td>4,200,000</td><td>134,400</td><td><strong style="color:var(--yellow)">3.20%</strong></td><td>12,440</td><td>₦80.40</td><td>₦198,000</td></tr>
+    </tbody>
+  </table>
+</div>
+<div class="chart-card">
+  <div class="section-title"><span class="st-ico">📈</span> Conversions by Channel — Last 30 Days</div>
+  <div class="chart-wrap"><canvas id="convChart"></canvas></div>
+</div>`;
+  setTimeout(()=>{
+    const c = document.getElementById('convChart');
+    if(!c) return;
+    if(charts.conv) charts.conv.destroy();
+    charts.conv = new Chart(c,{type:'bar',data:{
+      labels:['📱 STK Push','💬 SMS','*# USSD','🌐 WAP','📞 OBD'],
+      datasets:[{label:'Conversions',data:[48220,72110,59640,22400,12440],backgroundColor:['#A78BFA','#00D97E','#4F6EF7','#22D3EE','#FFB547'],borderRadius:8}]
+    },options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'#97A0B8'}},x:{grid:{display:false},ticks:{color:'#97A0B8'}}}}});
+  },50);
+}
+
+// ── AUDIENCE ──
+function renderAudience(el){
+  el.innerHTML=`
+<div class="grid3" style="margin-bottom:20px;">
+  <div class="stat-card orange"><div class="stat-emo">👥</div><div class="stat-val">18.4M</div><div class="stat-label">Total Reachable (MTN NG)</div></div>
+  <div class="stat-card blue"><div class="stat-emo">🧬</div><div class="stat-val">12</div><div class="stat-label">Saved Segments</div></div>
+  <div class="stat-card green"><div class="stat-emo">🎯</div><div class="stat-val">4.2M</div><div class="stat-label">Active Audience Pool</div></div>
+</div>
+<div class="card">
+  <div class="section-title"><span class="st-ico">🧬</span> Saved Audience Segments</div>
+  <table class="tbl">
+    <thead><tr><th>Segment</th><th>Size</th><th>Signal</th><th>Channels</th><th>Actions</th></tr></thead>
+    <tbody>
+      <tr><td><strong>⚽ High-intent sports gamblers</strong></td><td>280,000</td><td><span style="color:var(--green);">⭐ 91/100</span></td><td>📱 💬 *#</td><td><button class="tbtn ghost" style="padding:4px 10px;font-size:12px;">Use</button></td></tr>
+      <tr><td><strong>🎮 Mobile gamers 18–34</strong></td><td>1,200,000</td><td><span style="color:var(--green);">⭐ 87/100</span></td><td>📱 💬</td><td><button class="tbtn ghost" style="padding:4px 10px;font-size:12px;">Use</button></td></tr>
+      <tr><td><strong>💰 High ARPU subscribers</strong></td><td>450,000</td><td><span style="color:var(--primary);">⭐ 95/100</span></td><td>📱 💬 🌐</td><td><button class="tbtn ghost" style="padding:4px 10px;font-size:12px;">Use</button></td></tr>
+      <tr><td><strong>📺 Entertainment & music fans</strong></td><td>3,100,000</td><td><span style="color:var(--yellow);">⭐ 74/100</span></td><td>💬 🌐 📞</td><td><button class="tbtn ghost" style="padding:4px 10px;font-size:12px;">Use</button></td></tr>
+      <tr><td><strong>🏙️ Lagos urban 25–44</strong></td><td>820,000</td><td><span style="color:var(--green);">⭐ 88/100</span></td><td>📱 💬 *# 🌐</td><td><button class="tbtn ghost" style="padding:4px 10px;font-size:12px;">Use</button></td></tr>
+    </tbody>
+  </table>
+</div>`;
+}
+
+// ── AI TOOLS ──
+function renderAI(el){
+  el.innerHTML=`
+<div class="section-title"><span class="st-ico">🤖</span> Tely AI Tools</div>
+<p style="color:var(--dim);font-size:13px;margin-bottom:20px;">Powered by carrier intelligence and generative AI to help you create, optimise, and scale campaigns on MTN Nigeria.</p>
+<div class="ai-input-wrap" style="margin-bottom:24px;">
+  <div style="font-size:13px;font-weight:700;margin-bottom:10px;">✨ Describe your campaign in plain language</div>
+  <div class="ai-input-row">
+    <input class="ai-input" id="ai-prompt" placeholder="e.g. Push STK notification to football fans in Lagos, budget ₦200k, CPA pricing, goal is subscribe to *8022#...">
+    <button class="ai-go" onclick="runAI()">🚀 Generate</button>
+  </div>
+  <div id="ai-output" style="display:none;margin-top:14px;background:var(--card3);border-radius:var(--rs);padding:14px;font-size:13px;color:var(--text);line-height:1.6;"></div>
+</div>
+<div class="ai-grid">
+  <div class="ai-card"><div class="ai-emo">📝</div><div class="ai-name">STK Copy Generator</div><div class="ai-desc">Generate SIM Toolkit menu text, body messages, and CTA options optimised for your product and audience.</div></div>
+  <div class="ai-card"><div class="ai-emo">🎯</div><div class="ai-name">Audience Builder</div><div class="ai-desc">Describe your ideal subscriber in plain text and AI maps it to TelySignal™ behavioural segments.</div></div>
+  <div class="ai-card"><div class="ai-emo">💰</div><div class="ai-name">Budget Optimiser</div><div class="ai-desc">Recommend optimal budget splits across STK Push, SMS, USSD, WAP and OBD for your CPA target.</div></div>
+  <div class="ai-card"><div class="ai-emo">📈</div><div class="ai-name">Performance Analyst</div><div class="ai-desc">Upload your campaign results and get a plain-English diagnosis with specific recommendations to improve conversion rate.</div></div>
+  <div class="ai-card"><div class="ai-emo">🔮</div><div class="ai-name">Delivery Forecaster</div><div class="ai-desc">Predict reach, impressions, and conversions before you spend. Powered by MTN network data + TelySignal™.</div></div>
+  <div class="ai-card"><div class="ai-emo">🧬</div><div class="ai-name">Segment Suggester</div><div class="ai-desc">Enter your product category and goal; AI identifies the top 5 subscriber segments on MTN Nigeria to target.</div></div>
+  <div class="ai-card"><div class="ai-emo">💬</div><div class="ai-name">SMS Copywriter</div><div class="ai-desc">Generate DND-compliant, ARCON-safe SMS copy in English, Yoruba, Hausa, Igbo or Pidgin. 160-char optimised.</div></div>
+  <div class="ai-card"><div class="ai-emo">🌐</div><div class="ai-name">WAP Landing Builder</div><div class="ai-desc">Auto-generate a WAP-compatible mobile landing page from your campaign brief. Zero data required to load.</div></div>
+  <div class="ai-card"><div class="ai-emo">📞</div><div class="ai-name">OBD Script Writer</div><div class="ai-desc">Write engaging IVR call scripts with proper opt-out flows. Localised tone for Nigerian audiences.</div></div>
+</div>`;
+}
+
+function runAI(){
+  const p = document.getElementById('ai-prompt').value;
+  if(!p) return;
+  const out = document.getElementById('ai-output');
+  out.style.display='block';
+  out.innerHTML='<span style="color:var(--dim);">🤖 Generating campaign plan...</span>';
+  setTimeout(()=>{
+    out.innerHTML=`<strong style="color:var(--primary);">🚀 Generated Campaign Plan</strong><br><br>
+<strong>Channel:</strong> 📱 STK Push Notification (SIM Toolkit)<br>
+<strong>Target Audience:</strong> ⚽ Football fans aged 18–34 in Lagos · TelySignal™ Score 87/100<br>
+<strong>Estimated Reach:</strong> 420,000 subscribers<br>
+<strong>STK Menu Title:</strong> 🎮 Play &amp; Win Now!<br>
+<strong>Message:</strong> "Dial *8022# to predict today's football scores and win airtime! Available all day, no data needed."<br>
+<strong>CTA Option 1:</strong> ✅ Play Now — *8022#<br>
+<strong>Budget Recommendation:</strong> ₦200,000 total · ₦14,285/day for 14 days<br>
+<strong>Pricing Model:</strong> CPA (pay per verified subscription)<br>
+<strong>Projected CPA:</strong> ₦52–68 per subscriber<br>
+<strong>Projected Conversions:</strong> ~2,940–3,846 new subscribers<br><br>
+<button class="tbtn primary" onclick="openWizard()" style="margin-top:4px;">🚀 Build this campaign →</button>`;
+  },900);
+}
+
+// ── BILLING ──
+function renderBilling(el){
+  el.innerHTML=`
+<div class="grid3" style="margin-bottom:20px;">
+  <div class="stat-card orange"><div class="stat-emo">💳</div><div class="stat-val">₦4,218,000</div><div class="stat-label">Available Balance</div></div>
+  <div class="stat-card blue"><div class="stat-emo">💸</div><div class="stat-val">₦2,840,000</div><div class="stat-label">MTD Spend</div></div>
+  <div class="stat-card green"><div class="stat-emo">🏦</div><div class="stat-val">₦10,000,000</div><div class="stat-label">Monthly Budget Limit</div></div>
+</div>
+<div class="card">
+  <div class="section-title"><span class="st-ico">📊</span> Recent Transactions</div>
+  <table class="tbl">
+    <thead><tr><th>Date</th><th>Description</th><th>Channel</th><th>Amount (₦)</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>01 Jul</td><td>📱 MTN Game Zone — STK Push daily</td><td><span class="ch-pill stk">📱 STK</span></td><td>-₦18,440</td><td><span class="pill active">● Settled</span></td></tr>
+      <tr><td>01 Jul</td><td>💬 Total Goals SMS — daily</td><td><span class="ch-pill sms">💬 SMS</span></td><td>-₦52,100</td><td><span class="pill active">● Settled</span></td></tr>
+      <tr><td>30 Jun</td><td>🏦 Top-up via bank transfer</td><td>—</td><td>+₦2,000,000</td><td><span class="pill active">● Confirmed</span></td></tr>
+      <tr><td>30 Jun</td><td>*# Correct Score USSD daily</td><td><span class="ch-pill ussd">*# USSD</span></td><td>-₦28,200</td><td><span class="pill active">● Settled</span></td></tr>
+      <tr><td>29 Jun</td><td>🌐 WAP Predictor Push daily</td><td><span class="ch-pill wap">🌐 WAP</span></td><td>-₦21,400</td><td><span class="pill active">● Settled</span></td></tr>
+    </tbody>
+  </table>
+</div>`;
+}
+
+// ── NOTIFICATIONS ──
+function renderNotifications(el){
+  el.innerHTML=`
+<div class="card">
+  <div class="section-title"><span class="st-ico">🔔</span> All Notifications</div>
+  <div class="notif-item"><div class="notif-emo">⚠️</div><div class="notif-body"><div class="nb-title">STK Push delivery slowed</div><div class="nb-desc">MTN Game Zone saw 8% below-target delivery between 02:00–04:00 WAT. Monitoring continues.</div><div class="nb-time">🕐 2 hours ago</div></div><div class="notif-dot"></div></div>
+  <div class="notif-item"><div class="notif-emo">✅</div><div class="notif-body"><div class="nb-title">Budget milestone: Total Goals SMS</div><div class="nb-desc">Campaign has spent 75% of ₦1,000,000 budget. Projected to exhaust by 1 Jul at current pace.</div><div class="nb-time">🕐 6 hours ago</div></div><div class="notif-dot"></div></div>
+  <div class="notif-item"><div class="notif-emo">📊</div><div class="notif-body"><div class="nb-title">New TelySignal™ segment available</div><div class="nb-desc">"High-intent sports gamblers, Lagos 18–34" — 280K subscribers, signal score 91/100.</div><div class="nb-time">🕐 Yesterday 14:22</div></div><div class="notif-dot"></div></div>
+  <div class="notif-item"><div class="notif-emo">🚀</div><div class="notif-body"><div class="nb-title">Campaign launched successfully</div><div class="nb-desc">MTN Game Zone STK Push is now live and delivering. First impressions logged.</div><div class="nb-time">🕐 Yesterday 09:00</div></div></div>
+  <div class="notif-item"><div class="notif-emo">🤖</div><div class="notif-body"><div class="nb-title">AI insight ready</div><div class="nb-desc">Your USSD campaign has 6.4% interaction rate — 82% above network average. Consider increasing budget.</div><div class="nb-time">🕐 2 days ago</div></div></div>
+  <div class="notif-item"><div class="notif-emo">💬</div><div class="notif-body"><div class="nb-title">SMS campaign approved</div><div class="nb-desc">Total Goals Subscriber Acquisition SMS campaign approved by Tely compliance team and is delivering.</div><div class="nb-time">🕐 20 Jun</div></div></div>
+</div>`;
+}
+
+// ── CHANNELS PAGE ──
+function renderChannels(el){
+  el.innerHTML=`
+<div class="section-title"><span class="st-ico">📲</span> Available Delivery Channels</div>
+<p style="color:var(--dim);font-size:13px;margin-bottom:20px;">All channels are verified and active on the MTN Nigeria network. Delivery is via the Tely platform's carrier integration.</p>
+<div class="channel-grid" style="margin-top:0;">
+  <div class="ch-card" style="cursor:default;">
+    <div class="ch-emo">📱</div>
+    <div class="ch-name">STK Push Notification <span style="background:var(--gdim);color:var(--green);font-size:10px;padding:2px 8px;border-radius:10px;margin-left:6px;">● Live</span></div>
+    <div class="ch-desc">SIM Toolkit push delivered over-the-air directly into the subscriber's SIM menu. Zero internet. Works on any MTN SIM. Most intrusive and highest-attention format available.</div>
+    <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;">
+      <div><span style="color:var(--faint);">Avg Delivery</span><br><strong style="color:var(--green)">98.4%</strong></div>
+      <div><span style="color:var(--faint);">Interaction Rate</span><br><strong>4.2%</strong></div>
+      <div><span style="color:var(--faint);">Floor CPM</span><br><strong>₦80</strong></div>
+      <div><span style="color:var(--faint);">Data Required</span><br><strong style="color:var(--green)">None ✅</strong></div>
+    </div>
+  </div>
+  <div class="ch-card" style="cursor:default;">
+    <div class="ch-emo">💬</div>
+    <div class="ch-name">SMS Campaign <span style="background:var(--gdim);color:var(--green);font-size:10px;padding:2px 8px;border-radius:10px;margin-left:6px;">● Live</span></div>
+    <div class="ch-desc">Carrier-grade SMS with DND filtering. Supports alphanumeric sender IDs and click tracking via redirect links. Highest volume channel on the platform.</div>
+    <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;">
+      <div><span style="color:var(--faint);">Avg Delivery</span><br><strong style="color:var(--green)">99.1%</strong></div>
+      <div><span style="color:var(--faint);">Interaction Rate</span><br><strong>3.5%</strong></div>
+      <div><span style="color:var(--faint);">Floor CPM</span><br><strong>₦40</strong></div>
+      <div><span style="color:var(--faint);">Data Required</span><br><strong style="color:var(--green)">None ✅</strong></div>
+    </div>
+  </div>
+  <div class="ch-card" style="cursor:default;">
+    <div class="ch-emo">📞</div>
+    <div class="ch-name">OBD Voice Call <span style="background:var(--gdim);color:var(--green);font-size:10px;padding:2px 8px;border-radius:10px;margin-left:6px;">● Live</span></div>
+    <div class="ch-desc">Automated outbound voice call with IVR interaction. High attention, fully ARCON compliant with mandatory opt-out flow on every call.</div>
+    <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;">
+      <div><span style="color:var(--faint);">Avg Answer Rate</span><br><strong>61.4%</strong></div>
+      <div><span style="color:var(--faint);">Interaction Rate</span><br><strong>3.2%</strong></div>
+      <div><span style="color:var(--faint);">Floor CPM</span><br><strong>₦120</strong></div>
+      <div><span style="color:var(--faint);">Data Required</span><br><strong style="color:var(--green)">None ✅</strong></div>
+    </div>
+  </div>
+  <div class="ch-card" style="cursor:default;">
+    <div class="ch-emo">🌐</div>
+    <div class="ch-name">WAP Push <span style="background:var(--gdim);color:var(--green);font-size:10px;padding:2px 8px;border-radius:10px;margin-left:6px;">● Live</span></div>
+    <div class="ch-desc">Push a WAP message with a clickable URL to the subscriber's native message inbox. Ideal for feature phones and low-data environments.</div>
+    <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;">
+      <div><span style="color:var(--faint);">Avg Delivery</span><br><strong style="color:var(--green)">97.8%</strong></div>
+      <div><span style="color:var(--faint);">Click Rate</span><br><strong>2.4%</strong></div>
+      <div><span style="color:var(--faint);">Floor CPM</span><br><strong>₦35</strong></div>
+      <div><span style="color:var(--faint);">Data Required</span><br><strong style="color:var(--yellow)">Minimal</strong></div>
+    </div>
+  </div>
+  <div class="ch-card" style="cursor:default;grid-column:span 2;">
+    <div style="display:flex;gap:16px;align-items:flex-start;">
+      <div class="ch-emo" style="flex-shrink:0;">*#</div>
+      <div style="flex:1;">
+        <div class="ch-name">USSD Campaign <span style="background:var(--gdim);color:var(--green);font-size:10px;padding:2px 8px;border-radius:10px;margin-left:6px;">● Live</span></div>
+        <div class="ch-desc">Interactive USSD session on *8022# or branded short code. Zero-data, real-time subscriber interaction ideal for subscriber acquisition, opt-in flows, and game entry. Highest interaction rate of all channels. Verified via MTN Product ID.</div>
+        <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;font-size:12px;">
+          <div><span style="color:var(--faint);">Session Start Rate</span><br><strong style="color:var(--green)">78.2%</strong></div>
+          <div><span style="color:var(--faint);">Interaction Rate</span><br><strong style="color:var(--green)">6.4%</strong></div>
+          <div><span style="color:var(--faint);">Floor CPA</span><br><strong>₦35</strong></div>
+          <div><span style="color:var(--faint);">Data Required</span><br><strong style="color:var(--green)">None ✅</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>`;
+}
+
+// ── GENERIC PAGE ──
+function renderGeneric(el,page){
+  const emos={segments:'🧬',reach:'📡',creatives:'🎨',settings:'⚙️'};
+  el.innerHTML=`<div class="empty-state"><div class="empty-emo">${emos[page]||'🚀'}</div><div class="empty-title">${page.charAt(0).toUpperCase()+page.slice(1)}</div><div class="empty-desc">This section is coming soon.</div></div>`;
+}
+
+// ── WIZARD ──
+function openWizard(){
+  document.getElementById('wizard').classList.remove('hidden');
+  wizardStep=1;
+  updateWizardUI();
+  renderPhonePreview();
+}
+function closeWizard(){
+  document.getElementById('wizard').classList.add('hidden');
+}
+function goStep(n){
+  wizardStep=n;
+  updateWizardUI();
+}
+function nextStep(){
+  if(wizardStep<5){ wizardStep++; updateWizardUI(); }
+  else { launchCampaign(); }
+}
+function prevStep(){
+  if(wizardStep>1){ wizardStep--; updateWizardUI(); }
+  else { closeWizard(); }
+}
+function updateWizardUI(){
+  document.querySelectorAll('.step-pane').forEach(p=>p.classList.remove('active'));
+  document.getElementById('step'+wizardStep).classList.add('active');
+  document.querySelectorAll('.wstep').forEach((s,i)=>{
+    s.classList.remove('active','done');
+    if(i+1===wizardStep) s.classList.add('active');
+    else if(i+1<wizardStep) s.classList.add('done');
+  });
+  const back = document.getElementById('wbtn-back');
+  const next = document.getElementById('wbtn-next');
+  back.textContent = wizardStep===1 ? '✕ Cancel' : '← Back';
+  if(wizardStep===5){
+    next.textContent='🚀 Launch Campaign';
+    next.className='wbtn launch';
+  } else {
+    next.textContent='Next Step →';
+    next.className='wbtn next';
+  }
+}
+function launchCampaign(){
+  closeWizard();
+  alert('🚀 Campaign submitted for review!\n\nYour campaign will be reviewed by the Tely compliance team and begin delivering within 2 hours of approval.');
+}
+
+// ── CHANNEL SELECT ──
+function selectChannel(ch, el){
+  selectedChannel = ch;
+  document.querySelectorAll('.ch-card').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  // Show/hide creative fields
+  ['stk','sms','obd','wap','ussd'].forEach(c=>{
+    const d = document.getElementById('creative-'+c);
+    if(d) d.classList.toggle('hidden', c!==ch);
+  });
+  // Update preview badge
+  const badges = {
+    stk:{label:'📱 STK Push',bg:'rgba(167,139,250,.15)',color:'var(--purple)'},
+    sms:{label:'💬 SMS',bg:'var(--gdim)',color:'var(--green)'},
+    obd:{label:'📞 OBD Voice',bg:'var(--ydim)',color:'var(--yellow)'},
+    wap:{label:'🌐 WAP Push',bg:'var(--cyandim)',color:'var(--cyan)'},
+    ussd:{label:'*# USSD',bg:'var(--bdim)',color:'var(--blue)'}
+  };
+  const b = badges[ch];
+  const bd = document.getElementById('preview-ch-badge');
+  if(bd){ bd.textContent=b.label; bd.style.background=b.bg; bd.style.color=b.color; }
+  // Update channel stats panel
+  const stats = {
+    stk:{delivery:'98.4%',ctr:'4.2%',cpm:'₦80',data:'None ✅'},
+    sms:{delivery:'99.1%',ctr:'3.5%',cpm:'₦40',data:'None ✅'},
+    obd:{delivery:'61.4%',ctr:'3.2%',cpm:'₦120',data:'None ✅'},
+    wap:{delivery:'97.8%',ctr:'2.4%',cpm:'₦35',data:'Minimal'},
+    ussd:{delivery:'78.2%',ctr:'6.4%',cpm:'₦35 CPA',data:'None ✅'}
+  };
+  const s = stats[ch];
+  if(document.getElementById('stat-delivery')){
+    document.getElementById('stat-delivery').textContent=s.delivery;
+    document.getElementById('stat-ctr').textContent=s.ctr;
+    document.getElementById('stat-cpm').textContent=s.cpm;
+    document.getElementById('stat-data').textContent=s.data;
+  }
+  renderPhonePreview();
+}
+
+// ── PHONE PREVIEW ──
+function renderPhonePreview(){
+  const el = document.getElementById('phone-preview');
+  if(!el) return;
+  const ch = selectedChannel;
+  if(ch==='stk'){
+    el.innerHTML=`<div class="stk-preview">
+      <div style="font-size:9px;color:#666;text-align:center;margin-bottom:6px;">SIM TOOLKIT MENU</div>
+      <div class="stk-dialog">
+        <div class="stk-header">
+          <div class="sh-title">📡 MTN Nigeria</div>
+          <div class="sh-net">SIM Application Toolkit</div>
+        </div>
+        <div style="font-size:8px;color:#aaa;font-weight:700;margin-bottom:4px;letter-spacing:.03em;">🎮 MTN GAME ZONE</div>
+        <div class="stk-msg">Dial *8022# to play and win big with MTN Games! Predict scores, play trivia and win airtime daily.</div>
+        <div class="stk-btns">
+          <div class="stk-btn primary">1. ✅ Play Now — *8022#</div>
+          <div class="stk-btn">2. ℹ️ Learn More</div>
+          <div class="stk-btn">3. ❌ Not Now</div>
+        </div>
+      </div>
+      <div style="font-size:7px;color:#444;text-align:center;margin-top:4px;">📱 SIM-native · No data needed</div>
+    </div>`;
+  } else if(ch==='sms'){
+    el.innerHTML=`<div class="sms-preview">
+      <div style="font-size:8px;color:#666;font-weight:700;margin-bottom:4px;">MTNOffers</div>
+      <div class="sms-bubble">Hi! Get exclusive MTN offers today. Reply YES to subscribe or dial *8022# to explore. Stop=OPT OUT</div>
+      <div class="sms-meta">💬 Today 11:43 · MTN Nigeria</div>
+    </div>`;
+  } else if(ch==='obd'){
+    el.innerHTML=`<div class="obd-preview">
+      <div style="font-size:9px;color:#666;">Incoming Call</div>
+      <div class="obd-dial">📞</div>
+      <div class="obd-num">MTNOffers</div>
+      <div class="obd-info">MTN Nigeria · Promotional Call<br>"Press 1 to learn more, 2 to opt out"</div>
+      <div class="obd-btns">
+        <div class="obd-btn accept">✅</div>
+        <div class="obd-btn decline">❌</div>
+      </div>
+    </div>`;
+  } else if(ch==='wap'){
+    el.innerHTML=`<div class="wap-preview">
+      <div class="wap-bar"><div class="wap-bar-dot"></div><span>mtn.ng/offer</span></div>
+      <div class="wap-content">
+        <div class="wap-banner">
+          <div class="wb-title">🔥 Exclusive MTN Deal!</div>
+          <div class="wb-sub">Limited time · Click to claim</div>
+        </div>
+        <div style="font-size:8px;color:#333;line-height:1.5;">Tap below to claim your exclusive MTN data bundle. Available for 24 hours only!</div>
+        <div class="wap-cta">👆 Claim Now</div>
+      </div>
+    </div>`;
+  } else if(ch==='ussd'){
+    el.innerHTML=`<div class="ussd-preview">
+      <div class="ussd-header">⚡ *8022# · MTN Nigeria</div>
+      <div class="ussd-body">Welcome to MTN Games!<br><br>1. ⚽ Play Predictor<br>2. 🧠 Play Trivia<br>3. 🎯 Win Airtime<br>0. ❌ Exit<br><br>Reply with option:</div>
+      <div class="ussd-input-row">Enter: _</div>
+    </div>`;
+  }
+}
+
+// ── HELPER TOGGLES ──
+function toggleChip(el){ el.classList.toggle('on'); }
+function toggleTgl(el){ el.classList.toggle('on'); }
+function toggleBtab(el){
+  el.parentElement.querySelectorAll('.btab').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+}
+
+// ── INIT ──
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeWizard(); });
+</script>
+</body>
+</html>

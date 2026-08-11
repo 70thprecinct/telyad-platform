@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tely Master Admin — Cross-Telco Platform Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#06090F; --card:#0D1420; --card-2:#121A28; --card-3:#172238;
+  --border:rgba(255,255,255,0.08); --border-soft:rgba(255,255,255,0.05);
+  --primary:#22D3EE; --primary-dim:rgba(34,211,238,0.15);
+  --secondary:#818CF8; --secondary-dim:rgba(129,140,248,0.16);
+  --success:#00D97E; --success-dim:rgba(0,217,126,0.14);
+  --warning:#FFB547; --warning-dim:rgba(255,181,71,0.14);
+  --danger:#FF5E5E; --danger-dim:rgba(255,94,94,0.14);
+  --text:#E9EDF6; --text-dim:#8B9AB8; --text-faint:#566079;
+  --font-display:'Space Grotesk',sans-serif; --font-body:'Inter',sans-serif; --font-mono:'JetBrains Mono',monospace;
+  --radius:12px; --radius-sm:8px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:14px;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+a{color:inherit;text-decoration:none;} button{font-family:inherit;cursor:pointer;}
+::-webkit-scrollbar{width:10px;height:10px;} ::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:#1C2840;border-radius:8px;}
+.hidden{display:none !important;} .mono{font-family:var(--font-mono);} .dim{color:var(--text-dim);} .faint{color:var(--text-faint);}
+
+#login-screen{position:fixed;inset:0;z-index:500;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at top, rgba(34,211,238,0.08), transparent 55%), var(--bg);}
+.login-card{width:420px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:36px 32px;}
+.login-brand{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+.brand-mark{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--primary),#8EF2FF);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;color:#021014;font-size:16px;}
+.brand-name{font-family:var(--font-display);font-weight:600;font-size:18px;}
+.login-tag{font-size:12px;color:var(--text-dim);margin-bottom:26px;}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:11.5px;color:var(--text-dim);margin-bottom:6px;font-weight:500;}
+.field input{width:100%;background:var(--card-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;color:var(--text);font-size:13px;font-family:inherit;}
+.field input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-dim);}
+.btn{border:none;border-radius:var(--radius-sm);padding:10px 18px;font-size:13px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:8px;}
+.btn-primary{background:var(--primary);color:#021014;} .btn-primary:hover{filter:brightness(1.08);}
+.btn-block{width:100%;} .btn-ghost{background:var(--card-2);color:var(--text);border:1px solid var(--border);} .btn-ghost:hover{background:var(--card-3);}
+.btn-sm{padding:6px 11px;font-size:12px;}
+.mfa-note{display:flex;gap:9px;align-items:flex-start;background:var(--secondary-dim);border:1px solid rgba(129,140,248,0.3);border-radius:var(--radius-sm);padding:10px 12px;margin-top:16px;font-size:11.5px;color:#C9CEFF;line-height:1.5;}
+.security-badges{display:flex;gap:7px;margin-top:18px;flex-wrap:wrap;}
+.sec-badge{font-family:var(--font-mono);font-size:9.5px;color:var(--text-dim);background:var(--card-2);border:1px solid var(--border);border-radius:6px;padding:5px 7px;}
+.login-foot{margin-top:16px;font-size:10.5px;color:var(--text-faint);text-align:center;}
+.scope-note{background:var(--primary-dim);border:1px solid rgba(34,211,238,0.3);border-radius:var(--radius-sm);padding:10px 12px;font-size:11.5px;color:#A6F0FB;line-height:1.5;margin-bottom:18px;}
+
+#app{display:none;height:100vh;} #app.show{display:flex;}
+.sidebar{width:240px;flex-shrink:0;background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:14px 9px;}
+.sb-brand{display:flex;align-items:center;gap:9px;padding:6px 8px 16px;}
+.sb-group-label{font-size:9.5px;text-transform:uppercase;letter-spacing:0.6px;color:var(--text-faint);padding:10px 10px 4px;font-weight:600;}
+.sb-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--radius-sm);color:var(--text-dim);font-size:12.5px;font-weight:500;margin-bottom:1px;}
+.sb-item .ic{width:15px;height:15px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.sb-item:hover{background:var(--card-2);color:var(--text);}
+.sb-item.active{background:var(--primary-dim);color:var(--primary);} .sb-item.active svg{stroke:var(--primary);} .sb-item svg{stroke:currentColor;}
+.sb-footer{border-top:1px solid var(--border);padding-top:10px;margin-top:6px;}
+.sb-health{display:flex;align-items:center;gap:8px;padding:7px 10px;font-size:10.5px;color:var(--text-dim);}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--success);box-shadow:0 0 0 3px var(--success-dim);}
+
+.main-wrap{flex:1;display:flex;flex-direction:column;min-width:0;}
+.topbar{height:58px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 22px;gap:16px;flex-shrink:0;background:rgba(13,20,32,0.65);backdrop-filter:blur(8px);}
+.page-title-bar{font-family:var(--font-display);font-size:15.5px;font-weight:600;}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.user-chip{display:flex;align-items:center;gap:9px;padding:5px 10px 5px 5px;border-radius:30px;background:var(--card-2);border:1px solid var(--border);}
+.avatar{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--primary),#8EF2FF);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:var(--font-display);color:#021014;}
+.user-chip .un{font-size:12px;font-weight:600;} .user-chip .ur{font-size:10px;color:var(--text-faint);}
+.scope-banner{background:var(--secondary-dim);border-bottom:1px solid rgba(129,140,248,0.3);padding:9px 22px;font-size:12.5px;color:#C9CEFF;display:flex;align-items:center;justify-content:space-between;}
+
+.content{flex:1;overflow-y:auto;padding:22px 26px 60px;}
+.page{display:none;} .page.active{display:block;animation:fadeUp .35s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.page-head{margin-bottom:20px;}
+.page-eyebrow{font-family:var(--font-mono);font-size:10.5px;color:var(--primary);letter-spacing:0.5px;margin-bottom:6px;text-transform:uppercase;}
+.page-h1{font-family:var(--font-display);font-size:22px;font-weight:600;margin:0 0 6px;}
+.page-desc{color:var(--text-dim);font-size:12.5px;max-width:680px;line-height:1.55;}
+
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px;}
+.kpi-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 14px 12px;}
+.kpi-label{font-size:10.5px;color:var(--text-dim);margin-bottom:9px;font-weight:500;}
+.kpi-val{font-family:var(--font-display);font-size:21px;font-weight:600;}
+.kpi-delta{font-size:10.5px;margin-top:7px;font-weight:600;} .kpi-delta.up{color:var(--success);} .kpi-delta.down{color:var(--danger);}
+
+.grid-2{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;} .grid-equal-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px 18px 16px;margin-bottom:16px;}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.card-title{font-family:var(--font-display);font-size:14.5px;font-weight:600;} .card-sub{font-size:11.5px;color:var(--text-faint);margin-top:2px;}
+
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;padding:4px 9px;border-radius:20px;}
+.badge .d{width:6px;height:6px;border-radius:50%;}
+.badge-success{background:var(--success-dim);color:var(--success);} .badge-success .d{background:var(--success);}
+.badge-warning{background:var(--warning-dim);color:var(--warning);} .badge-warning .d{background:var(--warning);}
+.badge-info{background:var(--primary-dim);color:var(--primary);} .badge-info .d{background:var(--primary);}
+.badge-neutral{background:var(--card-2);color:var(--text-dim);}
+
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:0.4px;color:var(--text-faint);font-weight:600;padding:9px 12px;border-bottom:1px solid var(--border);}
+td{padding:12px 12px;font-size:12.5px;border-bottom:1px solid var(--border-soft);color:var(--text);}
+tr:last-child td{border-bottom:none;} tbody tr:hover{background:var(--card-2);}
+.t-faint{color:var(--text-faint);} .t-mono{font-family:var(--font-mono);font-size:11.5px;}
+
+.telco-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+.telco-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;}
+.telco-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;}
+.telco-logo{width:42px;height:42px;border-radius:10px;background:var(--secondary-dim);color:#C9CEFF;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;font-size:15px;}
+.telco-name{font-family:var(--font-display);font-size:15px;font-weight:600;margin-bottom:2px;}
+.metric-row{display:flex;justify-content:space-between;padding:6px 0;font-size:11.5px;border-bottom:1px dashed var(--border-soft);}
+.metric-row:last-child{border-bottom:none;} .metric-row span:first-child{color:var(--text-faint);} .metric-row span:last-child{font-family:var(--font-mono);}
+
+.config-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border-soft);}
+.config-row:last-child{border-bottom:none;} .config-row .cr-title{font-size:12.5px;font-weight:600;} .config-row .cr-sub{font-size:11px;color:var(--text-faint);margin-top:2px;}
+.toggle{width:38px;height:21px;border-radius:20px;background:var(--card-3);border:1px solid var(--border);position:relative;cursor:pointer;flex-shrink:0;}
+.toggle.on{background:var(--success-dim);border-color:var(--success);} .toggle .knob{position:absolute;top:2px;left:2px;width:15px;height:15px;border-radius:50%;background:var(--text-faint);transition:.18s;}
+.toggle.on .knob{left:19px;background:var(--success);}
+
+.overlay{position:fixed;inset:0;background:rgba(2,4,10,0.62);z-index:200;display:none;align-items:center;justify-content:center;}
+.overlay.show{display:flex;}
+.modal{width:460px;max-width:92vw;background:var(--card-3);border:1px solid var(--border);border-radius:var(--radius);padding:22px;}
+.modal h3{font-family:var(--font-display);font-size:16px;margin:0 0 8px;} .modal p{color:var(--text-dim);font-size:12.5px;line-height:1.55;margin:0 0 16px;}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;}
+.form-field{margin-bottom:12px;} .form-field label{display:block;font-size:11.5px;color:var(--text-dim);margin-bottom:6px;}
+.form-field input,.form-field select{width:100%;background:var(--card-2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-size:12.5px;font-family:inherit;}
+
+#toast-stack{position:fixed;bottom:22px;right:22px;z-index:400;display:flex;flex-direction:column;gap:10px;}
+.toast{background:var(--card-3);border:1px solid var(--border);border-left:3px solid var(--primary);border-radius:8px;padding:12px 16px;font-size:12.5px;min-width:240px;animation:toastIn .25s ease;}
+@keyframes toastIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.toast strong{display:block;margin-bottom:2px;}
+
+@media (max-width:1200px){.kpi-grid{grid-template-columns:repeat(3,1fr);} .grid-2,.grid-equal-2,.telco-grid{grid-template-columns:1fr;}}
+
+/* ============================================================ MOBILE / RESPONSIVE ============================================================ */
+.hamburger-btn{display:none;width:32px;height:32px;border-radius:8px;background:var(--card-2);border:1px solid var(--border);align-items:center;justify-content:center;color:var(--text-dim);font-size:15px;flex-shrink:0;}
+.sidebar-backdrop{position:fixed;inset:0;background:rgba(2,4,10,0.6);z-index:140;display:none;}
+.sidebar-backdrop.show{display:block;}
+
+@media (max-width:860px){
+  .hamburger-btn{display:flex;}
+  .sidebar{
+    position:fixed; top:0; left:0; height:100vh; z-index:150; width:250px;
+    transform:translateX(-100%); transition:transform .22s ease; box-shadow:0 0 0 1px var(--border);
+  }
+  .sidebar.show{transform:translateX(0);}
+  .topbar{padding:0 14px;gap:10px;}
+  .page-title-bar{font-size:13.5px;}
+  .content{padding:16px 14px 44px;}
+  .scope-banner{padding:8px 14px;font-size:11px;flex-wrap:wrap;gap:6px;}
+  .kpi-grid{grid-template-columns:repeat(2,1fr);}
+  .grid-2,.grid-equal-2,.telco-grid{grid-template-columns:1fr;}
+  .user-chip .un,.user-chip .ur{max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  table{display:block;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;}
+  thead,tbody{display:table;width:100%;}
+}
+
+@media (max-width:520px){
+  .login-card{width:92vw;padding:26px 20px;}
+  .kpi-grid{grid-template-columns:repeat(2,1fr);gap:8px;}
+  .kpi-card{padding:11px 11px 9px;}
+  .kpi-val{font-size:16px;}
+  .page-h1{font-size:18px;}
+  .user-chip .un,.user-chip .ur{display:none;}
+  .user-chip{padding:4px;}
+  .modal{padding:16px;}
+  .telco-top{flex-wrap:wrap;gap:8px;}
+}
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-brand"><div class="brand-mark">T</div><div class="brand-name">Tely Master Admin</div></div>
+    <div class="login-tag">Cross-telco platform console — for Tely's own team only</div>
+    <div class="field"><label>Work email</label><input type="text" value="o.umweni@tely.io"></div>
+    <div class="field"><label>Password</label><input type="password" value="••••••••••"></div>
+    <button class="btn btn-primary btn-block" onclick="doLogin()">Sign in</button>
+    <div class="mfa-note"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px;"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"></path></svg><div>This console has visibility into every telco partnership. MFA and hardware-key sign-in are required.</div></div>
+    <div class="security-badges"><span class="sec-badge">Super-admin only</span><span class="sec-badge">No telco can see this console</span><span class="sec-badge">Full audit trail</span></div>
+    <div class="login-foot">Tely Holdings · Internal use only</div>
+  </div>
+</div>
+
+<div id="app">
+  <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="closeSidebar()"></div>
+  <div class="sidebar" id="sidebar">
+    <div class="sb-brand"><div class="brand-mark">T</div><div class="brand-name" style="font-size:14px;">Master Admin</div></div>
+    <div id="sb-nav"></div>
+    <div class="sb-footer"><div class="sb-health"><span class="dot"></span> All telco environments operational</div></div>
+  </div>
+  <div class="main-wrap">
+    <div class="topbar">
+      <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Toggle menu">☰</button>
+      <div class="page-title-bar" id="page-title-bar">Global Dashboard</div>
+      <div class="topbar-right">
+        <div class="user-chip"><div class="avatar">OU</div><div><div class="un">Osa Umweni</div><div class="ur">Founder · Super Admin</div></div></div>
+      </div>
+    </div>
+    <div id="scope-banner-wrap"></div>
+    <div class="content" id="content"></div>
+  </div>
+</div>
+
+<div id="toast-stack"></div>
+<div class="overlay" id="onboard-overlay">
+  <div class="modal">
+    <h3>Onboard a new telco</h3>
+    <p>This creates a fully isolated environment — a separate Telco Console and separate Advertiser Portal — for the new partner.</p>
+    <div class="form-field"><label>Telco name</label><input id="ob-name" placeholder="e.g. Airtel Nigeria"></div>
+    <div class="form-field"><label>Country</label><input id="ob-country" placeholder="e.g. Nigeria"></div>
+    <div class="form-field"><label>Revenue share to telco (%)</label><input id="ob-share" type="number" value="80"></div>
+    <div class="modal-actions"><button class="btn btn-ghost" onclick="closeOnboard()">Cancel</button><button class="btn btn-primary" onclick="confirmOnboard()">Create environment</button></div>
+  </div>
+</div>
+
+<script>
+const TELCOS = [
+  {name:"MTN Nigeria", country:"Nigeria", status:"Active", since:"2026-04", share:80, subs:78.4, revenue:568, advertisers:538, health:99.97},
+  {name:"Airtel Nigeria", country:"Nigeria", status:"Pipeline", since:"—", share:78, subs:0, revenue:0, advertisers:0, health:null},
+  {name:"Glo Nigeria", country:"Nigeria", status:"Pipeline", since:"—", share:78, subs:0, revenue:0, advertisers:0, health:null},
+  {name:"Vodacom Tanzania", country:"Tanzania", status:"Prospect", since:"—", share:0, subs:0, revenue:0, advertisers:0, health:null},
+];
+
+const NAV = [
+  {group:"Global", items:[{id:"global", label:"Global Dashboard", icon:"globe"}]},
+  {group:"Partnerships", items:[
+    {id:"directory", label:"Telco Directory", icon:"layers"},
+    {id:"terms", label:"Commercial Terms", icon:"file-text"},
+  ]},
+  {group:"Platform", items:[
+    {id:"health", label:"Platform Health", icon:"activity"},
+    {id:"admin", label:"Master Admin Users", icon:"settings"},
+  ]},
+  {group:"Engineering", items:[
+    {id:"engineering", label:"Engine Dashboards", icon:"cpu"},
+  ]},
+];
+const ICONS = {
+  globe:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 010 20 15.3 15.3 0 010-20z"></path></svg>',
+  layers:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l9 5-9 5-9-5 9-5z"></path><path d="M3 12l9 5 9-5"></path><path d="M3 17l9 5 9-5"></path></svg>',
+  "file-text":'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path><path d="M14 2v6h6"></path></svg>',
+  activity:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>',
+  settings:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 00.3 1.9l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.9-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 11-4 0v-.1a1.7 1.7 0 00-1-1.6 1.7 1.7 0 00-1.9.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.9 1.7 1.7 0 00-1.5-1H3a2 2 0 110-4h.1a1.7 1.7 0 001.5-1 1.7 1.7 0 00-.3-1.9l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.9.3h0a1.7 1.7 0 001-1.5V3a2 2 0 114 0v.1a1.7 1.7 0 001 1.5h0a1.7 1.7 0 001.9-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.9v0a1.7 1.7 0 001.5 1H21a2 2 0 110 4h-.1a1.7 1.7 0 00-1.5 1z"></path></svg>',
+  cpu:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="15" x2="4" y2="15"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="15" x2="23" y2="15"></line></svg>',
+};
+const PAGE_META = {
+  global:{eyebrow:"ALL TELCOS · AGGREGATED",title:"Global Dashboard",desc:"Consolidated metrics across every telco partnership. No individual subscriber data ever appears here — only aggregated, per-telco metrics."},
+  directory:{eyebrow:"PARTNERSHIPS",title:"Telco Directory",desc:"Every telco partnership, its status, and a fully isolated environment per telco."},
+  terms:{eyebrow:"COMMERCIAL",title:"Commercial Terms",desc:"Revenue-share terms negotiated with each telco partner."},
+  health:{eyebrow:"INFRASTRUCTURE",title:"Platform Health",desc:"TelySignal, TelyXchange, TelyAds, and TelyReach infrastructure health across all telco environments."},
+  admin:{eyebrow:"PLATFORM",title:"Master Admin Users",desc:"People at Tely with access to this console. No telco employee can ever be granted access here."},
+  engineering:{eyebrow:"INTERNAL ONLY",title:"Engine Dashboards",desc:"Full technical depth for each underlying engine, across the entire infrastructure — not scoped to any one telco. Visible only inside Tely Master Admin."},
+};
+let currentPage = "global", chartsCache = {}, viewingTelco = null;
+function destroyChart(id){ if(chartsCache[id]){ chartsCache[id].destroy(); delete chartsCache[id]; } }
+function chartDefaults(){ Chart.defaults.color = "#8B9AB8"; Chart.defaults.font.family = "Inter"; Chart.defaults.borderColor = "rgba(255,255,255,0.06)"; }
+function baseLineOpts(){ return {plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:'rgba(255,255,255,0.05)'}}}}; }
+
+function doLogin(){
+  document.getElementById("login-screen").style.display="none";
+  document.getElementById("app").classList.add("show");
+  renderSidebar(); renderPage("global");
+  showToast("Welcome back, Osa", "Signed in to the cross-telco master console.");
+}
+function renderSidebar(){
+  document.getElementById("sb-nav").innerHTML = NAV.map(g=>`<div class="sb-group-label">${g.group}</div>${g.items.map(it=>`<div class="sb-item ${it.id===currentPage&&!viewingTelco?'active':''}" onclick="viewingTelco=null;renderPage('${it.id}')"><span class="ic">${ICONS[it.icon]}</span>${it.label}</div>`).join("")}`).join("");
+}
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('show');
+  document.getElementById('sidebar-backdrop').classList.toggle('show');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('show');
+  document.getElementById('sidebar-backdrop').classList.remove('show');
+}
+function renderPage(id){
+  currentPage = id; renderSidebar();
+  const meta = PAGE_META[id];
+  document.getElementById("page-title-bar").textContent = meta.title;
+  document.getElementById("scope-banner-wrap").innerHTML = "";
+  const c = document.getElementById("content");
+  c.innerHTML = `<div class="page active"><div class="page-head"><div class="page-eyebrow">${meta.eyebrow}</div><h1 class="page-h1">${meta.title}</h1><div class="page-desc">${meta.desc}</div></div><div id="page-body"></div></div>`;
+  const body = document.getElementById("page-body");
+  ({global:renderGlobal, directory:renderDirectory, terms:renderTerms, health:renderHealth, admin:renderAdmin, engineering:renderEngineering})[id](body);
+  closeSidebar();
+}
+function kpi(label,val,delta,dir){ return `<div class="kpi-card"><div class="kpi-label">${label}</div><div class="kpi-val">${val}</div><div class="kpi-delta ${dir}">${dir==='up'?'▲':'▼'} ${delta}</div></div>`; }
+
+function renderGlobal(el){
+  const active = TELCOS.filter(t=>t.status==='Active');
+  el.innerHTML = `
+    <div class="kpi-grid">
+      ${kpi("Telcos Onboarded","1 active · 3 pipeline","+1 this quarter","up")}
+      ${kpi("Total Subscriber Reach","78.4M","+1.2%","up")}
+      ${kpi("Total Advertisers","538","+12","up")}
+      ${kpi("Platform Revenue (MTD)","₦142M","+6.7%","up")}
+      ${kpi("Combined Telco Payout (MTD)","₦568M","+6.7%","up")}
+    </div>
+    <div class="grid-2">
+      <div class="card"><div class="card-head"><div class="card-title">Revenue by Telco</div><div class="card-sub">Monthly, ₦M — aggregated, no subscriber-level data</div></div><canvas id="g1" height="220"></canvas></div>
+      <div class="card"><div class="card-head"><div class="card-title">Platform Growth</div><div class="card-sub">Combined subscriber reach across all active telcos</div></div><canvas id="g2" height="220"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">Active Telco Summary</div></div>
+      <table><thead><tr><th>Telco</th><th>Subscribers</th><th>Advertisers</th><th>Revenue (₦M)</th><th>Tely's take</th></tr></thead><tbody>
+        ${active.map(t=>`<tr><td>${t.name}</td><td class="t-mono">${t.subs}M</td><td class="t-mono">${t.advertisers}</td><td class="t-mono">${t.revenue}</td><td class="t-mono" style="color:var(--primary)">${100-t.share}%</td></tr>`).join("")}
+      </tbody></table>
+    </div>
+  `;
+  chartDefaults();
+  destroyChart('g1'); chartsCache.g1 = new Chart(document.getElementById('g1'),{type:'bar',data:{labels:TELCOS.map(t=>t.name),datasets:[{data:TELCOS.map(t=>t.revenue),backgroundColor:'#22D3EE'}]},options:{plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:'rgba(255,255,255,0.05)'}}}}});
+  const months = ["Jan","Feb","Mar","Apr","May","Jun"];
+  destroyChart('g2'); chartsCache.g2 = new Chart(document.getElementById('g2'),{type:'line',data:{labels:months,datasets:[{data:[62,65,68,71,75,78.4],borderColor:'#818CF8',backgroundColor:'rgba(129,140,248,0.12)',fill:true,tension:0.35,pointRadius:3,borderWidth:2}]},options:baseLineOpts()});
+}
+
+function renderDirectory(el){
+  el.innerHTML = `
+    <div style="display:flex;justify-content:flex-end;margin-bottom:14px;"><button class="btn btn-primary btn-sm" onclick="openOnboard()">+ Onboard new telco</button></div>
+    <div class="telco-grid">
+      ${TELCOS.map((t,i)=>`
+        <div class="telco-card">
+          <div class="telco-top">
+            <div style="display:flex;gap:12px;"><div class="telco-logo">${t.name.split(' ')[0].slice(0,2)}</div><div><div class="telco-name">${t.name}</div><div class="t-faint" style="font-size:11px;">${t.country}</div></div></div>
+            ${statusBadge(t.status)}
+          </div>
+          <div class="metric-row"><span>Partner since</span><span>${t.since}</span></div>
+          <div class="metric-row"><span>Revenue share to telco</span><span>${t.share}%</span></div>
+          <div class="metric-row"><span>Subscribers reachable</span><span>${t.subs}M</span></div>
+          <div class="metric-row"><span>Active advertisers</span><span>${t.advertisers}</span></div>
+          <div class="metric-row"><span>Environment health</span><span style="color:${t.health?'var(--success)':'var(--text-faint)'}">${t.health?t.health+'%':'Not yet provisioned'}</span></div>
+          ${t.status==='Active'?`<button class="btn btn-ghost btn-sm btn-block" style="margin-top:12px;" onclick="enterTelco(${i})">Enter ${t.name} console →</button>`:`<button class="btn btn-ghost btn-sm btn-block" style="margin-top:12px;" onclick="showToast('Pipeline','${t.name} is still in commercial discussion — environment not yet provisioned.')">View pipeline status</button>`}
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+function statusBadge(s){
+  if(s==='Active') return '<span class="badge badge-success"><span class="d"></span>Active</span>';
+  if(s==='Pipeline') return '<span class="badge badge-info"><span class="d"></span>Pipeline</span>';
+  return '<span class="badge badge-neutral">Prospect</span>';
+}
+function enterTelco(i){
+  viewingTelco = TELCOS[i];
+  renderSidebar();
+  document.getElementById("page-title-bar").textContent = viewingTelco.name+" — Console View";
+  document.getElementById("scope-banner-wrap").innerHTML = `<div class="scope-banner"><span>🔒 Viewing as: <strong>${viewingTelco.name}</strong> — this is exactly what their Telco Console shows. No other telco's data is visible from here.</span><button class="btn btn-ghost btn-sm" onclick="exitTelco()">← Exit to global view</button></div>`;
+  const c = document.getElementById("content");
+  const t = viewingTelco;
+  c.innerHTML = `
+    <div class="page active">
+      <div class="page-head"><div class="page-eyebrow">TELCO-SCOPED VIEW</div><h1 class="page-h1">${t.name} Network</h1><div class="page-desc">Scoped strictly to ${t.name}'s own subscribers, advertisers, and revenue — identical to what ${t.name}'s own staff see when they log into their Telco Console.</div></div>
+      <div class="kpi-grid">
+        ${kpi("Subscribers Reachable",t.subs+"M","+1.2%","up")}
+        ${kpi("Active Advertisers",t.advertisers,"+12","up")}
+        ${kpi("Revenue Share Earned (MTD)","₦"+t.revenue+"M","+6.7%","up")}
+        ${kpi("Network Health",t.health+"%","steady","up")}
+        ${kpi("Revenue Share Rate",t.share+"%","fixed by contract","up")}
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-title">Advertiser Approval Queue (${t.name})</div></div>
+        <table><thead><tr><th>Advertiser</th><th>Type</th><th>Requested</th><th>Status</th></tr></thead><tbody>
+          <tr><td>Lendsqr Loans</td><td class="t-faint">MVAS Provider</td><td class="t-faint">2 days ago</td><td><span class="badge badge-warning"><span class="d"></span>Pending review</span></td></tr>
+          <tr><td>QuickCash NG</td><td class="t-faint">MVAS Provider</td><td class="t-faint">5 days ago</td><td><span class="badge badge-neutral">Rejected</span></td></tr>
+        </tbody></table>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-title">Settlement Summary</div></div>
+        <div class="metric-row"><span>Gross advertiser spend (MTD)</span><span>₦710M</span></div>
+        <div class="metric-row"><span>Tely's commission (${100-t.share}%)</span><span>-₦${Math.round(710*(100-t.share)/100)}M</span></div>
+        <div class="metric-row"><span>Net to ${t.name}</span><span style="color:var(--success)">₦${Math.round(710*t.share/100)}M</span></div>
+      </div>
+    </div>
+  `;
+}
+function exitTelco(){ viewingTelco=null; renderPage('directory'); }
+
+function renderTerms(el){
+  el.innerHTML = `
+    <div class="card">
+      <div class="card-head"><div class="card-title">Revenue Share Agreements</div></div>
+      <table><thead><tr><th>Telco</th><th>Share to telco</th><th>Tely's commission</th><th>Settlement frequency</th><th>Contract status</th></tr></thead><tbody>
+        ${TELCOS.map(t=>`<tr><td>${t.name}</td><td class="t-mono">${t.status==='Active'?t.share+'%':'—'}</td><td class="t-mono">${t.status==='Active'?(100-t.share)+'%':'—'}</td><td class="t-faint">${t.status==='Active'?'Weekly':'—'}</td><td>${statusBadge(t.status)}</td></tr>`).join("")}
+      </tbody></table>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">How the model works</div></div>
+      <div class="card-sub" style="font-size:12.5px;line-height:1.6;">No telco pays Tely a licence fee. Tely is introduced to a telco; once they agree to partner, advertiser spend on that telco's network is split between the telco and Tely per the negotiated share above. Each telco's environment — Telco Console and Advertiser Portal — is fully isolated from every other telco's.</div>
+    </div>
+  `;
+}
+function renderHealth(el){
+  el.innerHTML = `
+    <div class="grid-equal-2">
+      <div class="card"><div class="card-head"><div class="card-title">TelySignal</div></div><div class="metric-row"><span>Status</span><span style="color:var(--success)">Operational</span></div><div class="metric-row"><span>Environments running</span><span>1 (MTN)</span></div><div class="metric-row"><span>Daily signal events</span><span>2.84B</span></div></div>
+      <div class="card"><div class="card-head"><div class="card-title">TelyXchange</div></div><div class="metric-row"><span>Status</span><span style="color:var(--success)">Operational</span></div><div class="metric-row"><span>Environments running</span><span>1 (MTN)</span></div><div class="metric-row"><span>Daily auctions</span><span>5.04M</span></div></div>
+      <div class="card"><div class="card-head"><div class="card-title">TelyAds</div></div><div class="metric-row"><span>Status</span><span style="color:var(--success)">Operational</span></div><div class="metric-row"><span>Environments running</span><span>1 (MTN)</span></div><div class="metric-row"><span>Daily deliveries</span><span>50.2M</span></div></div>
+      <div class="card"><div class="card-head"><div class="card-title">TelyReach</div></div><div class="metric-row"><span>Status</span><span style="color:var(--success)">Operational</span></div><div class="metric-row"><span>Environments running</span><span>1 (MTN)</span></div><div class="metric-row"><span>Daily conversions verified</span><span>5.18M</span></div></div>
+    </div>
+    <div class="card"><div class="card-head"><div class="card-title">Infrastructure Load, Last 24h</div></div><canvas id="h1" height="200"></canvas></div>
+  `;
+  chartDefaults();
+  const hrs = Array.from({length:24},(_,i)=>`${i}h`);
+  destroyChart('h1'); chartsCache.h1 = new Chart(document.getElementById('h1'),{type:'line',data:{labels:hrs,datasets:[{data:hrs.map(()=>70+Math.random()*25),borderColor:'#22D3EE',backgroundColor:'rgba(34,211,238,0.12)',fill:true,tension:0.4,pointRadius:0,borderWidth:2}]},options:{...baseLineOpts(),scales:{x:{grid:{display:false}},y:{min:0,max:100,grid:{color:'rgba(255,255,255,0.05)'},title:{display:true,text:'% capacity'}}}}});
+}
+function renderAdmin(el){
+  el.innerHTML = `
+    <div class="card">
+      <div class="card-head"><div class="card-title">Master Admin Users</div><button class="btn btn-primary btn-sm" onclick="showToast('Invitation sent','A master-admin invite has been emailed.')">+ Invite</button></div>
+      <table><thead><tr><th>Name</th><th>Role</th><th>Telco visibility</th><th>Status</th></tr></thead><tbody>
+        <tr><td>Osa Umweni</td><td class="t-faint">Founder · Super Admin</td><td class="t-mono">All telcos</td><td><span class="badge badge-success"><span class="d"></span>Active</span></td></tr>
+        <tr><td>Tunde Aderinwale</td><td class="t-faint">CTO</td><td class="t-mono">All telcos</td><td><span class="badge badge-success"><span class="d"></span>Active</span></td></tr>
+      </tbody></table>
+    </div>
+    <div class="card">
+      <div class="card-head"><div class="card-title">Platform-Wide Configuration</div></div>
+      ${cfg("Allow telco staff to see this console","Always off — telcos only ever see their own scoped Telco Console",false)}
+      ${cfg("Auto-aggregate new telco into Global Dashboard","Once a telco environment goes live, include it in aggregated totals automatically",true)}
+      ${cfg("Require hardware key for master admin login","Applies to every account with cross-telco visibility",true)}
+    </div>
+  `;
+}
+function cfg(t,s,on){ return `<div class="config-row"><div><div class="cr-title">${t}</div><div class="cr-sub">${s}</div></div><div class="toggle ${on?'on':''}" onclick="this.classList.toggle('on')"><div class="knob"></div></div></div>`; }
+
+const ENGINES = [
+  {name:"TelySignal", desc:"Carrier audience intelligence — signal ingestion, pseudonymisation gateway, segment generation.", file:"TelySignal_Platform_Prototype.html", metric:"2.84B signal events / day across all environments", color:"#FFCB00"},
+  {name:"TelyXchange", desc:"The programmatic auction — live bidding, advertiser management, campaign marketplace.", file:"TelyXchange_Platform_Prototype.html", metric:"5.04M auctions / day across all environments", color:"#4F6EF7"},
+  {name:"TelyAds", desc:"Multi-channel delivery execution — SMS, USSD, SIM Toolkit, Zero-Rated Web, DCB.", file:"TelyAds_Platform_Prototype.html", metric:"50.2M deliveries / day across all environments", color:"#00D97E"},
+  {name:"TelyReach", desc:"Attribution and verification — passive conversion matching, fraud scoring, revenue attribution.", file:"TelyReach_Platform_Prototype.html", metric:"5.18M conversions verified / day across all environments", color:"#A855F7"},
+];
+function renderEngineering(el){
+  el.innerHTML = `
+    <div class="card" style="background:var(--primary-dim);border-color:rgba(34,211,238,0.3);margin-bottom:18px;">
+      <div class="card-sub" style="color:#A6F0FB;font-size:12.5px;">These are the full, unscoped engine dashboards — covering every telco environment at once, with the deepest technical detail (live auction feeds, signal ingestion throughput, attribution model comparison, delivery queue depth). No telco or advertiser can ever see these. Each opens in a new tab; keep these files in the same folder as this console for the links to work.</div>
+    </div>
+    <div class="telco-grid">
+      ${ENGINES.map(e=>`
+        <div class="telco-card">
+          <div class="telco-top">
+            <div style="display:flex;gap:12px;align-items:center;"><div class="telco-logo" style="background:${e.color}22;color:${e.color}">${e.name.replace('Tely','').slice(0,2)}</div><div><div class="telco-name">${e.name}</div></div></div>
+            <span class="badge badge-success"><span class="d"></span>Operational</span>
+          </div>
+          <div class="card-sub" style="margin-bottom:10px;">${e.desc}</div>
+          <div class="metric-row"><span>Scope</span><span>All telco environments</span></div>
+          <div class="metric-row"><span>Current volume</span><span style="font-size:10.5px;">${e.metric}</span></div>
+          <a href="${e.file}" target="_blank" rel="noopener"><button class="btn btn-ghost btn-sm btn-block" style="margin-top:12px;">Open full ${e.name} dashboard →</button></a>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+function openOnboard(){ document.getElementById('onboard-overlay').classList.add('show'); }
+function closeOnboard(){ document.getElementById('onboard-overlay').classList.remove('show'); }
+function confirmOnboard(){
+  const name = document.getElementById('ob-name').value || "New Telco";
+  closeOnboard();
+  showToast("Environment created", `${name} now has an isolated Telco Console and Advertiser Portal, pending contract sign-off.`);
+}
+function showToast(title,msg){
+  const stack = document.getElementById('toast-stack');
+  const t = document.createElement('div'); t.className='toast'; t.innerHTML = `<strong>${title}</strong>${msg}`;
+  stack.appendChild(t);
+  setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity .3s'; setTimeout(()=>t.remove(),300); }, 4200);
+}
+</script>
+</body>
+</html>
