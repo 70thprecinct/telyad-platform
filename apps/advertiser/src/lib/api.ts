@@ -1,11 +1,17 @@
 import type {
+  AdCapability,
   AdvertisingFormat,
   AudienceDefinition,
   AudienceEstimate,
+  AudienceOpportunity,
   AuthUser,
   Campaign,
   CampaignMetrics,
   CreateCampaignRequest,
+  LanguageCode,
+  LanguageVariant,
+  MediaPlan,
+  MediaPlanRequest,
 } from '@telyad/types';
 
 const BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000';
@@ -80,4 +86,31 @@ export const api = {
     request<{ campaign: Campaign }>(`/campaigns/${id}/submit`, { method: 'POST' }),
   campaignMetrics: (id: string) =>
     request<{ metrics: CampaignMetrics }>(`/campaigns/${id}/metrics`),
+
+  // ── Capability universe (marketplace) ──────────────────────────────────────
+  capabilities: () => request<{ capabilities: AdCapability[] }>('/capabilities'),
+  capability: (id: string) => request<{ capability: AdCapability }>(`/capabilities/${id}`),
+
+  // ── Demonstration intelligence layer ───────────────────────────────────────
+  mediaPlan: (req: MediaPlanRequest) =>
+    request<{ plan: MediaPlan }>('/ai/media-plan', {
+      method: 'POST',
+      body: JSON.stringify(req),
+    }),
+  localise: (input: {
+    baseText: string;
+    cta?: string;
+    targetLanguage: LanguageCode;
+    lockedTerms?: string[];
+    charLimit?: number;
+  }) =>
+    request<{ variant: LanguageVariant }>('/ai/localise', {
+      method: 'POST',
+      body: JSON.stringify(input),
+    }),
+  audienceOpportunity: (def: AudienceDefinition) =>
+    request<{ estimate: AudienceEstimate; opportunities: AudienceOpportunity[] }>(
+      '/ai/audience-opportunity',
+      { method: 'POST', body: JSON.stringify(def) },
+    ),
 };
