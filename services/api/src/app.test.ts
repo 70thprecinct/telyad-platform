@@ -201,3 +201,63 @@ describe('tenant isolation & RBAC (server-enforced)', () => {
     expect(res.statusCode).toBe(401);
   });
 });
+
+describe('WP02C.1 — persisted audience snapshot + multi-capability plan', () => {
+  const capIds = ['recharge_confirmation_sms', 'standard_sms', 'ussd_pre_session', 'rewarded_data'];
+  const body = () => ({
+    ...newCampaignBody,
+    name: `Maltina Plan ${Math.random().toString(36).slice(2, 8)}`,
+    capabilityIds: capIds,
+    selectedTarget: 999_999_999, // deliberately huge → must be clamped server-side
+  });
+
+  it('computes + persists the snapshot and full capability plan on create', async () => {
+    const token = await login('bola@toyota.example');
+    const res = await app.inject({ method: 'POST', url: '/campaigns', headers: auth(token), payload: body() });
+    expect(res.statusCode).toBe(201);
+    const c = res.json().campaign;
+    // Snapshot present and internally consistent (eligible ≥ target ≥ forecast).
+    expect(c.audienceSnapshot).toBeTruthy();
+    expect(c.audienceSnapshot.eligibleAudience).toBeGreaterThan(0);
+    expect(c.audienceSnapshot.selectedTarget).toBeLessThanOrEqual(c.audienceSnapshot.eligibleAudience);
+    expect(c.audienceSnapshot.forecastReach.point).toBeLessThanOrEqual(c.audienceSnapshot.selectedTarget);
+    // All selected capabilities persisted, order preserved.
+    expect(c.capabilityPlan.map((p: { capabilityId: string }) => p.capabilityId)).toEqual(capIds);
+    expect(c.capabilityPlan.map((p: { sortOrder: number }) => p.sortOrder)).toEqual([0, 1, 2, 3]);
+  });
+
+  it('is forgery-proof: the client cannot dictate the eligible count (server recomputes deterministically)', async () => {
+    const token = await login('bola@toyota.example');
+    const r1 = await app.inject({ method: 'POST', url: '/campaigns', headers: auth(token), payload: body() });
+    const r2 = await app.inject({ method: 'POST', url: '/campaigns', headers: auth(token), payload: body() });
+    // Same inputs (differing only by random name) → identical server-computed eligible.
+    expect(r1.json().campaign.audienceSnapshot.eligibleAudience).toBe(
+      r2.json().campaign.audienceSnapshot.eligibleAudience,
+    );
+  });
+
+  it('rejects an invalid capabilityId', async () => {
+    const token = await login('bola@toyota.example');
+    const res = await app.inject({
+      method: 'POST',
+      url: '/campaigns',
+      headers: auth(token),
+      payload: { ...body(), capabilityIds: ['standard_sms', 'not_a_real_capability'] },
+    });
+    expect(res.statusCode).toBe(400);
+  });
+
+  it('MTN reviews the EXACT submitted snapshot (immutable, not recalculated)', async () => {
+    const advToken = await login('bola@toyota.example');
+    const created = await app.inject({ method: 'POST', url: '/campaigns', headers: auth(advToken), payload: body() });
+    const id = created.json().campaign.id;
+    const submittedSnapshot = created.json().campaign.audienceSnapshot;
+    await app.inject({ method: 'POST', url: `/campaigns/${id}/submit`, headers: auth(advToken) });
+
+    const mtnToken = await login('ops.lead@mtn.example');
+    const mtnView = await app.inject({ method: 'GET', url: `/campaigns/${id}`, headers: auth(mtnToken) });
+    expect(mtnView.statusCode).toBe(200);
+    expect(mtnView.json().campaign.audienceSnapshot).toEqual(submittedSnapshot);
+    expect(mtnView.json().campaign.capabilityPlan).toHaveLength(capIds.length);
+  });
+});

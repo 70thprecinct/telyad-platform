@@ -250,6 +250,8 @@ export const HIGHLANDER_CAMPAIGN: Campaign = {
   submittedAt: null,
   approvedAt: null,
   approvedByTelcoName: null,
+  audienceSnapshot: null,
+  capabilityPlan: [],
 };
 
 // A second campaign already in the queue, so the console isn't empty on open.
@@ -292,6 +294,8 @@ export const FAIRMONEY_CAMPAIGN: Campaign = {
   submittedAt: '2026-08-08T11:30:00.000Z',
   approvedAt: null,
   approvedByTelcoName: null,
+  audienceSnapshot: null,
+  capabilityPlan: [],
 };
 
 // An already-live campaign so advertiser & telco dashboards have history.
@@ -334,6 +338,8 @@ export const JUMIA_CAMPAIGN: Campaign = {
   submittedAt: '2026-07-30T12:00:00.000Z',
   approvedAt: '2026-07-31T09:00:00.000Z',
   approvedByTelcoName: 'MTN Nigeria',
+  audienceSnapshot: null,
+  capabilityPlan: [],
 };
 
 // ── Multi-industry demo ecosystem (FMCG · banking · retail · SME) ────────────
@@ -380,6 +386,8 @@ function mkCampaign(o: {
     submittedAt: o.submittedAt ?? null,
     approvedAt: o.approvedAt ?? null,
     approvedByTelcoName: o.approvedByTelcoName ?? null,
+    audienceSnapshot: null,
+    capabilityPlan: [],
   };
 }
 

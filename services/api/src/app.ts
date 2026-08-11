@@ -15,7 +15,13 @@ import {
 } from '@telyad/types';
 import { permissionsFor } from '@telyad/auth';
 import { applyEvent, InvalidTransitionError, TELCO_APPROVAL_QUEUE_STATUSES } from '@telyad/campaign-engine';
-import { estimateAudience } from '@telyad/audience';
+import { estimateAudience, estimateAudienceMatch } from '@telyad/audience';
+import type {
+  AudienceCriteria,
+  AudienceEstimateSnapshot,
+  AudienceMatchInput,
+  CampaignCapability,
+} from '@telyad/types';
 import {
   getCapability,
   listCapabilities,
@@ -149,6 +155,54 @@ export function buildApp({ store, logger = false }: AppOptions): FastifyInstance
     const parsed = audienceDefinitionSchema.safeParse(req.body);
     if (!parsed.success) return reply.code(400).send({ error: 'Invalid audience definition' });
     return { estimate: estimateAudience(parsed.data) };
+  });
+
+  // Audience-match: eligible / selected target / forecast for selected capabilities.
+  app.post('/audience/match', { preHandler: authenticate }, async (req, reply) => {
+    const body = req.body as {
+      criteria?: AudienceCriteria;
+      capabilityIds?: string[];
+      selectedTarget?: number;
+    };
+    if (!body?.criteria || !Array.isArray(body.capabilityIds) || body.capabilityIds.length === 0) {
+      return reply.code(400).send({ error: 'criteria and at least one capabilityId are required' });
+    }
+    const caps = body.capabilityIds.map((id) => getCapability(id)).filter((c): c is NonNullable<typeof c> => !!c);
+    if (caps.length === 0) return reply.code(400).send({ error: 'No valid capabilities selected' });
+
+    const input: AudienceMatchInput = {
+      criteria: body.criteria,
+      selectedTarget: typeof body.selectedTarget === 'number' ? body.selectedTarget : undefined,
+      capabilities: caps.map((c) => ({
+        id: c.id,
+        name: c.name,
+        deviceClass: c.deviceClass,
+        pricingModel: c.pricingModels[0] ?? 'CPM',
+        networkStatus: c.defaultNetworkStatus,
+      })),
+    };
+    const result = estimateAudienceMatch(input);
+
+    // Privacy (spec §24): never expose exact small counts. When too narrow,
+    // return only the flag + threshold, no precise figures.
+    if (result.privacy.tooNarrow) {
+      return {
+        match: {
+          estimatorVersion: result.estimatorVersion,
+          basePool: result.basePool,
+          funnel: [],
+          eligibleAudience: 0,
+          selectedTarget: 0,
+          forecastReach: { low: 0, point: 0, high: 0 },
+          frequency: 0,
+          estimatedCostMinor: 0,
+          perFormat: [],
+          privacy: result.privacy,
+          currency: 'NGN' as const,
+        },
+      };
+    }
+    return { match: result };
   });
 
   app.get('/telcos', { preHandler: authenticate }, async (req, reply) => {
@@ -341,6 +395,83 @@ export function buildApp({ store, logger = false }: AppOptions): FastifyInstance
 
     const est = estimateAudience(input.audience);
     const now = new Date().toISOString();
+
+    // ── Compute the media plan + audience snapshot SERVER-SIDE (authoritative).
+    // The client's numbers are never trusted — we recompute from the criteria,
+    // selected capabilities and target so eligible/forecast counts cannot be
+    // forged. This snapshot is persisted and is exactly what MTN reviews.
+    const capIds: string[] =
+      input.capabilityIds && input.capabilityIds.length > 0
+        ? input.capabilityIds
+        : (() => {
+            const c = listCapabilities().find((x) => x.creatableFormatId === input.formatId);
+            return c ? [c.id] : [];
+          })();
+    const caps = capIds.map((id) => getCapability(id)).filter((c): c is NonNullable<typeof c> => !!c);
+    if (input.capabilityIds && caps.length !== capIds.length) {
+      return reply.code(400).send({ error: 'One or more capabilityIds are invalid' });
+    }
+    const criteria: AudienceCriteria = {
+      geographies: input.audience.geographies,
+      ageBands: input.audience.ageBands,
+      devices: input.audience.deviceTypes.filter(
+        (d): d is 'smartphone' | 'feature_phone' => d === 'smartphone' || d === 'feature_phone',
+      ),
+      dataUse: [],
+      spendBands: input.audience.arpuBands,
+      affinities: input.audience.interests,
+      engagement: [],
+      languages: input.audience.languages,
+    };
+    let audienceSnapshot: AudienceEstimateSnapshot | null = null;
+    let capabilityPlan: CampaignCapability[] = [];
+    if (caps.length > 0) {
+      const match = estimateAudienceMatch({
+        criteria,
+        selectedTarget: input.selectedTarget,
+        capabilities: caps.map((c) => ({
+          id: c.id,
+          name: c.name,
+          deviceClass: c.deviceClass,
+          pricingModel: c.pricingModels[0] ?? 'CPM',
+          networkStatus: c.defaultNetworkStatus,
+        })),
+      });
+      capabilityPlan = caps.map((c, i) => {
+        const f = match.perFormat.find((p) => p.capabilityId === c.id);
+        return {
+          capabilityId: c.id,
+          name: c.name,
+          statusAtSubmission: c.defaultNetworkStatus,
+          allocation: f?.allocation ?? 0,
+          eligible: f?.eligible ?? 0,
+          forecast: f?.forecast ?? 0,
+          costMinor: f?.costMinor ?? 0,
+          sortOrder: i,
+        };
+      });
+      if (!match.privacy.tooNarrow) {
+        audienceSnapshot = {
+          estimatorVersion: match.estimatorVersion,
+          estimatedAt: now,
+          criteria,
+          capabilityIds: capIds,
+          eligibleAudience: match.eligibleAudience,
+          selectedTarget: match.selectedTarget,
+          forecastReach: match.forecastReach,
+          frequency: match.frequency,
+          estimatedCostMinor: match.estimatedCostMinor,
+          formatAllocation: match.perFormat.map((f) => ({
+            capabilityId: f.capabilityId,
+            allocation: f.allocation,
+            forecast: f.forecast,
+            costMinor: f.costMinor,
+          })),
+          languageStrategy: input.audience.languages,
+        };
+      }
+    }
+
     const campaign: Campaign = {
       id: asId<'CampaignId'>(randomUUID()),
       telcoId: asId<'TelcoId'>(input.telcoId),
@@ -360,6 +491,8 @@ export function buildApp({ store, logger = false }: AppOptions): FastifyInstance
       submittedAt: null,
       approvedAt: null,
       approvedByTelcoName: null,
+      audienceSnapshot,
+      capabilityPlan,
     };
     const saved = await store.createCampaign(campaign);
     await audit(req, { action: 'Created campaign', target: saved.name, before: null, after: 'DRAFT' });

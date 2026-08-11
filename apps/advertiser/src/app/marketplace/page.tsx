@@ -7,7 +7,6 @@ import {
   CAPABILITY_STATUSES,
   CAPABILITY_STATUS_LABELS,
   type AdCapability,
-  type AdFormatId,
   type CapabilityFamily,
   type CapabilityStatus,
 } from '@telyad/types';
@@ -19,7 +18,7 @@ import {
   Input,
   Modal,
   PageHeader,
-  PhonePreview,
+  ExperiencePreview,
   Select,
 } from '@telyad/ui';
 import { PortalShell } from '@/components/PortalShell';
@@ -28,7 +27,6 @@ import { api } from '@/lib/api';
 const NETWORK_DISCLAIMER =
   'Availability and delivery are subject to participating network capabilities, technical integration, regulatory requirements and network approval.';
 
-const PREVIEW_RENDERERS = new Set(['stk', 'sms', 'ussd', 'wap', 'obd']);
 
 const DEVICE_OPTIONS = [
   { value: '', label: 'Any device' },
@@ -310,24 +308,8 @@ export default function MarketplacePage() {
                 <MetaRow label="Best use cases" value={open.bestUseCases.join(', ')} />
                 <MetaRow label="Recommended sectors" value={open.recommendedSectors.join(', ')} />
               </div>
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
-                {PREVIEW_RENDERERS.has(open.previewRenderer) ? (
-                  <PhonePreview formatId={open.previewRenderer as AdFormatId} fields={{}} />
-                ) : (
-                  <div
-                    className="tly-generic-preview"
-                    style={{
-                      border: '1px dashed var(--tly-border-soft)',
-                      borderRadius: 12,
-                      padding: 24,
-                      textAlign: 'center',
-                      color: 'var(--tly-text-faint)',
-                      fontSize: 12,
-                    }}
-                  >
-                    Preview not available for this capability yet.
-                  </div>
-                )}
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }} data-testid="capability-preview">
+                <ExperiencePreview renderer={open.previewRenderer} content={open.sample} device={open.deviceClass === 'feature_phone' ? 'feature_phone' : 'smartphone'} />
               </div>
             </div>
 

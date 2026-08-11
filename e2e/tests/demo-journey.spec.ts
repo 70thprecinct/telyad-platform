@@ -20,6 +20,11 @@ test('Wednesday demo journey: advertiser submit → MTN approve → advertiser s
   // ── Advertiser ─────────────────────────────────────────────────────────────
   const advCtx = await browser.newContext();
   const adv = await advCtx.newPage();
+  adv.on('response', async (r) => {
+    if (r.url().includes('/campaigns') && r.request().method() === 'POST' && !r.ok()) {
+      console.log('CAMPAIGN POST FAILED', r.status(), r.url(), await r.text().catch(() => ''));
+    }
+  });
 
   await test.step('advertiser login', () => login(adv, ADVERTISER_URL, 'bola@toyota.example'));
   await shot(adv, '01-advertiser-dashboard');
@@ -29,41 +34,39 @@ test('Wednesday demo journey: advertiser submit → MTN approve → advertiser s
     await expect(adv.getByRole('heading', { name: 'New campaign' })).toBeVisible();
   });
 
-  await test.step('step 1 — format & name', async () => {
-    await adv.getByRole('button', { name: /STK Push Notification/ }).click();
+  await test.step('step 1 — objective & name', async () => {
     await adv.getByLabel('Campaign name').fill(campaignName);
-    await shot(adv, '02-format-selection');
+    await shot(adv, '02-objective');
     await adv.getByRole('button', { name: 'Next →' }).click();
   });
 
-  await test.step('step 2 — creative', async () => {
-    await adv.getByLabel(/STK Menu Title/).fill('Toyota Highlander');
-    await adv.getByLabel(/Push Message Body/).fill('Book your Highlander test drive today.');
-    await adv.getByLabel(/Menu Option 1/).fill('Book Test Drive');
-    await adv.getByLabel(/Service Name/).fill('Toyota NG');
-    await shot(adv, '03-creative-preview');
+  await test.step('step 2 — select capabilities (all 48 available)', async () => {
+    await expect(adv.getByTestId('capability-selector')).toBeVisible();
+    await adv.getByRole('button', { name: 'Use recommended set' }).click();
+    await expect(adv.getByTestId('selected-capabilities')).toBeVisible();
+    await shot(adv, '03-capabilities');
     await adv.getByRole('button', { name: 'Next →' }).click();
   });
 
-  await test.step('step 3 — audience + reach estimate', async () => {
-    await adv.getByRole('button', { name: 'Lagos', exact: true }).click();
-    await adv.getByRole('button', { name: 'automotive', exact: true }).click();
-    await adv.getByRole('button', { name: 'premium', exact: true }).click();
-    // The deterministic reach estimate panel is present.
-    await expect(adv.getByText('eligible subscribers')).toBeVisible();
-    await shot(adv, '04-audience-builder');
+  await test.step('step 3 — audience match (eligible/target/forecast)', async () => {
+    const match = adv.getByTestId('audience-match');
+    await expect(match).toBeVisible();
+    // Wait for the estimate to finish computing (loading dots clear) so we don't
+    // advance mid-request.
+    await expect(match).not.toContainText('●●●', { timeout: 15000 });
+    await shot(adv, '04-audience-match');
     await adv.getByRole('button', { name: 'Next →' }).click();
   });
 
-  await test.step('step 4 — budget', async () => {
-    await expect(adv.getByText('Budget & schedule')).toBeVisible();
+  await test.step('step 4 — creative & language', async () => {
+    await adv.getByTestId('creative-body').fill('Win with Maltina — join the family promo today!');
+    await shot(adv, '05-creative-language');
     await adv.getByRole('button', { name: 'Next →' }).click();
   });
 
   await test.step('step 5 — review & submit', async () => {
-    await expect(adv.getByText('Review & submit')).toBeVisible();
-    await shot(adv, '05-review');
     await adv.getByRole('button', { name: 'Submit for approval' }).click();
+    await adv.waitForURL(/\/campaigns\/[0-9a-f-]+$/, { timeout: 20000 });
   });
 
   await test.step('advertiser sees Pending MTN approval', async () => {
@@ -88,6 +91,17 @@ test('Wednesday demo journey: advertiser submit → MTN approve → advertiser s
     const card = mtn.getByTestId('approval-card').filter({ hasText: campaignName });
     await expect(card).toBeVisible();
     await shot(mtn, '08-approval-queue');
+
+    await test.step('MTN reviews the persisted snapshot + full capability plan', async () => {
+      // The submitted audience snapshot and multi-capability plan are shown.
+      await expect(card.getByTestId('mtn-audience-snapshot')).toBeVisible();
+      await expect(card.getByTestId('mtn-capability-plan')).toBeVisible();
+      const tabs = card.getByTestId('mtn-capability-tab');
+      expect(await tabs.count()).toBeGreaterThan(1);
+      // Switching a capability changes the subscriber-experience preview.
+      await tabs.nth(1).click();
+      await expect(card.getByTestId('mtn-experience-preview')).toBeVisible();
+    });
 
     await test.step('review + approve', async () => {
       await card.getByTestId('approve-button').click();

@@ -1,8 +1,10 @@
 import type {
   AdCapability,
   AdvertisingFormat,
+  AudienceCriteria,
   AudienceDefinition,
   AudienceEstimate,
+  AudienceMatchResult,
   AudienceOpportunity,
   AuthUser,
   Campaign,
@@ -90,6 +92,17 @@ export const api = {
   // ── Capability universe (marketplace) ──────────────────────────────────────
   capabilities: () => request<{ capabilities: AdCapability[] }>('/capabilities'),
   capability: (id: string) => request<{ capability: AdCapability }>(`/capabilities/${id}`),
+
+  // ── Audience-match engine (WP02C) ──────────────────────────────────────────
+  audienceMatch: (body: {
+    criteria: AudienceCriteria;
+    capabilityIds: string[];
+    selectedTarget?: number;
+  }) =>
+    request<{ match: AudienceMatchResult }>('/audience/match', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    }),
 
   // ── Demonstration intelligence layer ───────────────────────────────────────
   mediaPlan: (req: MediaPlanRequest) =>
