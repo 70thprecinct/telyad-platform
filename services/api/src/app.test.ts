@@ -120,6 +120,20 @@ describe('Wednesday demo flow — advertiser submit → MTN approve → advertis
   });
 });
 
+describe('health & readiness', () => {
+  it('reports liveness on /health', async () => {
+    const res = await app.inject({ method: 'GET', url: '/health' });
+    expect(res.statusCode).toBe(200);
+    expect(res.json().ok).toBe(true);
+  });
+
+  it('reports readiness (store reachable) on /ready', async () => {
+    const res = await app.inject({ method: 'GET', url: '/ready' });
+    expect(res.statusCode).toBe(200);
+    expect(res.json().ready).toBe(true);
+  });
+});
+
 describe('tenant isolation & RBAC (server-enforced)', () => {
   it('advertiser listing returns only its own campaigns', async () => {
     const token = await login('bola@toyota.example');

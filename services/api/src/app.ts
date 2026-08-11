@@ -99,8 +99,18 @@ export function buildApp({ store, logger = false }: AppOptions): FastifyInstance
     await store.addAuditEvent(event);
   };
 
-  // ── health ─────────────────────────────────────────────────────────────────
+  // ── health & readiness ──────────────────────────────────────────────────────
+  // Liveness: the process is up. No dependencies checked, no secrets exposed.
   app.get('/health', async () => ({ ok: true, env: env.envLabel }));
+
+  // Readiness: the backing store is reachable. 503 if not (for load balancers).
+  app.get('/ready', async (_req, reply) => {
+    const storeKind = process.env.STORE === 'memory' ? 'memory' : 'prisma';
+    const dbReachable = await store.ping();
+    return reply
+      .code(dbReachable ? 200 : 503)
+      .send({ ready: dbReachable, store: storeKind, db: dbReachable ? 'reachable' : 'unreachable' });
+  });
 
   // ── auth ───────────────────────────────────────────────────────────────────
   app.post('/auth/login', async (req, reply) => {

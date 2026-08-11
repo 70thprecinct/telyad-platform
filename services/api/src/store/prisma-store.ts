@@ -87,6 +87,15 @@ function campaignToRow(c: Campaign) {
 export class PrismaStore implements Store {
   constructor(private readonly prisma: PrismaClient) {}
 
+  async ping(): Promise<boolean> {
+    try {
+      await this.prisma.$queryRaw`SELECT 1`;
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   async getUserByEmail(email: string): Promise<StoredUser | null> {
     const u = await this.prisma.user.findUnique({ where: { email } });
     return u ? this.mapUser(u) : null;

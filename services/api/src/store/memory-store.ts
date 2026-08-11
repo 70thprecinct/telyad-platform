@@ -33,6 +33,10 @@ export class MemoryStore implements Store {
     this.notifications = seed.notifications;
   }
 
+  async ping(): Promise<boolean> {
+    return true;
+  }
+
   async getUserByEmail(email: string): Promise<StoredUser | null> {
     for (const u of this.users.values()) {
       if (u.email.toLowerCase() === email.toLowerCase()) return clone(u);
