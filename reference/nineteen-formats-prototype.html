@@ -1,0 +1,1495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Tely — 19 Format Previews with Real Ad Copy</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto:wght@400;500&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --mtn:#FFCC08;--tely:#FF6A3D;--navy:#0A1628;
+  --bg:#0F1623;--card:#151E2E;--border:rgba(255,255,255,.08);
+  --text:#F0F4FF;--dim:#8A9BB8;--faint:#3A4A5E;
+  --green:#00E5A0;--red:#FF4455;--blue:#4F7EF7;--purple:#A78BFA;
+  --r:10px;
+}
+html,body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:14px;}
+.page{max-width:1320px;margin:0 auto;padding:28px 20px;}
+
+/* TOP HEADER */
+.hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:36px;padding-bottom:18px;border-bottom:1px solid var(--border);}
+.hdr-left{}
+.hdr-title{font-size:26px;font-weight:700;color:var(--text);}
+.hdr-title .tely{color:var(--tely);}
+.hdr-title .mtn{color:var(--mtn);}
+.hdr-sub{font-size:12px;color:var(--dim);margin-top:3px;}
+.portal-tabs{display:flex;gap:6px;}
+.ptab{padding:8px 20px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid var(--border);color:var(--dim);background:transparent;transition:all .2s;font-family:'Inter',sans-serif;}
+.ptab.ads.active{background:var(--tely);color:#fff;border-color:var(--tely);}
+.ptab.dial.active{background:var(--mtn);color:#000;border-color:var(--mtn);}
+.ptab.both.active{background:var(--blue);color:#fff;border-color:var(--blue);}
+
+/* PORTAL INTRO BANNERS */
+.portal-intro{border-radius:var(--r);padding:16px 20px;margin-bottom:28px;display:flex;align-items:flex-start;justify-content:space-between;gap:20px;}
+.portal-intro.ads{background:rgba(255,106,61,.07);border:1px solid rgba(255,106,61,.2);}
+.portal-intro.dial{background:rgba(255,204,8,.07);border:1px solid rgba(255,204,8,.2);}
+.pi-title{font-size:15px;font-weight:700;margin-bottom:4px;}
+.pi-desc{font-size:12px;color:var(--dim);line-height:1.55;max-width:600px;}
+.pi-stats{display:flex;gap:16px;flex-shrink:0;}
+.pi-stat{text-align:center;padding:10px 14px;background:rgba(255,255,255,.04);border-radius:8px;border:1px solid var(--border);}
+.pi-num{font-size:22px;font-weight:700;}
+.pi-lbl{font-size:10px;color:var(--dim);margin-top:2px;}
+
+/* CATEGORY BAR */
+.cat-bar{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin:32px 0 14px;padding-bottom:10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.cat-bar::before{content:'';display:inline-block;width:3px;height:13px;border-radius:2px;}
+.cat-bar.sms::before{background:#7BA0FF;}
+.cat-bar.ussd::before{background:var(--green);}
+.cat-bar.voice::before{background:var(--mtn);}
+.cat-bar.sim::before{background:var(--purple);}
+.cat-bar.smart::before{background:var(--tely);}
+.cat-bar.billing::before{background:var(--cyan,#22D3EE);}
+.cat-bar.retgt::before{background:var(--green);}
+
+/* FORMAT CARD */
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(580px,1fr));gap:18px;margin-bottom:4px;}
+.fcard{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:border-color .2s;}
+.fcard:hover{border-color:rgba(255,255,255,.16);}
+.fcard-hdr{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+.fcard-name{font-size:13.5px;font-weight:700;color:var(--text);}
+.fcard-meta{font-size:11px;color:var(--dim);margin-top:2px;}
+.ftag{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0;}
+.ftag.both{background:rgba(79,110,247,.15);color:#7BA0FF;}
+.ftag.smart{background:rgba(0,229,160,.12);color:var(--green);}
+
+/* BODY: ad copy left, preview right */
+.fcard-body{display:grid;grid-template-columns:1fr 1fr;min-height:280px;}
+.ad-panel{padding:14px 16px;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:0;}
+.dev-panel{padding:12px 14px;background:rgba(0,0,0,.18);display:flex;flex-direction:column;}
+
+/* PORTAL TOGGLE INSIDE CARD */
+.card-portals{display:flex;gap:6px;margin-bottom:10px;}
+.cp-btn{padding:4px 12px;border-radius:16px;font-size:10px;font-weight:700;border:1px solid var(--border);color:var(--dim);background:transparent;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;}
+.cp-btn.active.ads{background:rgba(255,106,61,.2);color:var(--tely);border-color:rgba(255,106,61,.3);}
+.cp-btn.active.dial{background:rgba(255,204,8,.2);color:var(--mtn);border-color:rgba(255,204,8,.3);}
+
+/* AD COPY BLOCK */
+.ad-block{border-radius:8px;padding:12px 14px;margin-bottom:8px;border:1px solid transparent;}
+.ad-block.ads{background:rgba(255,106,61,.06);border-color:rgba(255,106,61,.15);}
+.ad-block.dial{background:rgba(255,204,8,.06);border-color:rgba(255,204,8,.15);}
+.ab-label{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:5px;}
+.ab-label.ads{color:var(--tely);}
+.ab-label.dial{color:var(--mtn);}
+.ab-badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:10px;font-size:9px;font-weight:700;}
+.ab-badge.ads{background:rgba(255,106,61,.15);color:var(--tely);}
+.ab-badge.dial{background:rgba(255,204,8,.15);color:var(--mtn);}
+.ab-brand{font-size:11px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.ab-copy{font-size:11.5px;color:rgba(255,255,255,.8);line-height:1.6;font-family:'Roboto',sans-serif;}
+.ab-copy strong{color:#fff;font-weight:700;}
+.ab-cta{margin-top:6px;font-family:'Roboto Mono',monospace;font-size:11px;font-weight:700;}
+.ab-cta.ads{color:var(--blue);}
+.ab-cta.dial{color:var(--mtn);}
+.ab-note{font-size:9.5px;color:var(--faint);margin-top:3px;}
+.ab-sep{height:1px;background:var(--border);margin:8px 0;}
+
+/* DEVICE TABS */
+.dtabs{display:flex;margin-bottom:8px;background:rgba(255,255,255,.04);border-radius:6px;padding:2px;}
+.dtab{flex:1;padding:4px;text-align:center;font-size:10px;font-weight:600;color:var(--dim);cursor:pointer;border-radius:4px;transition:all .15s;}
+.dtab.on{background:rgba(255,255,255,.08);color:var(--text);}
+
+/* PHONE */
+.pw{display:flex;justify-content:center;gap:10px;flex:1;align-items:center;}
+.phone{border-radius:20px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.5);flex-shrink:0;}
+.phone.sm{width:138px;background:#111;border:4px solid #222;}
+.phone.fp{width:106px;background:#1A1A1A;border:4px solid #111;border-radius:13px;}
+.pnb{height:16px;background:#111;display:flex;align-items:center;justify-content:center;}
+.pn{width:44px;height:11px;background:#111;border-radius:0 0 8px 8px;border:2px solid #222;border-top:none;}
+.pscr{background:#fff;overflow:hidden;}
+.fpscr{background:#000;overflow:hidden;}
+
+/* STATUS BAR */
+.sb{display:flex;justify-content:space-between;align-items:center;padding:3px 7px;font-size:7px;font-weight:600;}
+.sb.lt{background:#fff;color:#000;}
+.sb.dk{background:#1C1C1E;color:#fff;}
+.sb.bl{background:#1A73E8;color:#fff;}
+.sbr{display:flex;align-items:center;gap:2px;font-size:6.5px;}
+.sig{display:flex;align-items:flex-end;gap:1px;}
+.sig s{width:1.5px;background:currentColor;border-radius:.5px;text-decoration:none;}
+.sig s:nth-child(1){height:3px;opacity:.35;}.sig s:nth-child(2){height:5px;opacity:.6;}.sig s:nth-child(3){height:7px;opacity:.8;}.sig s:nth-child(4){height:9px;}
+
+/* SMS THREAD */
+.msgtop{background:#1A73E8;padding:6px 8px;display:flex;align-items:center;gap:5px;}
+.msgav{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:900;flex-shrink:0;}
+.msgnm{font-size:9px;color:#fff;font-weight:700;}
+.msgthread{padding:7px;display:flex;flex-direction:column;gap:4px;background:#fff;}
+.msts{text-align:center;font-size:6.5px;color:#aaa;margin-bottom:1px;}
+.bbl{border-radius:12px;padding:5px 7px;font-size:8px;line-height:1.5;font-family:'Roboto',sans-serif;}
+.bbl.in{background:#E8E8E8;color:#111;border-radius:12px 12px 12px 2px;max-width:92%;}
+.bbl.ad{background:#E3F2FD;border:1px solid #BBDEFB;border-radius:12px 12px 12px 2px;max-width:95%;}
+.bbl.vas{background:#FFF8E1;border:1px solid #FFECB3;border-radius:12px 12px 12px 2px;max-width:95%;}
+
+/* FLASH */
+.flash-bg{background:#d8d8d8;display:flex;align-items:center;justify-content:center;padding:8px;min-height:168px;}
+.flash-dlg{background:#fff;border-radius:7px;width:100%;box-shadow:0 3px 12px rgba(0,0,0,.2);}
+.flash-ttl{padding:10px 10px 4px;font-size:9px;font-weight:700;color:#111;font-family:'Roboto',sans-serif;}
+.flash-bd{padding:0 10px 8px;font-size:8px;color:#333;line-height:1.55;font-family:'Roboto',sans-serif;}
+.flash-code{font-family:'Roboto Mono',monospace;font-size:9px;font-weight:700;color:#1A73E8;margin-top:5px;}
+.flash-opts{display:flex;border-top:1px solid #eee;}
+.flash-btn{flex:1;padding:8px;text-align:center;font-size:9px;font-weight:700;color:#1A73E8;font-family:'Roboto',sans-serif;}
+.flash-btn+.flash-btn{border-left:1px solid #eee;color:#888;}
+
+/* USSD */
+.ud{background:#fff;margin:6px;border-radius:5px;box-shadow:0 1px 8px rgba(0,0,0,.15);}
+.uh{padding:8px 10px 4px;font-size:8.5px;font-weight:700;color:#111;font-family:'Roboto Mono',monospace;}
+.ub{padding:0 10px 6px;font-size:8px;color:#222;line-height:1.75;font-family:'Roboto Mono',monospace;white-space:pre;}
+.uinj{background:#E8F0FE;border-left:2px solid #1A73E8;margin:0 10px 6px;padding:4px 6px;font-size:7.5px;color:#111;}
+.uinjl{font-size:7px;font-weight:700;color:#1A3FAA;margin-bottom:1px;text-transform:uppercase;letter-spacing:.04em;}
+.uinj.vas{background:#FFF8E1;border-color:#F9A825;}
+.uinjl.vas{color:#E65100;}
+.uacts{display:flex;border-top:1px solid #eee;}
+.ubtn{flex:1;padding:6px;text-align:center;font-size:8.5px;font-weight:700;color:#1A73E8;}
+.ubtn+.ubtn{border-left:1px solid #eee;color:#888;}
+
+/* EOC */
+.eoc{background:#1C1C1E;display:flex;flex-direction:column;min-height:190px;}
+.eoc-c{text-align:center;padding:12px 8px 6px;}
+.eoc-av{width:34px;height:34px;border-radius:50%;background:#3A3A3C;margin:0 auto 4px;display:flex;align-items:center;justify-content:center;font-size:14px;}
+.eoc-nm{font-size:10px;font-weight:700;color:#fff;font-family:'Roboto',sans-serif;}
+.eoc-inf{font-size:7.5px;color:rgba(255,255,255,.35);margin-top:1px;}
+.eoc-div{height:1px;background:rgba(255,255,255,.07);margin:0 8px;}
+.eoc-ad{margin:5px 7px;background:#2C2C2E;border-radius:7px;overflow:hidden;}
+.eoc-adl{font-size:6.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.25);padding:3px 7px 1px;}
+.eoc-adb{padding:1px 7px 7px;}
+.eoc-brand{font-size:9.5px;font-weight:700;color:#fff;margin-bottom:1px;}
+.eoc-copy{font-size:7.5px;color:rgba(255,255,255,.5);line-height:1.35;margin-bottom:4px;}
+.eoc-cta{border-radius:4px;padding:4px 6px;font-size:7.5px;font-weight:700;color:#fff;text-align:center;}
+.eoc-keys{display:flex;justify-content:space-around;padding:6px 8px;margin-top:auto;}
+.eoc-key{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;font-size:10px;}
+.eoc-call{background:#34C759;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;}
+
+/* LOCK */
+.lock-bg{background:linear-gradient(155deg,#0D1B3E,#050A14);display:flex;flex-direction:column;min-height:190px;}
+.lock-t{text-align:center;padding:16px 0 6px;}
+.lock-time{font-size:34px;font-weight:200;color:#fff;font-family:'Roboto',sans-serif;}
+.lock-date{font-size:8px;color:rgba(255,255,255,.4);}
+.lock-card{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.12);border-radius:9px;margin:0 7px;}
+.lock-bar{background:rgba(255,255,255,.07);padding:3px 7px;display:flex;justify-content:space-between;font-size:7px;}
+.lock-body{padding:7px;}
+.lock-row{display:flex;align-items:center;gap:5px;margin-bottom:4px;}
+.lock-ico{width:16px;height:16px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:900;color:#fff;flex-shrink:0;}
+.lock-bn{font-size:9.5px;font-weight:700;color:#fff;}
+.lock-copy{font-size:8px;color:rgba(255,255,255,.7);line-height:1.35;margin-bottom:5px;}
+.lock-btns{display:flex;gap:4px;}
+.lock-bp{flex:1;padding:4px;border-radius:4px;font-size:8px;font-weight:700;color:#fff;text-align:center;}
+.lock-bd{padding:4px 7px;border:1px solid rgba(255,255,255,.15);border-radius:4px;font-size:7.5px;color:rgba(255,255,255,.4);}
+.lock-sw{text-align:center;padding:6px 0 4px;font-size:7px;color:rgba(255,255,255,.15);margin-top:auto;}
+
+/* NOTIF */
+.notif-bg{background:#0D1B3E;min-height:190px;position:relative;}
+.shade{position:absolute;top:0;left:0;right:0;background:rgba(8,14,26,.95);border-radius:0 0 10px 10px;padding:4px 7px 8px;}
+.shade-h{width:22px;height:2px;background:rgba(255,255,255,.12);border-radius:2px;margin:0 auto 6px;}
+.nc{background:rgba(255,255,255,.05);border-radius:7px;overflow:hidden;margin-bottom:4px;}
+.nc.sp{border:1px solid rgba(255,204,8,.2);}
+.ntop{display:flex;align-items:center;gap:4px;padding:4px 7px 1px;}
+.nico{width:11px;height:11px;border-radius:2px;flex-shrink:0;}
+.napp{font-size:7.5px;color:rgba(255,255,255,.35);}
+.ntime{margin-left:auto;font-size:7px;color:rgba(255,255,255,.2);}
+.nbody{padding:0 7px 5px;}
+.nttl{font-size:9px;font-weight:700;color:#fff;font-family:'Roboto',sans-serif;}
+.ntxt{font-size:8px;color:rgba(255,255,255,.55);line-height:1.3;font-family:'Roboto',sans-serif;}
+.nacts{display:flex;border-top:1px solid rgba(255,255,255,.05);}
+.nact{flex:1;padding:4px;text-align:center;font-size:8px;font-weight:600;color:#64B5F6;}
+.nact+.nact{border-left:1px solid rgba(255,255,255,.05);color:rgba(255,255,255,.25);}
+.nspon{font-size:6.5px;color:rgba(255,255,255,.18);padding:1px 7px;}
+
+/* BROWSER */
+.browser{background:#fff;display:flex;flex-direction:column;min-height:168px;}
+.bbar{background:#F5F5F5;border-bottom:1px solid #E0E0E0;padding:5px 7px;display:flex;align-items:center;gap:4px;}
+.burl{background:#fff;border:1px solid #E0E0E0;border-radius:12px;padding:2px 7px;font-size:7.5px;color:#555;font-family:'Roboto Mono',monospace;flex:1;}
+.bcon{padding:7px;}
+.blines{margin-bottom:6px;}
+.bline{height:6px;background:#F0F0F0;border-radius:2px;margin-bottom:4px;}
+.banner{border:1px solid #E0E0E0;border-radius:5px;overflow:hidden;}
+.bannertop{padding:3px 7px;display:flex;justify-content:space-between;align-items:center;}
+.banlbl{font-size:6.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:rgba(255,255,255,.7);}
+.banbody{padding:6px 7px;display:flex;align-items:center;gap:6px;}
+.bantxt{flex:1;}
+.banttl{font-size:9px;font-weight:700;color:#111;}
+.bancopy{font-size:7.5px;color:#555;line-height:1.3;}
+.bancta{border-radius:3px;padding:4px 6px;font-size:8px;font-weight:700;color:#fff;white-space:nowrap;}
+
+/* RECEIPT */
+.receipt{background:#fff;display:flex;flex-direction:column;min-height:168px;}
+.rhdr{padding:8px;text-align:center;}
+.rcheck{font-size:16px;margin-bottom:3px;}
+.rttl{font-size:10px;font-weight:700;color:#fff;}
+.ramt{font-size:8.5px;color:rgba(255,255,255,.75);}
+.rrows{padding:6px 9px;border-bottom:1px solid #F0F0F0;}
+.rrow{display:flex;justify-content:space-between;padding:2px 0;font-size:8.5px;color:#333;}
+.rrow span:last-child{font-weight:700;}
+.rad{background:#FFF8E1;border-left:3px solid #F9A825;margin:6px 9px;padding:5px 6px;border-radius:0 4px 4px 0;}
+.rad.vas{border-color:#FFCC08;background:#FFFDE7;}
+.radlbl{font-size:7px;font-weight:700;color:#E65100;margin-bottom:1px;text-transform:uppercase;letter-spacing:.03em;}
+.radlbl.vas{color:#F57F17;}
+.radttl{font-size:9px;font-weight:700;color:#111;margin-bottom:1px;}
+.radcopy{font-size:8px;color:#444;line-height:1.3;margin-bottom:2px;}
+.radcta{font-family:'Roboto Mono',monospace;font-size:8.5px;font-weight:700;color:#1A73E8;}
+
+/* OBD */
+.obd{background:#1C1C1E;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:190px;padding:12px;}
+.obd-lbl{font-size:7.5px;color:rgba(255,255,255,.35);margin-bottom:8px;}
+.obd-av{width:40px;height:40px;border-radius:50%;background:#2C2C2E;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:6px;}
+.obd-num{font-size:12px;font-weight:700;color:#fff;}
+.obd-desc{font-size:8px;color:rgba(255,255,255,.4);margin-top:2px;margin-bottom:12px;text-align:center;line-height:1.4;}
+.obd-btns{display:flex;gap:20px;}
+.obd-btn{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;}
+
+/* STK */
+.stk-bg{background:#E8E8E8;display:flex;align-items:center;justify-content:center;padding:8px;min-height:190px;}
+.stk-dlg{background:#fff;border-radius:5px;width:100%;border:1px solid #ccc;}
+.stk-hdr{padding:7px 9px;border-radius:5px 5px 0 0;}
+.stk-ht{font-size:9.5px;font-weight:700;color:#fff;}
+.stk-hs{font-size:7.5px;color:rgba(255,255,255,.65);}
+.stk-body{padding:7px 9px;}
+.stk-msg{font-size:8.5px;color:#333;line-height:1.5;margin-bottom:7px;}
+.stk-items{display:flex;flex-direction:column;gap:2px;}
+.stk-i{background:#F5F5F5;border-radius:3px;padding:5px 7px;font-size:8.5px;color:#333;}
+.stk-i.pri{font-weight:700;color:#fff;}
+
+/* WAP */
+.wap{background:#fff;display:flex;flex-direction:column;min-height:168px;}
+.wbar{padding:5px 7px;display:flex;align-items:center;gap:4px;}
+.wurl{border-radius:12px;padding:2px 7px;font-size:7.5px;font-family:'Roboto Mono',monospace;flex:1;}
+.wcon{padding:7px;}
+.wttl{font-size:9.5px;font-weight:700;color:#111;margin-bottom:5px;}
+.wn{border:1px solid #E0E0E0;border-radius:5px;overflow:hidden;}
+.wntop{background:#F5F5F5;padding:4px 7px;border-bottom:1px solid #E0E0E0;font-size:7.5px;color:#666;}
+.wnbody{padding:7px;}
+.wnttl{font-size:9.5px;font-weight:700;color:#111;margin-bottom:2px;}
+.wncopy{font-size:8px;color:#444;line-height:1.35;margin-bottom:4px;}
+.wnlink{font-size:8px;font-weight:700;color:#1A73E8;}
+
+/* FEATURE PHONE */
+.fpt{background:#003300;padding:2px 5px;display:flex;justify-content:space-between;font-size:6.5px;color:#00cc00;font-family:'Roboto Mono',monospace;}
+.fpb{padding:5px;font-family:'Roboto Mono',monospace;font-size:8px;line-height:1.65;min-height:100px;}
+.fpb.blk{background:#000;color:#fff;}
+.fpb.wht{background:#fff;color:#000;}
+.fpsk{display:flex;border-top:1px solid #333;}
+.fpk{flex:1;padding:4px;text-align:center;font-size:7px;font-family:'Roboto Mono',monospace;}
+.fpk.dk{background:#111;color:#aaa;border-right:1px solid #222;}
+.fpk.lt{background:#e8e8e8;color:#333;border-right:1px solid #ccc;}
+
+/* SEQ */
+.seq-steps{display:flex;flex-direction:column;gap:5px;}
+.seq-s{border-radius:6px;overflow:hidden;}
+.seq-sh{display:flex;align-items:center;gap:6px;padding:5px 8px;border-bottom:1px solid rgba(255,255,255,.05);}
+.seq-n{width:15px;height:15px;border-radius:50%;color:#fff;font-size:7.5px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.seq-l{font-size:8.5px;font-weight:700;color:#fff;}
+.seq-d{margin-left:auto;font-size:7.5px;color:var(--dim);}
+.seq-b{padding:6px 8px;font-size:8.5px;color:rgba(255,255,255,.6);line-height:1.45;}
+.seq-code{font-family:'Roboto Mono',monospace;font-weight:700;font-size:8.5px;}
+
+/* FOOTER */
+.fcard-footer{padding:8px 14px;border-top:1px solid var(--border);display:flex;gap:5px;flex-wrap:wrap;align-items:center;}
+.pill{font-size:9.5px;font-weight:600;padding:2px 8px;border-radius:9px;}
+.p-conv{background:rgba(0,229,160,.1);color:var(--green);}
+.p-aware{background:rgba(255,181,71,.1);color:#FFB547;}
+.p-lead{background:rgba(79,110,247,.12);color:#7BA0FF;}
+.p-sub{background:rgba(255,204,8,.12);color:var(--mtn);}
+.p-cpm{background:rgba(167,139,250,.1);color:var(--purple);}
+.p-cpd{background:rgba(34,211,238,.1);color:#22D3EE;}
+.p-cpa{background:rgba(255,68,85,.1);color:var(--red);}
+.p-revs{background:rgba(0,229,160,.08);color:var(--green);}
+
+/* VISIBILITY */
+.ads-only,.dial-only{display:none;}
+body.mode-ads .ads-only{display:flex;}
+body.mode-dial .dial-only{display:flex;}
+body.mode-both .ads-only,.mode-both .dial-only{display:flex;}
+</style>
+</head>
+<body class="mode-ads">
+<div class="page">
+
+<div class="hdr">
+  <div class="hdr-left">
+    <div class="hdr-title">Tely<span class="tely">Ads</span> &amp; Tely<span class="mtn">Dial</span> — 19 Format Previews</div>
+    <div class="hdr-sub">Real ad copy · Nigerian brands & VAS services · Feature phone + smartphone · All 19 formats</div>
+  </div>
+  <div class="portal-tabs">
+    <button class="ptab ads active" onclick="setMode('ads',this)">📣 TelyAds</button>
+    <button class="ptab dial" onclick="setMode('dial',this)">📱 TelyDial VAS</button>
+    <button class="ptab both" onclick="setMode('both',this)">⬡ Both</button>
+  </div>
+</div>
+
+<!-- TelyAds intro -->
+<div class="portal-intro ads ads-only">
+  <div>
+    <div class="pi-title" style="color:var(--tely);">📣 TelyAds — Advertiser Portal</div>
+    <div class="pi-desc">Carrier-layer programmatic advertising for SMEs, banks, FMCG brands, betting companies, and e-commerce. Advertisers target MTN's 80M+ subscribers by demographics, geography, spend tier, and network behaviour. Every naira tracked from impression to dial to conversion. Advertiser keeps their own USSD code.</div>
+  </div>
+  <div class="pi-stats">
+    <div class="pi-stat"><div class="pi-num" style="color:var(--tely);">19</div><div class="pi-lbl">Ad formats</div></div>
+    <div class="pi-stat"><div class="pi-num" style="color:var(--mtn);">80M+</div><div class="pi-lbl">Subscribers</div></div>
+    <div class="pi-stat"><div class="pi-num" style="color:var(--green);">CPM</div><div class="pi-lbl">All objectives</div></div>
+  </div>
+</div>
+
+<!-- TelyDial intro -->
+<div class="portal-intro dial dial-only">
+  <div>
+    <div class="pi-title" style="color:var(--mtn);">📱 TelyDial — VAS Subscriber Acquisition</div>
+    <div class="pi-desc">Clean, carrier-layer MVAS subscriber acquisition for VAS operators. Subscribers opt in explicitly — dial the code, reply the digit, press the key. No silent enrollments. No affiliate middlemen. Daily, weekly, and monthly subscription services — Soka Games, Yello Trivia, Spin2Cash, Lucky Number, Cash Drop, and all 70TH Precinct services on *8022#.</div>
+  </div>
+  <div class="pi-stats">
+    <div class="pi-stat"><div class="pi-num" style="color:var(--mtn);">*8022#</div><div class="pi-lbl">Short code</div></div>
+    <div class="pi-stat"><div class="pi-num" style="color:var(--green);">100%</div><div class="pi-lbl">Consent</div></div>
+    <div class="pi-stat"><div class="pi-num" style="color:var(--purple);">RevShare</div><div class="pi-lbl">Model</div></div>
+  </div>
+</div>
+
+<!-- ══ SMS ══ -->
+<div class="cat-bar sms">SMS Formats (1–4)</div>
+<div class="fgrid">
+
+<!-- F1: Standard SMS -->
+<div class="fcard">
+  <div class="fcard-hdr">
+    <div><div class="fcard-name">1 · Standard SMS</div><div class="fcard-meta">MT via shortcode · 160 chars/segment · Sender ID shown</div></div>
+    <span class="ftag both">Both devices</span>
+  </div>
+  <div class="fcard-body">
+    <div class="ad-panel">
+      <!-- TelyAds copy -->
+      <div class="ad-block ads ads-only">
+        <div class="ab-label ads"><span class="ab-badge ads">TelyAds</span> — Access Bank</div>
+        <div class="ab-copy"><strong>ACCESS BANK:</strong> Open a HighYield account today and earn 22% p.a. No branch visit. Takes 3 minutes.</div>
+        <div class="ab-cta ads">Dial *901*1#</div>
+        <div class="ab-note">Reply STOP to opt out</div>
+      </div>
+      <!-- TelyDial copy -->
+      <div class="ad-block dial dial-only">
+        <div class="ab-label dial"><span class="ab-badge dial">TelyDial</span> — Yello Trivia</div>
+        <div class="ab-copy"><strong>How sharp you be? 🧠</strong> Join Yello Trivia — answer daily questions, climb the leaderboard & win cash prizes every week!</div>
+        <div class="ab-cta dial">Dial *8022# → Option 3</div>
+        <div class="ab-note">₦50/day · Reply STOP to opt out</div>
+      </div>
+      <div class="ab-sep"></div>
+      <div style="font-size:10px;color:var(--dim);">Max 160 chars · Opt-out mandatory · DND filtered automatically</div>
+    </div>
+    <div class="dev-panel">
+      <div class="dtabs"><div class="dtab on">📱 Smartphone</div><div class="dtab">📟 Feature phone</div></div>
+      <div class="pw">
+        <div class="phone sm">
+          <div class="pnb"><div class="pn"></div></div>
+          <div class="pscr">
+            <div class="sb lt"><span>09:41</span><div class="sbr"><div class="sig"><s></s><s></s><s></s><s></s></div><span>4G</span>🔋</div></div>
+            <div class="msgtop"><div class="msgav" style="background:#FFCC08;color:#000;">M</div><div class="msgnm">MTNOffers</div></div>
+            <div class="msgthread">
+              <div class="msts">Today 11:04</div>
+              <div class="bbl ads-only in">ACCESS BANK: Open a HighYield account today and earn 22% p.a. No branch visit. Takes 3 minutes. Dial *901*1# Reply STOP to opt out.</div>
+              <div class="bbl dial-only vas">How sharp you be? 🧠 Join Yello Trivia — answer daily questions, win cash prizes! Dial *8022# Reply 3. ₦50/day. Reply STOP to opt out.</div>
+            </div>
+          </div>
+        </div>
+        <div class="phone fp">
+          <div class="fpscr">
+            <div class="fpt"><span>MTN</span><span>Msg</span></div>
+            <div class="fpb wht ads-only" style="font-size:7.5px;">From: MTNOffers&#10;&#10;ACCESS BANK: Earn 22% p.a. No branch. 3 mins. Dial *901*1#. Reply STOP to opt out.</div>
+            <div class="fpb wht dial-only" style="font-size:7.5px;">From: MTN&#10;&#10;How sharp you be? Join Yello Trivia! Win cash. Dial *8022# Reply 3. N50/day. Reply STOP to opt out.</div>
+            <div class="fpsk"><span class="fpk lt">Back</span><span class="fpk lt">Reply</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="fcard-footer">
+    <span class="pill p-aware">Awareness</span><span class="pill p-conv">Conversion</span><span class="pill p-sub dial-only">Subscription</span><span class="pill p-cpm">CPM</span><span class="pill p-revs dial-only">RevShare</span>
+  </div>
+</div>
+
+<!-- F2: Flash SMS -->
+<div class="fcard">
+  <div class="fcard-hdr">
+    <div><div class="fcard-name">2 · Flash SMS (Class 0)</div><div class="fcard-meta">Pops over any screen · Not saved · 160 char hard limit</div></div>
+    <span class="ftag both">Both devices</span>
+  </div>
+  <div class="fcard-body">
+    <div class="ad-panel">
+      <div class="ad-block ads ads-only">
+        <div class="ab-label ads"><span class="ab-badge ads">TelyAds</span> — Betway Nigeria</div>
+        <div class="ab-copy"><strong>BETWAY:</strong> Free ₦500 bet on tonight's AFCON match! New users only. Register in 2 minutes.</div>
+        <div class="ab-cta ads">Dial *347#</div>
+        <div class="ab-note">Reply STOP to opt out · Max 1 per 72 hours</div>
+      </div>
+      <div class="ad-block dial dial-only">
+        <div class="ab-label dial"><span class="ab-badge dial">TelyDial</span> — Spin2Cash</div>
+        <div class="ab-copy"><strong>Spin am, win am! 🎡</strong> Your next spin could unlock cash & exciting prizes. First spin FREE today only!</div>
+        <div class="ab-cta dial">Dial *8022# → Option 2</div>
+        <div class="ab-note">₦100/day · Reply STOP to opt out · Max 1 per 72 hours</div>
+      </div>
+      <div class="ab-sep"></div>
+      <div style="font-size:10px;color:var(--dim);">Hard cap: 1 Flash SMS per subscriber per 72 hours · Platform enforced</div>
+    </div>
+    <div class="dev-panel">
+      <div class="dtabs"><div class="dtab on">📱 Smartphone</div><div class="dtab">📟 Feature phone</div></div>
+      <div class="pw">
+        <div class="phone sm">
+          <div class="pnb"><div class="pn"></div></div>
+          <div class="pscr">
+            <div class="sb lt"><span>09:41</span><div class="sbr"><div class="sig"><s></s><s></s><s></s><s></s></div><span>4G</span>🔋</div></div>
+            <div class="flash-bg">
+              <div class="flash-dlg">
+                <div class="flash-ttl">MTN Nigeria</div>
+                <div class="flash-bd ads-only">BETWAY: Free ₦500 bet on tonight's AFCON match! New users only. Register in 2 minutes.<div class="flash-code">Dial *347#</div><div style="font-size:7px;color:#999;margin-top:3px;">Reply STOP to opt out</div></div>
+                <div class="flash-bd dial-only">Spin am, win am! 🎡 Your next spin could unlock cash & prizes. First spin FREE today only!<div class="flash-code">Dial *8022# → Opt 2</div><div style="font-size:7px;color:#999;margin-top:3px;">₦100/day · Reply STOP to opt out</div></div>
+                <div class="flash-opts"><div class="flash-btn">Dial Now</div><div class="flash-btn">Close</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="phone fp">
+          <div class="fpscr">
+            <div class="fpt"><span>MTN</span><span>Flash</span></div>
+            <div class="fpb blk ads-only" style="font-size:7.5px;">BETWAY: Free N500 bet AFCON! New users. Reg 2 mins.&#10;&#10;Dial *347#&#10;&#10;Reply STOP to opt out</div>
+            <div class="fpb blk dial-only" style="font-size:7.5px;">Spin am win am! Free spin today only!&#10;&#10;Dial *8022# Opt 2&#10;&#10;N100/day Reply STOP to opt out</div>
+            <div class="fpsk"><span class="fpk dk">Dial</span><span class="fpk dk">Close</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="fcard-footer">
+    <span class="pill p-conv">Conversion</span><span class="pill p-sub dial-only">Subscription</span><span class="pill p-cpm">CPM</span><span class="pill p-cpd">CPD</span><span class="pill p-revs dial-only">RevShare</span>
+  </div>
+</div>
+
+<!-- F3: Recharge Confirmation SMS -->
+<div class="fcard">
+  <div class="fcard-hdr">
+    <div><div class="fcard-name">3 · Recharge Confirmation SMS</div><div class="fcard-meta">Ad appended after system text · Triggered by actual recharge event</div></div>
+    <span class="ftag both">Both devices</span>
+  </div>
+  <div class="fcard-body">
+    <div class="ad-panel">
+      <div class="ad-block ads ads-only">
+        <div class="ab-label ads"><span class="ab-badge ads">TelyAds</span> — GTBank (Premium tier ₦10k+)</div>
+        <div class="ab-copy"><strong>GTBANK:</strong> Your ₦20,000 recharge shows buying power. Open a GTBank account and earn 21% on your money. No forms.</div>
+        <div class="ab-cta ads">Dial *737*1#</div>
+        <div class="ab-note">Reply STOP to opt out</div>
+      </div>
+      <div class="ad-block dial dial-only">
+        <div class="ab-label dial"><span class="ab-badge dial">TelyDial</span> — Lucky Number (All tiers)</div>
+        <div class="ab-copy"><strong>Your number fit be lucky today! 🍀</strong> You just recharged — now pick your Lucky Numbers for a chance to win BIG cash prizes!</div>
+        <div class="ab-cta dial">Dial *8022# → Lucky Number</div>
+        <div class="ab-note">₦50/day · T&Cs apply · Reply STOP to opt out</div>
+      </div>
+      <div class="ab-sep"></div>
+      <div style="font-size:10px;color:var(--dim);">Prefix: "Recharge of N[X] successful. Bal: N[Y]." — then ad appended</div>
+    </div>
+    <div class="dev-panel">
+      <div class="dtabs"><div class="dtab on">📱 Smartphone</div><div class="dtab">📟 Feature phone</div></div>
+      <div class="pw">
+        <div class="phone sm">
+          <div class="pnb"><div class="pn"></div></div>
+          <div class="pscr">
+            <div class="sb lt"><span>09:41</span><div class="sbr"><div class="sig"><s></s><s></s><s></s><s></s></div><span>4G</span>🔋</div></div>
+            <div class="msgtop"><div class="msgav" style="background:#FFCC08;color:#000;">M</div><div class="msgnm">MTN Nigeria</div></div>
+            <div class="msgthread">
+              <div class="msts">Today 09:14</div>
+              <div class="bbl ads-only in">Recharge of N20,000.00 successful. Bal: N21,247.80. Valid 30 days. GTBANK: Your ₦20,000 recharge shows buying power. Earn 21% on your money. Dial *737*1#. Reply STOP to opt out.</div>
+              <div class="bbl dial-only vas">Recharge of N500.00 successful. Bal: N512.40. Your number fit be lucky today! 🍀 Pick Lucky Numbers & win BIG. Dial *8022# ₦50/day. T&Cs apply. Reply STOP to opt out.</div>
+            </div>
+          </div>
+        </div>
+        <div class="phone fp">
+          <div class="fpscr">
+            <div class="fpt"><span>MTN</span><span>Msg</span></div>
+            <div class="fpb wht ads-only" style="font-size:7px;">MTN: Recharge N20000 OK. Bal: N21247.80.&#10;&#10;GTBANK: Earn 21% on your money. Dial *737*1#. Reply STOP.</div>
+            <div class="fpb wht dial-only" style="font-size:7px;">MTN: Recharge N500 OK. Bal: N512.40.&#10;&#10;Your number fit be lucky! Win BIG. Dial *8022#. N50/day. Reply STOP.</div>
+            <div class="fpsk"><span class="fpk lt">Back</span><span class="fpk lt">OK</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="fcard-footer">
+    <span class="pill p-conv">Conversion</span><span class="pill p-sub dial-only">Subscription</span><span class="pill p-cpm">CPM</span><span class="pill p-cpa">CPA</span><span class="pill p-revs dial-only">RevShare</span>
+  </div>
+</div>
+
+<!-- F4: Transactional SMS (TelyAds only) -->
+<div class="fcard ads-only">
+  <div class="fcard-hdr">
+    <div><div class="fcard-name">4 · Transactional SMS</div><div class="fcard-meta">Appended to data alert, expiry notice, or balance alert · TelyAds only</div></div>
+    <span class="ftag both">Both devices</span>
+  </div>
+  <div class="fcard-body">
+    <div class="ad-panel">
+      <div class="ad-block ads">
+        <div class="ab-label ads"><span class="ab-badge ads">TelyAds</span> — Moniepoint (Data alert trigger)</div>
+        <div class="ab-copy"><strong>MONIEPOINT:</strong> Running low on data? Get instant credit in 60 seconds. No paperwork, no branch. Pay back whenever.</div>
+        <div class="ab-cta ads">Dial *5573#</div>
+        <div class="ab-note">Reply STOP to opt out</div>
+      </div>
+      <div class="ab-sep"></div>
+      <div class="ad-block ads">
+        <div class="ab-label ads"><span class="ab-badge ads">TelyAds</span> — Coca-Cola (Balance alert trigger)</div>
+        <div class="ab-copy"><strong>COCA-COLA:</strong> Refresh yourself today! Buy any Coke at any Lagos store and get 50cl free. Show code: MTN50.</div>
+        <div class="ab-cta ads">Dial *234*50#</div>
+        <div class="ab-note">Reply STOP to opt out</div>
+      </div>
+    </div>
+    <div class="dev-panel">
+      <div class="dtabs"><div class="dtab on">📱 Data alert trigger</div><div class="dtab">📟 Feature phone</div></div>
+      <div class="pw">
+        <div class="phone sm">
+          <div class="pnb"><div class="pn"></div></div>
+          <div class="pscr">
+            <div class="sb lt"><span>09:41</span><div class="sbr"><div class="sig"><s></s><s></s><s></s><s></s></div><span>4G</span>🔋</div></div>
+            <div class="msgtop"><div class="msgav" style="background:#FFCC08;color:#000;">M</div><div class="msgnm">MTN Nigeria</div></div>
+            <div class="msgthread">
+              <div class="msts">Today 14:22</div>
+              <div class="bbl in">You have used 80% of your data bundle. 512MB remaining. Expires in 3 days. MONIEPOINT: Running low on data? Get instant credit in 60 seconds. Dial *5573#. Reply STOP to opt out.</div>
+            </div>
+          </div>
+        </div>
+        <div class="phone fp">
+          <div class="fpscr">
+            <div class="fpt"><span>MTN</span><span>Alert</span></div>
+            <div class="fpb wht" style="font-size:7px;">MTN: 80% data used. 512MB left. 3 days.&#10;&#10;MONIEPOINT: Get instant credit in 60 secs. Dial *5573#. Reply STOP.</div>
+            <div class="fpsk"><span class="fpk lt">Back</span><span class="fpk lt">OK</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="fcard-footer">
+    <span class="pill p-aware">Awareness</span><span class="pill p-conv">Conversion</span><span class="pill p-cpm">CPM</span>
+  </div>
+</div>
+
+</div><!-- /SMS grid -->
+
+<!-- ══ USSD ══ -->
+<div class="cat-bar ussd">USSD Formats (5–9)</div>
+<div class="fgrid">
+
+<!-- F5: Pre-session -->
+<div class="fcard">
+  <div class="fcard-hdr">
+    <div><div class="fcard-name">5 · USSD Pre-Session Splash</div><div class="fcard-meta">Shown before the menu loads · Subscriber must see it to proceed</div></div>
+    <span class="ftag both">Both devices</span>
+  </div>
+  <div class="fcard-body">
+    <div class="ad-panel">
+      <div class="ad-block ads ads-only">
+        <div class="ab-label ads"><span class="ab-badge ads">TelyAds</span> — First Bank Nigeria</div>
+        <div class="ab-copy"><strong>FIRSTBANK:</strong> 114 years of trust. Open a FirstBank account in 5 minutes. Zero maintenance fee for life. Trusted by millions.</div>
+        <div class="ab-cta ads">Dial *894*0#</div>
+        <div class="ab-note">Press OK to continue to your USSD session</div>
+      </div>
+      <div class="ad-block dial dial-only">
+        <div class="ab-label dial"><span class="ab-badge dial">TelyDial</span> — Soka Games</div>
+        <div class="ab-copy"><strong>⚽ Soka Games!</strong> Nigeria's No.1 mobile football game. Predict matches, compete & win weekly prizes. Join 500,000+ players!</div>
+        <div class="ab-cta dial">Dial *8022# → Soka Games</div>
+        <div class="ab-note">₦50/day · T&Cs apply · Press OK to continue</div>
+      </div>
+    </div>
+    <div class="dev-panel">
+      <div class="dtabs"><div class="dtab on">📱 Smartphone</div><div class="dtab">📟 Feature phone</div></div>
+      <div class="pw">
+        <div class="phone sm">
+          <div class="pnb"><div class="pn"></div></div>
+          <div class="pscr">
+            <div class="sb lt"><span>09:41</span><div class="sbr"><div class="sig"><s></s><s></s><s></s><s></s></div><span>3G</span>🔋</div></div>
+            <div style="background:#fff;padding:6px;display:flex;align-items:center;min-height:165px;">
+              <div class="ud" style="margin:0;width:100%;">
+                <div class="uh">*131# — MTN Nigeria</div>
+                <div class="ads-only" style="padding:0 10px 8px;font-size:8.5px;color:#333;line-height:1.5;font-family:'Roboto',sans-serif;">FIRSTBANK: 114 years of trust. Open an account in 5 minutes. Zero maintenance fee. Dial *894*0# or press OK to continue to your session.</div>
+                <div class="dial-only" style="padding:0 10px 8px;font-size:8.5px;color:#333;line-height:1.5;font-family:'Roboto',sans-serif;">⚽ Soka Games — Nigeria's No.1 mobile football game! Predict matches & win weekly prizes. Dial *8022# or press OK to continue.</div>
+                <div class="uacts"><div class="ubtn">Cancel</div><div class="ubtn">OK</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="phone fp">
+          <div class="fpscr">
+            <div class="fpt"><span>MTN</span><span>USSD</span></div>
+            <div class="fpb wht ads-only" style="font-size:7.5px;">FIRSTBANK: 114 yrs trust. Open account 5 mins. Zero fee.&#10;&#10;Dial *894*0#&#10;&#10;Press OK to continue</div>
+            <div class="fpb wht dial-only" style="font-size:7.5px;">Soka Games! Nigeria No.1 football game. Win weekly!&#10;&#10;Dial *8022#&#10;&#10;Press OK to continue</div>
+            <div class="fpsk"><span class="fpk lt">Back</span><span class="fpk lt">OK</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="fcard-footer">
+    <span class="pill p-conv">Conversion</span><span class="pill p-sub dial-only">Subscription</span><span class="pill p-lead">Lead Gen</span><span class="pill p-cpm">CPM</span><span class="pill p-cpd">CPD</span>
+  </div>
+</div>
+
+<!-- F6: Mid-session -->
+<div class="fcard">
+  <div class="fcard-hdr">
+    <div><div class="fcard-name">6 · USSD Mid-Session Inject</div><div class="fcard-meta">Appended below live menu · Reply digit to engage</div></div>
+    <span class="ftag both">Both devices</span>
+  </div>
+  <div class="fcard-body">
+    <div class="ad-panel">
+      <div class="ad-block ads ads-only">
+        <div class="ab-label ads"><span class="ab-badge ads">TelyAds</span> — Jumia Nigeria</div>
+        <div class="ab-copy"><strong>JUMIA:</strong> Flash sale today! Electronics up to 60% off. Free delivery Lagos & Abuja. Order online now.</div>
+        <div class="ab-cta ads">Reply 5 or Dial *537#</div>
+        <div class="ab-note">Offer valid today only</div>
+      </div>
+      <div class="ad-block dial dial-only">
+        <div class="ab-label dial"><span class="ab-badge dial">TelyDial</span> — Daily Cash Draw</div>
+        <div class="ab-copy"><strong>Cash alert fit land today! 💰</strong> Join the Daily Cash Draw — one entry, daily chance to win up to ₦50,000!</div>
+        <div class="ab-cta dial">Reply 6 or Dial *8022# → Cash Draw</div>
+        <div class="ab-note">₦50/day · T&Cs apply</div>
+      </div>
+    </div>
+    <div class="dev-panel">
+      <div class="dtabs"><div class="dtab on">📱 Smartphone</div><div class="dtab">📟 Feature phone</div></div>
+      <div class="pw">
+        <div class="phone sm">
+          <div class="pnb"><div class="pn"></div></div>
+          <div class="pscr">
+            <div class="sb lt"><span>09:41</span><div class="sbr"><div class="sig"><s></s><s></s><s></s><s></s></div><span>3G</span>🔋</div></div>
+            <div style="background:#fff;padding:6px;min-height:165px;display:flex;align-items:center;">
+              <div class="ud" style="margin:0;width:100%;">
+                <div class="uh">*556# — MTN Nigeria</div>
+                <div class="ub">Bal: ₦1,247.50&#10;Data: 2.4GB&#10;&#10;1. Buy data&#10;2. Transfer&#10;0. Exit</div>
+                <div class="uinj ads-only"><div class="uinjl">MTN Offer</div>JUMIA: Flash sale today! Electronics 60% off. Free delivery. Reply 5 or Dial *537#</div>
+                <div class="uinj vas dial-only"><div class="uinjl vas">MTN VAS Offer</div>Cash alert fit land today! 💰 Join Daily Cash Draw. Win up to ₦50,000! Reply 6 or Dial *8022#</div>
+                <div class="uacts"><div class="ubtn">Send</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="phone fp">
+          <div class="fpscr">
+            <div class="fpt"><span>MTN</span><span>USSD</span></div>
+            <div class="fpb wht ads-only" style="font-size:7px;">Bal: N1247.50&#10;Data: 2.4GB&#10;1. Buy data&#10;2. Transfer&#10;0. Exit&#10;--&#10;JUMIA: Flash sale! 60% off. Reply 5 or *537#</div>
+            <div class="fpb wht dial-only" style="font-size:7px;">Bal: N1247.50&#10;Data: 2.4GB&#10;1. Buy data&#10;2. Transfer&#10;0. Exit&#10;--&#10;Cash alert! Win N50k daily. Reply 6 or *8022#</div>
+            <div class="fpsk"><span class="fpk lt">Back</span><span class="fpk lt">Send</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="fcard-footer">
+    <span class="pill p-conv">Conversion</span><span class="pill p-sub dial-only">Subscription</span><span class="pill p-cpm">CPM</span><span class="pill p-cpd">CPD</span>
+  </div>
+</div>
+
+<!-- F7: Post-session -->
+<div class="fcard">
+  <div class="fcard-hdr">
+    <div><div class="fcard-name">7 · USSD Post-Session</div><div class="fcard-meta">Shown immediately after session closes</div></div>
+    <span class="ftag both">Both devices</span>
+  </div>
+  <div class="fcard-body">
+    <div class="ad-panel">
+      <div class="ad-block ads ads-only">
+        <div class="ab-label ads"><span class="ab-badge ads">TelyAds</span> — Nigerian Breweries / Heineken</div>
+        <div class="ab-copy"><strong>HEINEKEN:</strong> Tonight's match deserves the best. Chilled Heineken available at your nearest store now. Cheers! 🍺</div>
+        <div class="ab-cta ads">Dial *500*200#</div>
+        <div class="ab-note">Locate nearest distributor</div>
+      </div>
+      <div class="ad-block dial dial-only">
+        <div class="ab-label dial"><span class="ab-badge dial">TelyDial</span> — Midnight Millionaire</div>
+        <div class="ab-copy"><strong>Before you sleep, try your luck! 🌙</strong> Join tonight's Midnight Millionaire draw — one lucky winner takes the prize at midnight!</div>
+        <div class="ab-cta dial">Dial *8022# → Midnight Draw</div>
+        <div class="ab-note">₦50/entry · T&Cs apply</div>
+      </div>
+    </div>
+    <div class="dev-panel">
+      <div class="dtabs"><div class="dtab on">📱 Smartphone</div><div class="dtab">📟 Feature phone</div></div>
+      <div class="pw">
+        <div class="phone sm">
+          <div class="pnb"><div class="pn"></div></div>
+          <div class="pscr">
+            <div class="sb lt"><span>09:41</span><div class="sbr"><div class="sig"><s></s><s></s><s></s><s></s></div><span>3G</span>🔋</div></div>
+            <div style="background:#fff;padding:6px;min-height:165px;display:flex;align-items:center;">
+              <div class="ud" style="margin:0;width:100%;">
+                <div class="uh">MTN Nigeria</div>
+                <div class="ads-only" style="padding:0 10px 8px;font-size:8.5px;color:#333;line-height:1.5;font-family:'Roboto',sans-serif;">Your session has ended.<br><br><strong>HEINEKEN:</strong> Tonight's match deserves the best. Chilled Heineken at your nearest store. 🍺<br><br><span style="font-weight:700;color:#1A73E8;font-size:9px;">Dial *500*200# to locate store</span></div>
+                <div class="dial-only" style="padding:0 10px 8px;font-size:8.5px;color:#333;line-height:1.5;font-family:'Roboto',sans-serif;">Your session has ended.<br><br><strong>Before you sleep, try your luck! 🌙</strong> Join Midnight Millionaire draw tonight — win BIG!<br><br><span style="font-weight:700;color:#F9A825;font-size:9px;">Dial *8022# → Midnight Draw</span></div>
+                <div class="uacts"><div class="ubtn" style="color:#888;">Close</div><div class="ubtn">Dial Now</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="phone fp">
+          <div class="fpscr">
+            <div class="fpt"><span>MTN</span><span>USSD</span></div>
+            <div class="fpb wht ads-only" style="font-size:7.5px;">Session ended.&#10;&#10;HEINEKEN: Tonight's match deserves the best! Dial *500*200# to locate store.</div>
+            <div class="fpb wht dial-only" style="font-size:7.5px;">Session ended.&#10;&#10;Try your luck! Join Midnight Millionaire. Dial *8022# Option 5. N50/entry.</div>
+            <div class="fpsk"><span class="fpk lt">Close</span><span class="fpk lt">Dial</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="fcard-footer">
+    <span class="pill p-conv">Conversion</span><span class="pill p-sub dial-only">Subscription</span><span class="pill p-aware">Awareness</span><span class="pill p-cpm">CPM</span>
+  </div>
+</div>
+
+<!-- F8: Balance enquiry -->
+<div class="fcard">
+  <div class="fcard-hdr">
+    <div><div class="fcard-name">8 · Balance Enquiry Inject</div><div class="fcard-meta">*556# result · Low and high balance variants</div></div>
+    <span class="ftag both">Both devices</span>
+  </div>
+  <div class="fcard-body">
+    <div class="ad-panel">
+      <div class="ad-block ads ads-only">
+        <div class="ab-label ads"><span class="ab-badge ads">TelyAds</span> — Fairmoney (Low balance &lt;₦500)</div>
+        <div class="ab-copy"><strong>FAIRMONEY:</strong> Low on airtime? Get up to ₦10,000 instant loan in 60 seconds. No documents, no stress.</div>
+        <div class="ab-cta ads">Dial *329#</div>
+        <div class="ab-note">Reply STOP to opt out</div>
+      </div>
+      <div class="ad-block dial dial-only">
+        <div class="ab-label dial"><span class="ab-badge dial">TelyDial</span> — Lucky 5 (All balance tiers)</div>
+        <div class="ab-copy"><strong>5 numbers fit change your day! 🎯</strong> Pick your Lucky 5 for a chance to win BIG daily cash prizes. ₦50 only!</div>
+        <div class="ab-cta dial">Dial *8022# → Lucky 5</div>
+        <div class="ab-note">₦50/day · T&Cs apply</div>
+      </div>
+    </div>
+    <div class="dev-panel">
+      <div class="dtabs"><div class="dtab on">📱 Smartphone</div><div class="dtab">📟 Feature phone</div></div>
+      <div class="pw">
+        <div class="phone sm">
+          <div class="pnb"><div class="pn"></div></div>
+          <div class="pscr">
+            <div class="sb lt"><span>09:41</span><div class="sbr"><div class="sig"><s></s><s></s><s></s><s></s></div><span>3G</span>🔋</div></div>
+            <div style="background:#fff;padding:6px;min-height:165px;display:flex;align-items:center;">
+              <div class="ud" style="margin:0;width:100%;">
+                <div class="uh">*556# — MTN Nigeria</div>
+                <div class="ub">Airtime: ₦87.50&#10;Data: 0MB&#10;Expiry: 2 days</div>
+                <div class="uinj ads-only"><div class="uinjl">Low Balance Offer</div>FAIRMONEY: Get ₦10,000 instant loan in 60 secs. No documents. Dial *329#</div>
+                <div class="uinj vas dial-only"><div class="uinjl vas">MTN VAS Offer</div>5 numbers fit change your day! 🎯 Pick Lucky 5 & win BIG. Only ₦50! Dial *8022#</div>
+                <div class="uacts"><div class="ubtn" style="color:#888;">Close</div><div class="ubtn">Dial Now</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="phone fp">
+          <div class="fpscr">
+            <div class="fpt"><span>MTN</span><span>*556#</span></div>
+            <div class="fpb wht ads-only" style="font-size:7.5px;">Bal: N87.50&#10;Data: 0MB&#10;Exp: 2 days&#10;&#10;FAIRMONEY: N10k instant loan 60 secs. Dial *329#</div>
+            <div class="fpb wht dial-only" style="font-size:7.5px;">Bal: N87.50&#10;Data: 0MB&#10;&#10;5 numbers fit change your day! Win BIG. Dial *8022# N50/day</div>
+            <div class="fpsk"><span class="fpk lt">Close</span><span class="fpk lt">Dial</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="fcard-footer">
+    <span class="pill p-conv">Conversion</span><span class="pill p-sub dial-only">Subscription</span><span class="pill p-cpm">CPM</span><span class="pill p-cpd">CPD</span>
+  </div>
+</div>
+
+<!-- F9: Data purchase flow (TelyAds only) -->
+<div class="fcard ads-only">
+  <div class="fcard-hdr">
+    <div><div class="fcard-name">9 · Data Purchase Flow</div><div class="fcard-meta">Inject during *131# bundle selection · Subscriber actively buying · TelyAds only</div></div>
+    <span class="ftag both">Both devices</span>
+  </div>
+  <div class="fcard-body">
+    <div class="ad-panel">
+      <div class="ad-block ads">
+        <div class="ab-label ads"><span class="ab-badge ads">TelyAds</span> — Betway (during data buy)</div>
+        <div class="ab-copy"><strong>BETWAY:</strong> Enjoy your data — bet live on today's match! Free ₦500 bet for new users. Works on all networks.</div>
+        <div class="ab-cta ads">Reply 5 or Dial *347#</div>
+      </div>
+      <div class="ab-sep"></div>
+      <div class="ad-block ads">
+        <div class="ab-label ads"><span class="ab-badge ads">TelyAds</span> — Pepsi (FMCG / data purchaser)</div>
+        <div class="ab-copy"><strong>PEPSI:</strong> Enjoy your data with a chilled Pepsi! Buy 2 bottles at any store and get one free this weekend. Show code: MTN2.</div>
+        <div class="ab-cta ads">Dial *234*PEPSI#</div>
+      </div>
+    </div>
+    <div class="dev-panel">
+      <div class="dtabs"><div class="dtab on">📱 Smartphone</div><div class="dtab">📟 Feature phone</div></div>
+      <div class="pw">
+        <div class="phone sm">
+          <div class="pnb"><div class="pn"></div></div>
+          <div class="pscr">
+            <div class="sb lt"><span>09:41</span><div class="sbr"><div class="sig"><s></s><s></s><s></s><s></s></div><span>3G</span>🔋</div></div>
+            <div style="background:#fff;padding:6px;min-height:165px;display:flex;align-items:center;">
+              <div class="ud" style="margin:0;width:100%;">
+                <div class="uh">*131# — Buy Data</div>
+                <div class="ub">1. 1GB ₦300 (7 days)
+2. 2GB ₦500 (30d)
+3. 5GB ₦1,000
+4. 10GB ₦2,000
+0. Back</div>
+                <div class="uinj"><div class="uinjl">MTN Offer</div>BETWAY: Enjoy your data — Free ₦500 bet new users. Reply 5 or Dial *347#</div>
+                <div class="uacts"><div class="ubtn">Send</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="phone fp">
+          <div class="fpscr">
+            <div class="fpt"><span>MTN</span><span>*131#</span></div>
+            <div class="fpb wht" style="font-size:7.5px;">1. 1GB N300&#10;2. 2GB N500&#10;3. 5GB N1000&#10;0. Back&#10;--&#10;BETWAY: Free N500 bet new users. Reply 5 or *347#</div>
+            <div class="fpsk"><span class="fpk lt">Back</span><span class="fpk lt">Send</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="fcard-footer">
+    <span class="pill p-conv">Conversion</span><span class="pill p-aware">Awareness</span><span class="pill p-cpm">CPM</span><span class="pill p-cpd">CPD</span>
+  </div>
+</div>
+
+</div><!-- /USSD -->
+
+<!-- ══ VOICE ══ -->
+<div class="cat-bar voice">Voice Formats (10–11)</div>
+<div class="fgrid">
+
+<!-- F10: EOC -->
+<div class="fcard">
+  <div class="fcard-hdr">
+    <div><div class="fcard-name">10 · End of Call (EOC)</div><div class="fcard-meta">Fires at exact call-end moment · Dialler overlay (smartphone) · Flash SMS (feature phone)</div></div>
+    <span class="ftag both">Both devices</span>
+  </div>
+  <div class="fcard-body">
+    <div class="ad-panel">
+      <div class="ad-block ads ads-only">
+        <div class="ab-label ads"><span class="ab-badge ads">TelyAds</span> — Access Bank (voice-heavy subscribers)</div>
+        <div class="ab-brand">Access Bank Nigeria</div>
+        <div class="ab-copy"><strong>Free transfers all weekend</strong> — send to any bank at zero fees, Saturday and Sunday only.</div>
+        <div class="ab-cta ads">Dial *901*1#</div>
+      </div>
+      <div class="ad-block dial dial-only">
+        <div class="ab-label dial"><span class="ab-badge dial">TelyDial</span> — Soka Games (post-call)</div>
+        <div class="ab-brand">⚽ Soka Games</div>
+        <div class="ab-copy"><strong>You just finished a call — now play!</strong> Predict today's match result and win up to ₦10,000.</div>
+        <div class="ab-cta dial">Dial *8022# → Soka Games</div>
+        <div class="ab-note">₦50/day · Feature phone: Flash SMS sent at call-end</div>
+      </div>
+    </div>
+    <div class="dev-panel">
+      <div class="dtabs"><div class="dtab on">📱 Smartphone</div><div class="dtab">📟 Feature phone</div></div>
+      <div class="pw">
+        <div class="phone sm">
+          <div class="pnb"><div class="pn"></div></div>
+          <div class="pscr">
+            <div class="sb dk"><span>09:41</span><div class="sbr"><div class="sig" style="color:#fff;"><s></s><s></s><s></s><s></s></div><span>4G</span>🔋</div></div>
+            <div class="eoc">
+              <div class="eoc-c">
+                <div class="eoc-av">👤</div>
+                <div class="eoc-nm">Tunde Aderinwale</div>
+                <div class="eoc-inf">Call ended · 4 min 32 sec</div>
+              </div>
+              <div class="eoc-div"></div>
+              <div class="eoc-ad">
+                <div class="eoc-adl">Sponsored · TelyAds</div>
+                <div class="eoc-adb ads-only">
+                  <div class="eoc-brand">Access Bank Nigeria</div>
+                  <div class="eoc-copy">Free transfers all weekend. Zero fees Sat & Sun.</div>
+                  <div class="eoc-cta" style="background:#EF7D00;">Dial *901*1#</div>
+                </div>
+                <div class="eoc-adb dial-only">
+                  <div class="eoc-brand">⚽ Soka Games</div>
+                  <div class="eoc-copy">Predict today's match & win up to ₦10,000!</div>
+                  <div class="eoc-cta" style="background:#006B3F;">Dial *8022#</div>
+                </div>
+              </div>
+              <div class="eoc-keys"><div class="eoc-key">💬</div><div class="eoc-call">📞</div><div class="eoc-key">👤</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="phone fp">
+          <div class="fpscr">
+            <div class="fpt"><span>MTN</span><span>Flash</span></div>
+            <div class="fpb blk ads-only" style="font-size:7.5px;">ACCESS BANK: Free transfers Sat & Sun. Zero fees all weekend.&#10;&#10;Dial *901*1#&#10;&#10;Reply STOP to opt out</div>
+            <div class="fpb blk dial-only" style="font-size:7.5px;">Soka Games! Predict today's match & win N10,000!&#10;&#10;Dial *8022#&#10;N50/day. T&Cs apply.</div>
+            <div class="fpsk"><span class="fpk dk">Dial</span><span class="fpk dk">Close</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="fcard-footer">
+    <span class="pill p-conv">Conversion</span><span class="pill p-sub dial-only">Subscription</span><span class="pill p-cpm">CPM</span><span class="pill p-cpa">CPA</span><span class="pill p-revs dial-only">RevShare</span>
+  </div>
+</div>
+
+<!-- F11: OBD -->
+<div class="fcard">
+  <div class="fcard-hdr">
+    <div><div class="fcard-name">11 · Outbound Voice (OBD)</div><div class="fcard-meta">Automated call · IVR · Press 1 to engage · Enforced 8AM–8PM delivery only</div></div>
+    <span class="ftag both">Both devices</span>
+  </div>
+  <div class="fcard-body">
+    <div class="ad-panel">
+      <div class="ad-block ads ads-only">
+        <div class="ab-label ads"><span class="ab-badge ads">TelyAds</span> — Guinness Nigeria (Yoruba)</div>
+        <div class="ab-copy"><strong>Voice script:</strong> "Hello! This is MTN Nigeria. Guinness Nigeria has a special promotion for you. Press 1 to hear about free Guinness delivery this weekend, or press 2 to opt out."</div>
+        <div class="ab-cta ads">Press 1 → Dial *GNPLc#</div>
+        <div class="ab-note">Language: Yoruba variant available · 8AM–8PM enforced</div>
+      </div>
+      <div class="ad-block dial dial-only">
+        <div class="ab-label dial"><span class="ab-badge dial">TelyDial</span> — Quiz Master (Pidgin)</div>
+        <div class="ab-copy"><strong>Voice script:</strong> "Hello! MTN Nigeria dey holla. How sharp you be? Join Quiz Master today — answer questions, climb the leaderboard and win cash prizes every week! Press 1 to join now or press 2 to stop am."</div>
+        <div class="ab-cta dial">Press 1 → Subscribe *8022# Quiz</div>
+        <div class="ab-note">Language: Nigerian Pidgin · 8AM–8PM enforced · 1 per 7 days per subscriber</div>
+      </div>
+    </div>
+    <div class="dev-panel">
+      <div class="dtabs"><div class="dtab on">📱 Incoming call view</div></div>
+      <div class="pw">
+        <div class="phone sm">
+          <div class="pnb"><div class="pn"></div></div>
+          <div class="pscr">
+            <div class="sb dk"><span>09:41</span><div class="sbr"><div class="sig" style="color:#fff;"><s></s><s></s><s></s><s></s></div><span>4G</span>🔋</div></div>
+            <div class="obd">
+              <div class="obd-lbl">Incoming call · MTN Nigeria</div>
+              <div class="obd-av ads-only">🍺</div>
+              <div class="obd-av dial-only">🧠</div>
+              <div class="obd-num">MTNOffers</div>
+              <div class="obd-desc ads-only">"Guinness Nigeria has a<br>special promo for you.<br>Press 1 to hear more."</div>
+              <div class="obd-desc dial-only">"How sharp you be?<br>Join Quiz Master today<br>and win cash prizes!"</div>
+              <div class="obd-btns">
+                <div class="obd-btn" style="background:#FF3B30;">📵</div>
+                <div class="obd-btn" style="background:#34C759;">📞</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="phone fp">
+          <div class="fpscr">
+            <div class="fpt"><span>MTN</span><span>Call</span></div>
+            <div class="fpb blk" style="font-size:8px;display:flex;flex-direction:column;justify-content:center;min-height:110px;text-align:center;">Incoming Call&#10;&#10;MTNOffers&#10;&#10;Promotional&#10;Call</div>
+            <div class="fpsk"><span class="fpk dk">Reject</span><span class="fpk dk">Answer</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="fcard-footer">
+    <span class="pill p-conv">Conversion</span><span class="pill p-sub dial-only">Subscription</span><span class="pill p-lead">Lead Gen</span><span class="pill p-cpm">CPM</span>
+  </div>
+</div>
+
+</div><!-- /Voice -->
+
+<!-- ══ SIM ══ -->
+<div class="cat-bar sim">SIM-Level Formats (12–13)</div>
+<div class="fgrid">
+
+<!-- F12: STK -->
+<div class="fcard">
+  <div class="fcard-hdr">
+    <div><div class="fcard-name">12 · STK Push (SIM Toolkit)</div><div class="fcard-meta">Via SIM applet · Works on every MTN SIM · No internet needed</div></div>
+    <span class="ftag both">Both devices</span>
+  </div>
+  <div class="fcard-body">
+    <div class="ad-panel">
+      <div class="ad-block ads ads-only">
+        <div class="ab-label ads"><span class="ab-badge ads">TelyAds</span> — Bet9ja</div>
+        <div class="ab-copy"><strong>BET9JA:</strong> Weekend Super 6 Jackpot is live! Pick your 6 correct scores and win up to ₦10 million. Available to all MTN subscribers.</div>
+        <div class="ab-cta ads">1. Place Bet — *320*9#</div>
+        <div class="ab-note">T&Cs apply · 2. Learn More · 3. Not Now</div>
+      </div>
+      <div class="ad-block dial dial-only">
+        <div class="ab-label dial"><span class="ab-badge dial">TelyDial</span> — Weekend Millions</div>
+        <div class="ab-copy"><strong>Weekend don land with better awoof! 🔥</strong> Join Weekend Millions for your chance to win the biggest prize of the week. One entry, massive reward!</div>
+        <div class="ab-cta dial">1. Join Now — *8022# Weekend</div>
+        <div class="ab-note">₦100/entry · T&Cs apply · 2. Learn More · 3. Not Now</div>
+      </div>
+    </div>
+    <div class="dev-panel">
+      <div class="dtabs"><div class="dtab on">📱 Smartphone</div><div class="dtab">📟 Feature phone</div></div>
+      <div class="pw">
+        <div class="phone sm">
+          <div class="pnb"><div class="pn"></div></div>
+          <div class="pscr">
+            <div class="sb" style="background:#E8E8E8;"><span style="color:#333;">09:41</span><div class="sbr" style="color:#333;"><div class="sig" style="color:#333;"><s></s><s></s><s></s><s></s></div><span>4G</span></div></div>
+            <div class="stk-bg">
+              <div class="stk-dlg">
+                <div class="stk-hdr ads-only" style="background:#1A1A1A;"><div class="stk-ht">📡 MTN Nigeria</div><div class="stk-hs">SIM Application Toolkit</div></div>
+                <div class="stk-hdr dial-only" style="background:#006B3F;"><div class="stk-ht">📡 MTN Nigeria</div><div class="stk-hs">SIM Application Toolkit</div></div>
+                <div class="stk-body">
+                  <div class="stk-msg ads-only">BET9JA: Weekend Super 6 Jackpot is live! Pick 6 correct scores and win up to ₦10 million.</div>
+                  <div class="stk-msg dial-only">Weekend don land with better awoof! 🔥 Join Weekend Millions for your chance to win BIG this weekend!</div>
+                  <div class="stk-items ads-only">
+                    <div class="stk-i pri" style="background:#1A1A1A;">1. Place Bet — *320*9#</div>
+                    <div class="stk-i">2. Learn More</div><div class="stk-i">3. Not Now</div>
+                  </div>
+                  <div class="stk-items dial-only">
+                    <div class="stk-i pri" style="background:#006B3F;">1. Join Now — *8022#</div>
+                    <div class="stk-i">2. Learn More</div><div class="stk-i">3. Not Now</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="phone fp">
+          <div class="fpscr">
+            <div class="fpt"><span>MTN</span><span>STK</span></div>
+            <div class="fpb wht ads-only" style="font-size:7.5px;">BET9JA: Super 6 Jackpot! Win N10M. Pick 6 scores.&#10;&#10;1. Bet *320*9#&#10;2. Learn More&#10;3. Not Now</div>
+            <div class="fpb wht dial-only" style="font-size:7.5px;">Weekend Millions! Win BIG this weekend. One entry!&#10;&#10;1. Join *8022#&#10;2. Learn More&#10;3. Not Now</div>
+            <div class="fpsk"><span class="fpk lt">Back</span><span class="fpk lt">Select</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="fcard-footer">
+    <span class="pill p-conv">Conversion</span><span class="pill p-sub dial-only">Subscription</span><span class="pill p-aware">Awareness</span><span class="pill p-cpm">CPM</span><span class="pill p-revs dial-only">RevShare</span>
+  </div>
+</div>
+
+<!-- F13: WAP Push -->
+<div class="fcard">
+  <div class="fcard-hdr">
+    <div><div class="fcard-name">13 · WAP Push</div><div class="fcard-meta">Push to device message inbox · Clickable link · Both device types</div></div>
+    <span class="ftag both">Both devices</span>
+  </div>
+  <div class="fcard-body">
+    <div class="ad-panel">
+      <div class="ad-block ads ads-only">
+        <div class="ab-label ads"><span class="ab-badge ads">TelyAds</span> — Konga Nigeria</div>
+        <div class="ab-copy"><strong>KONGA SUPER DEALS:</strong> Up to 70% off electronics, fashion & home goods today only. Free delivery on orders above ₦5,000. Shop now!</div>
+        <div class="ab-cta ads">Dial *537*DEAL#</div>
+      </div>
+      <div class="ad-block dial dial-only">
+        <div class="ab-label dial"><span class="ab-badge dial">TelyDial</span> — Mega Friday</div>
+        <div class="ab-copy"><strong>Friday fit change everything! 🔥</strong> Join Mega Friday draw — the week's biggest prize is up for grabs tonight. Don't miss your shot!</div>
+        <div class="ab-cta dial">Dial *8022# → Mega Friday</div>
+        <div class="ab-note">₦100/entry · T&Cs apply</div>
+      </div>
+    </div>
+    <div class="dev-panel">
+      <div class="dtabs"><div class="dtab on">📱 Smartphone</div><div class="dtab">📟 Feature phone</div></div>
+      <div class="pw">
+        <div class="phone sm">
+          <div class="pnb"><div class="pn"></div></div>
+          <div class="pscr">
+            <div class="sb lt"><span>09:41</span><div class="sbr"><div class="sig"><s></s><s></s><s></s><s></s></div><span>4G</span>🔋</div></div>
+            <div class="wap">
+              <div class="wbar" style="background:#4285F4;"><span style="font-size:12px;color:#fff;">←</span><div class="wurl" style="background:rgba(255,255,255,.2);color:#fff;">mtn.ng/messages</div></div>
+              <div class="wcon">
+                <div class="wttl">MTN Messages</div>
+                <div class="wn">
+                  <div class="wntop">MTN Nigeria · WAP Push · Just now</div>
+                  <div class="wnbody ads-only">
+                    <div class="wnttl">Konga Super Deals — 70% Off</div>
+                    <div class="wncopy">Electronics, fashion & home goods. Free delivery on ₦5,000+. Today only.</div>
+                    <div class="wnlink">Dial *537*DEAL# or tap →</div>
+                  </div>
+                  <div class="wnbody dial-only">
+                    <div class="wnttl">🔥 Mega Friday — Win BIG Tonight!</div>
+                    <div class="wncopy">Friday fit change everything! Join the biggest draw of the week.</div>
+                    <div class="wnlink" style="color:#F9A825;">Dial *8022# Mega Friday →</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="phone fp">
+          <div class="fpscr">
+            <div class="fpt"><span>MTN</span><span>WAP</span></div>
+            <div class="fpb wht ads-only" style="font-size:7.5px;">New Message:&#10;&#10;Konga Super Deals! 70% off. Free delivery N5k+.&#10;&#10;Dial *537*DEAL#</div>
+            <div class="fpb wht dial-only" style="font-size:7.5px;">New Message:&#10;&#10;Mega Friday! Win BIG tonight. Don't miss it!&#10;&#10;Dial *8022# Mega Friday</div>
+            <div class="fpsk"><span class="fpk lt">Back</span><span class="fpk lt">Open</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="fcard-footer">
+    <span class="pill p-aware">Awareness</span><span class="pill p-sub dial-only">Subscription</span><span class="pill p-lead">Lead Gen</span><span class="pill p-cpm">CPM</span>
+  </div>
+</div>
+
+</div><!-- /SIM -->
+
+<!-- ══ SMARTPHONE ══ -->
+<div class="cat-bar smart">Smartphone Only (14–16) — TelyAds only</div>
+<div class="fgrid">
+
+<!-- F14: Lock screen -->
+<div class="fcard ads-only">
+  <div class="fcard-hdr">
+    <div><div class="fcard-name">14 · Lock Screen Interstitial</div><div class="fcard-meta">Carrier-injected on device wake · No app needed · Smartphone only · TelyAds only</div></div>
+    <span class="ftag smart">Smartphone only</span>
+  </div>
+  <div class="fcard-body">
+    <div class="ad-panel">
+      <div class="ad-block ads">
+        <div class="ab-label ads"><span class="ab-badge ads">TelyAds</span> — Opay Nigeria</div>
+        <div class="ab-brand">Opay</div>
+        <div class="ab-copy"><strong>Zero transfer fees, always.</strong> Send money to any bank in Nigeria instantly. 20 million users trust Opay. Join them today.</div>
+        <div class="ab-cta ads">Dial *955#</div>
+      </div>
+      <div class="ab-sep"></div>
+      <div class="ad-block ads">
+        <div class="ab-label ads"><span class="ab-badge ads">TelyAds</span> — Coca-Cola Nigeria (brand awareness)</div>
+        <div class="ab-copy"><strong>Taste the feeling. ❤️</strong> Coke is available ice-cold at over 50,000 outlets across Nigeria. Find your nearest retailer now.</div>
+        <div class="ab-cta ads">Dial *234*COKE#</div>
+      </div>
+    </div>
+    <div class="dev-panel">
+      <div class="preview-label" style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--dim);margin-bottom:8px;">Smartphone only</div>
+      <div class="pw">
+        <div class="phone sm" style="width:148px;">
+          <div class="pnb"><div class="pn"></div></div>
+          <div class="pscr">
+            <div class="sb" style="background:#0D1B3E;"><span style="color:#fff;">09:41</span><div class="sbr" style="color:#fff;"><div class="sig" style="color:#fff;"><s></s><s></s><s></s><s></s></div><span>4G</span>🔋</div></div>
+            <div class="lock-bg">
+              <div class="lock-t"><div class="lock-time">09:41</div><div class="lock-date">Sunday, 9 August 2026</div></div>
+              <div class="lock-card">
+                <div class="lock-bar"><span style="font-size:7px;color:rgba(255,255,255,.4);">MTN Nigeria</span><span style="font-size:7px;color:rgba(255,255,255,.2);">Sponsored</span></div>
+                <div class="lock-body">
+                  <div class="lock-row"><div class="lock-ico" style="background:#00A651;">OP</div><div class="lock-bn">Opay Nigeria</div></div>
+                  <div class="lock-copy">Zero transfer fees, always. Send to any bank instantly. 20 million users trust Opay.</div>
+                  <div class="lock-btns"><div class="lock-bp" style="background:#00A651;">Dial *955#</div><div class="lock-bd">Later</div></div>
+                </div>
+              </div>
+              <div class="lock-sw">↑ Swipe up to unlock</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="fcard-footer">
+    <span class="pill p-conv">Conversion</span><span class="pill p-aware">Awareness</span><span class="pill p-cpm">CPM</span><span class="pill p-cpa">CPA</span>
+  </div>
+</div>
+
+<!-- F15: Notification Shade -->
+<div class="fcard ads-only">
+  <div class="fcard-hdr">
+    <div><div class="fcard-name">15 · Notification Shade</div><div class="fcard-meta">Android pull-down inject · Sits among organic notifications · TelyAds only</div></div>
+    <span class="ftag smart">Smartphone only</span>
+  </div>
+  <div class="fcard-body">
+    <div class="ad-panel">
+      <div class="ad-block ads">
+        <div class="ab-label ads"><span class="ab-badge ads">TelyAds</span> — Sportybet Nigeria</div>
+        <div class="ab-copy"><strong>🏟️ AFCON Quarter Final Tonight!</strong> Deposit ₦1,000 and get ₦500 free bet. Best odds guaranteed on Sportybet. Offer ends at kickoff.</div>
+        <div class="ab-cta ads">Claim Offer → Dial *323#</div>
+      </div>
+      <div class="ab-sep"></div>
+      <div class="ad-block ads">
+        <div class="ab-label ads"><span class="ab-badge ads">TelyAds</span> — Nigerian Breweries (Star Lager)</div>
+        <div class="ab-copy"><strong>⭐ Born in Nigeria. Made for Nigerians.</strong> Star Lager — available cold at your nearest bar tonight. Cheers to the match!</div>
+        <div class="ab-cta ads">Find store → Dial *200*STAR#</div>
+      </div>
+    </div>
+    <div class="dev-panel">
+      <div class="preview-label" style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--dim);margin-bottom:8px;">Pull-down notification shade</div>
+      <div class="pw">
+        <div class="phone sm" style="width:148px;">
+          <div class="pnb"><div class="pn"></div></div>
+          <div class="pscr">
+            <div class="sb" style="background:#0D1B3E;"><span>09:41</span><div class="sbr" style="color:#fff;"><div class="sig" style="color:#fff;"><s></s><s></s><s></s><s></s></div><span>4G</span>🔋</div></div>
+            <div class="notif-bg">
+              <div class="shade">
+                <div class="shade-h"></div>
+                <div class="nc">
+                  <div class="ntop"><div class="nico" style="background:#25D366;"></div><span class="napp">WhatsApp · 3m</span></div>
+                  <div class="nbody"><div class="nttl">Adebimpe</div><div class="ntxt">You watching the match?</div></div>
+                </div>
+                <div class="nc sp">
+                  <div class="ntop"><div class="nico" style="background:#FFCC08;"></div><span class="napp">MTN Nigeria</span><span class="ntime">Now</span></div>
+                  <div class="nspon">Sponsored · TelyAds</div>
+                  <div class="nbody"><div class="nttl">🏟️ AFCON Quarter Final</div><div class="ntxt">Sportybet: ₦1,000 gets ₦500 free bet. Best odds guaranteed. Offer ends at kickoff.</div></div>
+                  <div class="nacts"><div class="nact">Claim *323#</div><div class="nact">Dismiss</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="fcard-footer">
+    <span class="pill p-conv">Conversion</span><span class="pill p-aware">Awareness</span><span class="pill p-cpm">CPM</span>
+  </div>
+</div>
+
+<!-- F16: In-browser banner -->
+<div class="fcard ads-only">
+  <div class="fcard-hdr">
+    <div><div class="fcard-name">16 · In-Browser / WAP Portal Banner</div><div class="fcard-meta">MTN carrier web portal · Smartphone only · TelyAds only</div></div>
+    <span class="ftag smart">Smartphone only</span>
+  </div>
+  <div class="fcard-body">
+    <div class="ad-panel">
+      <div class="ad-block ads">
+        <div class="ab-label ads"><span class="ab-badge ads">TelyAds</span> — Moniepoint (SME lending)</div>
+        <div class="ab-copy"><strong>MONIEPOINT:</strong> Get working capital for your business in 24 hours. No collateral. ₦100k to ₦10M available. 200,000+ businesses funded.</div>
+        <div class="ab-cta ads">Dial *5573*BIZ#</div>
+      </div>
+      <div class="ab-sep"></div>
+      <div class="ad-block ads">
+        <div class="ab-label ads"><span class="ab-badge ads">TelyAds</span> — Pepsi Nigeria (FMCG brand)</div>
+        <div class="ab-copy"><strong>PEPSI:</strong> Nothing official like that. The biggest night of football deserves a chilled Pepsi. Available everywhere tonight. 🔵❤️</div>
+        <div class="ab-cta ads">Find store → Dial *234*PEPSI#</div>
+      </div>
+    </div>
+    <div class="dev-panel">
+      <div class="preview-label" style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--dim);margin-bottom:8px;">MTN portal page</div>
+      <div class="pw">
+        <div class="phone sm" style="width:148px;">
+          <div class="pnb"><div class="pn"></div></div>
+          <div class="pscr">
+            <div class="sb lt"><span>09:41</span><div class="sbr"><div class="sig"><s></s><s></s><s></s><s></s></div><span>4G</span>🔋</div></div>
+            <div class="browser">
+              <div class="bbar"><span style="font-size:11px;color:#555;">←</span><div class="burl">mtn.ng/selfcare</div></div>
+              <div class="bcon">
+                <div style="font-size:10px;font-weight:700;color:#111;margin-bottom:6px;">MTN Self Service</div>
+                <div class="blines"><div class="bline" style="width:90%;"></div><div class="bline" style="width:65%;"></div></div>
+                <div class="banner">
+                  <div class="bannertop" style="background:#1A3FAA;"><span class="banlbl">Sponsored</span></div>
+                  <div class="banbody"><div class="bantxt"><div class="banttl">Moniepoint Business</div><div class="bancopy">₦100k–₦10M in 24hrs. No collateral.</div></div><div class="bancta" style="background:#1A3FAA;">Dial *5573*BIZ#</div></div>
+                </div>
+                <div class="blines" style="margin-top:6px;"><div class="bline" style="width:55%;"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="fcard-footer">
+    <span class="pill p-aware">Awareness</span><span class="pill p-conv">Conversion</span><span class="pill p-lead">Lead Gen</span><span class="pill p-cpm">CPM</span>
+  </div>
+</div>
+
+</div><!-- /Smartphone -->
+
+<!-- ══ BILLING ══ -->
+<div class="cat-bar billing">Billing Event Formats (17–18) — TelyAds only</div>
+<div class="fgrid">
+
+<!-- F17: Airtime Receipt -->
+<div class="fcard ads-only">
+  <div class="fcard-hdr">
+    <div><div class="fcard-name">17 · Airtime Recharge Receipt</div><div class="fcard-meta">Post-recharge screen · Subscriber has proven spend power · TelyAds only</div></div>
+    <span class="ftag both">Both devices</span>
+  </div>
+  <div class="fcard-body">
+    <div class="ad-panel">
+      <div class="ad-block ads">
+        <div class="ab-label ads"><span class="ab-badge ads">TelyAds</span> — GTBank (Premium ₦10,000+)</div>
+        <div class="ab-copy"><strong>GTBANK:</strong> Your ₦20,000 recharge shows real buying power. Open a GTBank savings account and earn 21% p.a. — open in 3 minutes.</div>
+        <div class="ab-cta ads">Dial *737*1#</div>
+      </div>
+      <div class="ab-sep"></div>
+      <div class="ad-block ads">
+        <div class="ab-label ads"><span class="ab-badge ads">TelyAds</span> — Coca-Cola (Any tier, CPM awareness)</div>
+        <div class="ab-copy"><strong>COCA-COLA:</strong> You just recharged — celebrate with an ice-cold Coke. Taste the feeling. Available at 50,000+ outlets across Nigeria. ❤️</div>
+        <div class="ab-cta ads">Find store → Dial *234*COKE#</div>
+      </div>
+    </div>
+    <div class="dev-panel">
+      <div class="dtabs"><div class="dtab on">📱 Smartphone</div><div class="dtab">📟 Feature phone</div></div>
+      <div class="pw">
+        <div class="phone sm">
+          <div class="pnb"><div class="pn"></div></div>
+          <div class="pscr">
+            <div class="sb lt"><span>09:41</span><div class="sbr"><div class="sig"><s></s><s></s><s></s><s></s></div><span>4G</span>🔋</div></div>
+            <div class="receipt">
+              <div class="rhdr" style="background:#1A73E8;"><div class="rcheck">✓</div><div class="rttl">Recharge Successful</div><div class="ramt">₦20,000.00 credited</div></div>
+              <div class="rrows">
+                <div class="rrow"><span>New balance</span><span>₦21,247.80</span></div>
+                <div class="rrow"><span>Valid for</span><span>30 days</span></div>
+              </div>
+              <div class="rad">
+                <div class="radlbl">Premium Offer</div>
+                <div class="radttl">GTBank — Earn 21% p.a.</div>
+                <div class="radcopy">Deposit ₦20k+ and earn the highest savings rate. Open in 3 minutes.</div>
+                <div class="radcta">Dial *737*1#</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="phone fp">
+          <div class="fpscr">
+            <div class="fpt"><span>MTN</span><span>Msg</span></div>
+            <div class="fpb wht" style="font-size:7px;">MTN: Recharge N20000 OK. Bal: N21247.80.&#10;&#10;GTBANK: Earn 21% p.a. Open account 3 mins. Dial *737*1#. Reply STOP.</div>
+            <div class="fpsk"><span class="fpk lt">Back</span><span class="fpk lt">OK</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="fcard-footer">
+    <span class="pill p-conv">Conversion</span><span class="pill p-aware">Awareness</span><span class="pill p-cpm">CPM</span><span class="pill p-cpa">CPA</span>
+  </div>
+</div>
+
+<!-- F18: Data Bundle Receipt -->
+<div class="fcard ads-only">
+  <div class="fcard-hdr">
+    <div><div class="fcard-name">18 · Data Bundle Purchase Receipt</div><div class="fcard-meta">Post data-buy screen · Subscriber is now online · TelyAds only</div></div>
+    <span class="ftag both">Both devices</span>
+  </div>
+  <div class="fcard-body">
+    <div class="ad-panel">
+      <div class="ad-block ads">
+        <div class="ab-label ads"><span class="ab-badge ads">TelyAds</span> — Betway (data buyer = likely smartphone user)</div>
+        <div class="ab-copy"><strong>BETWAY:</strong> Enjoy your data — stream tonight's AFCON match and bet live! ₦500 free bet for all new users. Claim in 2 minutes.</div>
+        <div class="ab-cta ads">Dial *347#</div>
+      </div>
+      <div class="ab-sep"></div>
+      <div class="ad-block ads">
+        <div class="ab-label ads"><span class="ab-badge ads">TelyAds</span> — Jumia Nigeria</div>
+        <div class="ab-copy"><strong>JUMIA:</strong> You're online — shop now! Flash sale ends at midnight. Free delivery on ₦3,000+ orders. Electronics, fashion, beauty — all in one place.</div>
+        <div class="ab-cta ads">Dial *537#</div>
+      </div>
+    </div>
+    <div class="dev-panel">
+      <div class="dtabs"><div class="dtab on">📱 Smartphone</div><div class="dtab">📟 Feature phone</div></div>
+      <div class="pw">
+        <div class="phone sm">
+          <div class="pnb"><div class="pn"></div></div>
+          <div class="pscr">
+            <div class="sb lt"><span>09:41</span><div class="sbr"><div class="sig"><s></s><s></s><s></s><s></s></div><span>4G</span>🔋</div></div>
+            <div class="receipt">
+              <div class="rhdr" style="background:#00897B;"><div class="rcheck">✓</div><div class="rttl">Data Activated</div><div class="ramt">2GB — ₦500 · 30 days</div></div>
+              <div class="rrows">
+                <div class="rrow"><span>Bundle</span><span>2GB SmartPak</span></div>
+                <div class="rrow"><span>Check balance</span><span>*559#</span></div>
+              </div>
+              <div class="rad">
+                <div class="radlbl">For You</div>
+                <div class="radttl">Betway — Stream & Bet Live</div>
+                <div class="radcopy">Enjoy your data — stream AFCON tonight and bet live. Free ₦500 bet for new users.</div>
+                <div class="radcta">Dial *347#</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="phone fp">
+          <div class="fpscr">
+            <div class="fpt"><span>MTN</span><span>Msg</span></div>
+            <div class="fpb wht" style="font-size:7px;">MTN: 2GB activated. 30 days. Check: *559#.&#10;&#10;BETWAY: Stream AFCON & bet live. Free N500 new users. Dial *347#. Reply STOP.</div>
+            <div class="fpsk"><span class="fpk lt">Back</span><span class="fpk lt">OK</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="fcard-footer">
+    <span class="pill p-conv">Conversion</span><span class="pill p-aware">Awareness</span><span class="pill p-cpm">CPM</span><span class="pill p-cpa">CPA</span>
+  </div>
+</div>
+
+</div><!-- /Billing -->
+
+<!-- ══ RETARGETING ══ -->
+<div class="cat-bar retgt">Retargeting (19)</div>
+<div class="fgrid" style="grid-template-columns:1fr;">
+
+<!-- F19: Sequenced Follow-up -->
+<div class="fcard">
+  <div class="fcard-hdr">
+    <div><div class="fcard-name">19 · Sequenced Follow-Up Retargeting</div><div class="fcard-meta">Cross-channel re-engagement for non-converters · Max 3 touchpoints · Day 1 SMS → Day 3 USSD inject → Day 7 EOC · Frequency capped</div></div>
+    <span class="ftag both">Both · TelyAds &amp; TelyDial</span>
+  </div>
+  <div class="fcard-body" style="grid-template-columns:1fr 1fr;">
+    <div class="ad-panel">
+      <!-- TelyAds sequence -->
+      <div class="ads-only">
+        <div class="ab-label ads" style="margin-bottom:8px;"><span class="ab-badge ads">TelyAds</span> — Access Bank (3-step re-engagement)</div>
+        <div style="display:flex;flex-direction:column;gap:7px;">
+          <div style="background:rgba(255,106,61,.06);border:1px solid rgba(255,106,61,.15);border-radius:7px;padding:10px 12px;">
+            <div style="font-size:9px;font-weight:700;color:var(--tely);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;">Step 1 · Day 1 · SMS</div>
+            <div class="ab-copy">Still thinking about it? Open an Access Bank account today and earn 22% p.a. — offer includes ₦5,000 bonus for new accounts this week only.</div>
+            <div class="ab-cta ads">Dial *901*1#</div>
+            <div class="ab-note">Reply STOP to opt out</div>
+          </div>
+          <div style="background:rgba(79,110,247,.06);border:1px solid rgba(79,110,247,.15);border-radius:7px;padding:10px 12px;">
+            <div style="font-size:9px;font-weight:700;color:#7BA0FF;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;">Step 2 · Day 3 · USSD Inject</div>
+            <div class="ab-copy">ACCESS BANK: Your ₦5,000 new account bonus is still waiting. Open today before it expires. Reply 7 or Dial *901*1#</div>
+          </div>
+          <div style="background:rgba(0,229,160,.06);border:1px solid rgba(0,229,160,.15);border-radius:7px;padding:10px 12px;">
+            <div style="font-size:9px;font-weight:700;color:var(--green);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;">Step 3 · Day 7 · End of Call</div>
+            <div class="ab-copy">Last chance — open your Access Bank account today. The ₦5,000 bonus expires at midnight tonight.</div>
+            <div class="ab-cta ads">Dial *901*1#</div>
+          </div>
+        </div>
+      </div>
+      <!-- TelyDial sequence -->
+      <div class="dial-only">
+        <div class="ab-label dial" style="margin-bottom:8px;"><span class="ab-badge dial">TelyDial</span> — Soka Games (VAS win-back)</div>
+        <div style="display:flex;flex-direction:column;gap:7px;">
+          <div style="background:rgba(255,204,8,.06);border:1px solid rgba(255,204,8,.15);border-radius:7px;padding:10px 12px;">
+            <div style="font-size:9px;font-weight:700;color:var(--mtn);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;">Step 1 · Day 1 · SMS</div>
+            <div class="ab-copy">⚽ Oga, you almost joined! Soka Games — Nigeria's No.1 football prediction game — is waiting for you. Join 500,000+ players today. First day FREE!</div>
+            <div class="ab-cta dial">Dial *8022# → Soka Games</div>
+            <div class="ab-note">₦50/day · Reply STOP to opt out</div>
+          </div>
+          <div style="background:rgba(79,110,247,.06);border:1px solid rgba(79,110,247,.15);border-radius:7px;padding:10px 12px;">
+            <div style="font-size:9px;font-weight:700;color:#7BA0FF;margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;">Step 2 · Day 3 · USSD Inject</div>
+            <div class="ab-copy">Soka Games: Your FREE first day is still available! Predict today's match and win up to ₦10,000. Reply 5 or Dial *8022#</div>
+          </div>
+          <div style="background:rgba(0,229,160,.06);border:1px solid rgba(0,229,160,.15);border-radius:7px;padding:10px 12px;">
+            <div style="font-size:9px;font-weight:700;color:var(--green);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;">Step 3 · Day 7 · End of Call</div>
+            <div class="ab-copy">⚽ AFCON is on — don't watch without a bet! Last chance: Join Soka Games free first day expires tonight.</div>
+            <div class="ab-cta dial">Dial *8022# → Soka Games</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="dev-panel">
+      <div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--dim);margin-bottom:8px;">Sequence preview</div>
+      <div class="seq-steps">
+        <div class="seq-s ads-only" style="background:rgba(255,106,61,.06);border:1px solid rgba(255,106,61,.12);">
+          <div class="seq-sh"><div class="seq-n" style="background:var(--tely);">1</div><span class="seq-l">Day 1 — SMS</span><span class="seq-d">Sent immediately</span></div>
+          <div class="seq-b">Still thinking about it? ACCESS BANK: Open today and earn 22% p.a. + ₦5,000 new account bonus this week. <span class="seq-code" style="color:var(--blue);">Dial *901*1#</span>. Reply STOP to opt out.</div>
+        </div>
+        <div class="seq-s dial-only" style="background:rgba(255,204,8,.06);border:1px solid rgba(255,204,8,.12);">
+          <div class="seq-sh"><div class="seq-n" style="background:var(--mtn);color:#000;">1</div><span class="seq-l">Day 1 — SMS</span><span class="seq-d">Sent immediately</span></div>
+          <div class="seq-b">⚽ Oga, you almost joined! Soka Games is waiting — 500,000+ players. First day FREE! <span class="seq-code" style="color:var(--mtn);">Dial *8022# → Soka</span>. ₦50/day. Reply STOP to opt out.</div>
+        </div>
+        <div class="seq-s" style="background:rgba(79,110,247,.05);border:1px solid rgba(79,110,247,.12);">
+          <div class="seq-sh"><div class="seq-n" style="background:var(--blue);">2</div><span class="seq-l">Day 3 — USSD Inject</span><span class="seq-d">If no conversion</span></div>
+          <div class="seq-b ads-only">ACCESS BANK: Your ₦5,000 bonus is still waiting. Open before it expires. Reply 7 or <span class="seq-code" style="color:var(--blue);">Dial *901*1#</span></div>
+          <div class="seq-b dial-only">Soka Games: FREE first day still available! Predict today's match, win ₦10,000. Reply 5 or <span class="seq-code" style="color:var(--mtn);">Dial *8022#</span></div>
+        </div>
+        <div class="seq-s" style="background:rgba(0,229,160,.05);border:1px solid rgba(0,229,160,.12);">
+          <div class="seq-sh"><div class="seq-n" style="background:var(--green);">3</div><span class="seq-l">Day 7 — End of Call</span><span class="seq-d">If call occurs & no conversion</span></div>
+          <div class="seq-b ads-only">ACCESS BANK: Last chance — ₦5,000 bonus expires midnight tonight. <span class="seq-code" style="color:var(--blue);">Dial *901*1#</span> now.</div>
+          <div class="seq-b dial-only">⚽ AFCON is on! Last chance — Soka Games FREE day expires tonight. <span class="seq-code" style="color:var(--mtn);">Dial *8022#</span> → Soka Games.</div>
+        </div>
+      </div>
+      <div style="margin-top:8px;padding:8px 10px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:7px;font-size:10px;color:var(--dim);line-height:1.5;">Max 3 touchpoints per subscriber · Frequency capped · Full multi-touch attribution reported</div>
+    </div>
+  </div>
+  <div class="fcard-footer">
+    <span class="pill p-conv">Conversion</span><span class="pill p-sub dial-only">Subscription</span><span class="pill p-cpm">CPM</span><span class="pill p-cpa">CPA</span><span class="pill p-revs dial-only">RevShare</span>
+  </div>
+</div>
+
+</div><!-- /Retargeting -->
+</div><!-- /page -->
+
+<script>
+function setMode(mode, btn){
+  document.querySelectorAll('.ptab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.body.className = 'mode-'+mode;
+}
+</script>
+</body>
+</html>
