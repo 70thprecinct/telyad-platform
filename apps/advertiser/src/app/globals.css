@@ -1,14 +1,13 @@
 @import '@telyad/ui/styles.css';
 
-/* Advertiser Portal theme — orange accent on dark (from the approved prototype). */
+/* Advertiser Portal theme — premium light with the TelyAd orange accent.
+   Neutrals inherit the shared light system; only brand tokens + canvas set here. */
 :root {
-  --tly-bg: #0b0e14;
-  --tly-card: #131722;
-  --tly-card-2: #1a2030;
-  --tly-card-3: #212939;
-  --tly-primary: #ff6a3d;
-  --tly-primary-dim: rgba(255, 106, 61, 0.16);
-  --tly-primary-contrast: #1a0a04;
+  --tly-bg: #f5f6f9;
+  --tly-primary: #ee5d2b;
+  --tly-primary-dim: rgba(238, 93, 43, 0.12);
+  --tly-primary-contrast: #ffffff;
+  --tly-accent-ink: #cf4c1c;
 }
 
 html,
@@ -26,6 +25,9 @@ a {
   height: 10px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1c2840;
+  background: #d4dae2;
   border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #c3cbd6;
 }
