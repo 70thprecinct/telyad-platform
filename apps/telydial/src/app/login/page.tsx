@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button, Field, Input } from '@telyad/ui';
+import { Brand, Button, Field, Input } from '@telyad/ui';
 import { useAuth } from '@/lib/auth';
 
 export default function LoginPage() {
@@ -43,8 +43,8 @@ export default function LoginPage() {
         style={{ width: 400, marginBottom: 0 }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-          <div className="tly-brand-mark">T</div>
-          <div className="tly-brand-name" style={{ fontSize: 18 }}>
+          <Brand height={34} withTagline />
+          <div className="tly-brand-name tly-faint" style={{ fontSize: 13 }}>
             TelyDial — MVAS
           </div>
         </div>

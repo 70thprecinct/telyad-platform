@@ -167,7 +167,7 @@ function CreateDemoModal({ onClose, onCreated }: { onClose: () => void; onCreate
   const [email, setEmail] = useState('');
   const [portal, setPortal] = useState<Portal>('advertiser');
   const [organisation, setOrganisation] = useState('');
-  const [role, setRole] = useState<string>(ADVERTISER_ROLES[0]);
+  const [role, setRole] = useState<string>(ADVERTISER_ROLES[0]!);
   const [hours, setHours] = useState(72);
   const [pwMode, setPwMode] = useState<'generate' | 'manual'>('generate');
   const [password, setPassword] = useState('');
@@ -211,33 +211,30 @@ function CreateDemoModal({ onClose, onCreated }: { onClose: () => void; onCreate
         <Field label="Portal">
           <Select
             value={portal}
+            options={(Object.keys(PORTAL_LABEL) as Portal[]).map((p) => ({ value: p, label: PORTAL_LABEL[p] }))}
             onChange={(e) => {
               const p = e.target.value as Portal;
               setPortal(p);
-              setRole(ROLES_FOR[p][0]);
+              setRole(ROLES_FOR[p][0]!);
             }}
-          >
-            {(Object.keys(PORTAL_LABEL) as Portal[]).map((p) => (
-              <option key={p} value={p}>{PORTAL_LABEL[p]}</option>
-            ))}
-          </Select>
+          />
         </Field>
         <Field label="Organisation / tenant">
           <Input value={organisation} onChange={(e) => setOrganisation(e.target.value)} placeholder="Coca-Cola Demo" />
         </Field>
         <Field label="Role">
-          <Select value={role} onChange={(e) => setRole(e.target.value)}>
-            {roles.map((r) => (
-              <option key={r} value={r}>{r}</option>
-            ))}
-          </Select>
+          <Select
+            value={role}
+            options={roles.map((r) => ({ value: r, label: r }))}
+            onChange={(e) => setRole(e.target.value)}
+          />
         </Field>
         <Field label="Access duration">
-          <Select value={hours} onChange={(e) => setHours(Number(e.target.value))}>
-            {DURATIONS.map((d) => (
-              <option key={d.hours} value={d.hours}>{d.label}</option>
-            ))}
-          </Select>
+          <Select
+            value={hours}
+            options={DURATIONS.map((d) => ({ value: String(d.hours), label: d.label }))}
+            onChange={(e) => setHours(Number(e.target.value))}
+          />
           <div className="hint">Valid {fmt(validFrom)} → {fmt(expiresAt)}</div>
         </Field>
         <Field label="Temporary password">
