@@ -1,14 +1,13 @@
 @import '@telyad/ui/styles.css';
 
-/* TelyDial — violet accent on the shared dark shell (MVAS acquisition module). */
+/* TelyDial — premium light shared shell with a distinct violet accent (MVAS
+   acquisition module). Same light structure as the rest of the ecosystem. */
 :root {
-  --tly-bg: #0b0e14;
-  --tly-card: #131722;
-  --tly-card-2: #1a2030;
-  --tly-card-3: #212939;
-  --tly-primary: #7c6cf0;
-  --tly-primary-dim: rgba(124, 108, 240, 0.16);
-  --tly-primary-contrast: #0b0720;
+  --tly-bg: #f6f6fb;
+  --tly-primary: #6d5ae6;
+  --tly-primary-dim: rgba(109, 90, 230, 0.12);
+  --tly-primary-contrast: #ffffff;
+  --tly-accent-ink: #5646c9;
   --tly-secondary: #2a78d6;
 }
 
@@ -27,6 +26,9 @@ a {
   height: 10px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1c2840;
+  background: #d7d5e6;
   border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #c7c4dd;
 }

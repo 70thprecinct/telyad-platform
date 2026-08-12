@@ -11,6 +11,11 @@ export interface AIPlanner {
 const BASE_POOL = 80_000_000; // MTN demo subscriber base
 const IMPRESSION_COST_MAJOR = 0.12; // ~₦120 CPM, demonstration blended rate
 
+/** Indefinite article agreeing with the following word (e.g. "an Acquisition"). */
+function article(word: string): 'a' | 'an' {
+  return /^[aeiou]/i.test(word.trim()) ? 'an' : 'a';
+}
+
 function score(cap: AdCapability, req: MediaPlanRequest): number {
   let s = 1;
   const obj = req.objective.toLowerCase();
@@ -59,7 +64,7 @@ export class DemoAIPlanner implements AIPlanner {
         family: c.family,
         sharePct,
         budgetMinor: Math.round((request.budgetMinor * sharePct) / 100),
-        reason: `For a ${request.objective} objective in ${request.sector}: ${c.name} — ${c.bestUseCases[0] ?? c.description}`,
+        reason: `For ${article(request.objective)} ${request.objective} objective in ${request.sector}: ${c.name} — ${c.bestUseCases[0] ?? c.description}`,
         estimatedReach: Math.min(BASE_POOL, estimatedReach),
         pricingModel: c.pricingModels[0]!,
         networkStatus: c.defaultNetworkStatus,

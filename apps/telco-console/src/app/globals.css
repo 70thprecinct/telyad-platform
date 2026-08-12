@@ -1,19 +1,17 @@
 @import '@telyad/ui/styles.css';
 
-/* MTN Telco Operations theme — MTN yellow on dark (from the approved prototype). */
+/* MTN Telco Operations theme — premium light with MTN yellow used as a strategic
+   accent (active states, KPIs, chart highlights, status), never as a full-screen
+   wash. `--tly-accent-ink` is a dark gold so brand-coloured *text* stays legible
+   on white; the bright yellow is reserved for fills and indicators. */
 :root {
-  --tly-bg: #070c12;
-  --tly-card: #0e151d;
-  --tly-card-2: #131c26;
-  --tly-card-3: #18222e;
+  --tly-bg: #f6f7f4;
   --tly-primary: #ffcc08;
-  --tly-primary-dim: rgba(255, 204, 8, 0.16);
-  --tly-primary-contrast: #241b00;
-  --tly-secondary: #4f6ef7;
-  --tly-info-dim: rgba(255, 204, 8, 0.12);
-  --tly-text: #e9edf6;
-  --tly-text-dim: #8c9aae;
-  --tly-text-faint: #576070;
+  --tly-primary-dim: rgba(255, 204, 8, 0.2);
+  --tly-primary-contrast: #1a1400;
+  --tly-accent-ink: #8a6a00;
+  --tly-secondary: #3b5bdb;
+  --tly-info-dim: rgba(255, 204, 8, 0.16);
   --tly-radius: 12px;
 }
 
@@ -32,6 +30,9 @@ a {
   height: 10px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1c2840;
+  background: #d6d8cf;
   border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #c7c9bd;
 }
