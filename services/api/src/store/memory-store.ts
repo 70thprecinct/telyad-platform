@@ -48,6 +48,20 @@ export class MemoryStore implements Store {
     const u = this.users.get(id);
     return u ? clone(u) : null;
   }
+  async createUser(user: StoredUser): Promise<StoredUser> {
+    this.users.set(user.id, clone(user));
+    return clone(user);
+  }
+  async updateUser(id: string, patch: Partial<StoredUser>): Promise<StoredUser> {
+    const existing = this.users.get(id);
+    if (!existing) throw new Error(`User not found: ${id}`);
+    const updated = { ...existing, ...patch };
+    this.users.set(id, updated);
+    return clone(updated);
+  }
+  async listDemoUsers(): Promise<StoredUser[]> {
+    return clone([...this.users.values()].filter((u) => u.isDemo));
+  }
   async listTelcos(): Promise<Telco[]> {
     return clone([...this.telcos.values()]);
   }

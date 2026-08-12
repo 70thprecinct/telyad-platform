@@ -7,7 +7,7 @@ import { useAuth } from '@/lib/auth';
 export default function LoginPage() {
   const { login } = useAuth();
   const router = useRouter();
-  const [email, setEmail] = useState('ops.lead@mtn.example');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
@@ -61,7 +61,7 @@ export default function LoginPage() {
             onChange={(e) => setPassword(e.target.value)}
             type="password"
             required
-            placeholder="Enter your demo password"
+            placeholder="Enter your password"
           />
         </Field>
         <Button type="submit" block disabled={busy}>

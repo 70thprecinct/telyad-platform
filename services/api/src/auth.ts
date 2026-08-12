@@ -11,8 +11,14 @@ export function verifyPassword(plain: string, hash: string): boolean {
   return bcrypt.compareSync(plain, hash);
 }
 
-export function signToken(payload: AuthTokenPayload): string {
-  return jwt.sign(payload, env.jwtSecret, { expiresIn: env.jwtExpiresIn as jwt.SignOptions['expiresIn'] });
+export function signToken(payload: AuthTokenPayload, maxAgeSeconds?: number): string {
+  // The token never outlives the account: use the smaller of the configured
+  // session length and the caller-supplied account-expiry window.
+  const expiresIn: jwt.SignOptions['expiresIn'] =
+    typeof maxAgeSeconds === 'number'
+      ? maxAgeSeconds
+      : (env.jwtExpiresIn as jwt.SignOptions['expiresIn']);
+  return jwt.sign(payload, env.jwtSecret, { expiresIn });
 }
 
 export function verifyToken(token: string): AuthTokenPayload {

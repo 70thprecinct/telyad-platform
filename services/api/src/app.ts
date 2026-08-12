@@ -1,4 +1,4 @@
-import { randomUUID } from 'node:crypto';
+import { randomBytes, randomUUID } from 'node:crypto';
 import Fastify, {
   type FastifyError,
   type FastifyInstance,
@@ -10,12 +10,20 @@ import {
   approvalDecisionSchema,
   asId,
   createCampaignSchema,
+  createDemoUserSchema,
+  deriveDemoStatus,
+  extendDemoUserSchema,
+  isDemoAccessLive,
   loginRequestSchema,
+  PORTAL_REALM,
+  resetDemoPasswordSchema,
   type AuditEvent,
   type AuthUser,
   type Campaign,
   type CampaignApproval,
+  type DemoUserView,
   type Permission,
+  type Portal,
   audienceDefinitionSchema,
 } from '@telyad/types';
 import { permissionsFor } from '@telyad/auth';
@@ -37,7 +45,7 @@ import { intelligence, type RevenueLine } from '@telyad/intelligence';
 import { CAPABILITY_STATUSES, type CapabilityStatus } from '@telyad/types';
 import type { AuthTokenPayload } from '@telyad/auth';
 import type { Store } from './store/store';
-import { signToken, verifyPassword, verifyToken } from './auth';
+import { hashPassword, signToken, verifyPassword, verifyToken } from './auth';
 import { deriveCampaignMetrics } from './analytics';
 import { env } from './env';
 
@@ -52,12 +60,38 @@ export interface AppOptions {
   logger?: boolean;
 }
 
+/** Cryptographically-strong temporary password (Crockford-ish, unambiguous). */
+function generatePassword(): string {
+  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
+  const bytes = randomBytes(16);
+  let out = '';
+  for (let i = 0; i < 16; i++) out += alphabet[bytes[i]! % alphabet.length];
+  return `${out.slice(0, 4)}-${out.slice(4, 8)}-${out.slice(8, 12)}-${out.slice(12, 16)}`;
+}
+
+/** Map a stored user to the safe admin view (never exposes the hash). */
+function toDemoView(u: {
+  id: string; name: string; email: string; portal: string; organisation: string | null;
+  role: string; isDemo: boolean; disabled: boolean; revokedAt: string | null;
+  validFrom: string | null; expiresAt: string | null; createdAt: string;
+  createdByName: string | null; lastLoginAt: string | null;
+}, nowMs: number): DemoUserView {
+  return {
+    id: u.id, name: u.name, email: u.email, portal: u.portal as DemoUserView['portal'],
+    organisation: u.organisation, role: u.role,
+    status: deriveDemoStatus(u, nowMs),
+    createdAt: u.createdAt, createdByName: u.createdByName,
+    validFrom: u.validFrom, expiresAt: u.expiresAt, lastLoginAt: u.lastLoginAt,
+  };
+}
+
 function toAuthUser(p: AuthTokenPayload): AuthUser {
   return {
     id: p.sub,
     name: p.name,
     email: p.email,
     realm: p.realm,
+    portal: p.portal,
     role: p.role,
     telcoId: p.telcoId,
     advertiserId: p.advertiserId,
@@ -85,12 +119,23 @@ export function buildApp({ store, logger = false }: AppOptions): FastifyInstance
     if (!header?.startsWith('Bearer ')) {
       return reply.code(401).send({ error: 'Missing bearer token' });
     }
+    let payload: AuthTokenPayload;
     try {
-      const payload = verifyToken(header.slice(7));
-      req.auth = { ...payload, permissions: permissionsFor(payload.realm, payload.role as never) };
+      payload = verifyToken(header.slice(7));
     } catch {
       return reply.code(401).send({ error: 'Invalid or expired token' });
     }
+    // Re-check the account against the store on EVERY protected request, so a
+    // demo account that has since expired / been revoked / disabled stops
+    // working immediately — an already-issued token is never sufficient on its
+    // own. Enforcement is server-side; the frontend is never trusted for this.
+    const user = await store.getUserById(payload.sub);
+    if (!user) return reply.code(401).send({ error: 'Account no longer exists' });
+    if (!isDemoAccessLive(user, Date.now())) {
+      req.log.info({ userId: user.id, portal: user.portal }, 'auth: demo access no longer valid');
+      return reply.code(401).send({ error: 'Demo access has expired', code: 'ACCESS_EXPIRED' });
+    }
+    req.auth = { ...payload, permissions: permissionsFor(payload.realm, payload.role as never) };
   };
 
   const require = (req: FastifyRequest, reply: FastifyReply, perm: Permission): boolean => {
@@ -150,20 +195,214 @@ export function buildApp({ store, logger = false }: AppOptions): FastifyInstance
       req.log.warn({ email: parsed.data.email }, 'auth: login failed');
       return reply.code(401).send({ error: 'Invalid email or password' });
     }
-    req.log.info({ userId: user.id, realm: user.realm }, 'auth: login ok');
+    // Portal isolation: an account issued for one portal cannot sign into
+    // another. When the client declares its portal, it must match.
+    if (parsed.data.portal && parsed.data.portal !== user.portal) {
+      req.log.warn(
+        { email: user.email, requested: parsed.data.portal, actual: user.portal },
+        'auth: portal mismatch',
+      );
+      return reply.code(403).send({ error: 'This account cannot access this portal' });
+    }
+    // Demo lifecycle: reject before validFrom, after expiry, when revoked/disabled.
+    const now = Date.now();
+    if (!isDemoAccessLive(user, now)) {
+      req.log.warn({ userId: user.id }, 'auth: demo access not valid at login');
+      const status = deriveDemoStatus(user, now);
+      return reply.code(403).send({ error: `Demo access ${status.toLowerCase()}`, code: 'ACCESS_EXPIRED' });
+    }
+    req.log.info({ userId: user.id, realm: user.realm, portal: user.portal }, 'auth: login ok');
+    await store.updateUser(user.id, { lastLoginAt: new Date(now).toISOString() });
     const payload: AuthTokenPayload = {
       sub: user.id,
       email: user.email,
       name: user.name,
       realm: user.realm,
+      portal: user.portal,
       role: user.role,
       telcoId: user.telcoId,
       advertiserId: user.advertiserId,
     };
-    return { token: signToken(payload), user: toAuthUser(payload) };
+    // Clamp the token lifetime so it can never outlive the account's expiry.
+    const maxAgeSec = user.expiresAt
+      ? Math.max(1, Math.floor((Date.parse(user.expiresAt) - now) / 1000))
+      : undefined;
+    return { token: signToken(payload, maxAgeSec), user: toAuthUser(payload) };
   });
 
   app.get('/auth/me', { preHandler: authenticate }, async (req) => ({ user: toAuthUser(req.auth!) }));
+
+  // ── demo access (administrator-issued temporary accounts) ─────────────────────
+  // Only a platform (Tely Master Admin) user with users:manage may administer
+  // demo accounts. RBAC/tenant rules are unchanged — a demo account is a normal
+  // account with a validity window; it never bypasses any security rule.
+  const requireAdmin = (req: FastifyRequest, reply: FastifyReply): boolean => {
+    if (!req.auth) {
+      reply.code(401).send({ error: 'Unauthenticated' });
+      return false;
+    }
+    if (req.auth.realm !== 'platform' || !req.auth.permissions.includes('users:manage' as Permission)) {
+      reply.code(403).send({ error: 'Demo access administration is restricted' });
+      return false;
+    }
+    return true;
+  };
+
+  app.get('/admin/demo-users', { preHandler: authenticate }, async (req, reply) => {
+    if (!requireAdmin(req, reply)) return;
+    const now = Date.now();
+    const users = await store.listDemoUsers();
+    return {
+      users: users
+        .map((u) => toDemoView(u, now))
+        .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1)),
+    };
+  });
+
+  app.post('/admin/demo-users', { preHandler: authenticate }, async (req, reply) => {
+    if (!requireAdmin(req, reply)) return;
+    const parsed = createDemoUserSchema.safeParse(req.body);
+    if (!parsed.success) return reply.code(400).send({ error: 'Invalid demo user payload' });
+    const input = parsed.data;
+
+    if (await store.getUserByEmail(input.email)) {
+      return reply.code(409).send({ error: 'A user with this email already exists' });
+    }
+
+    // The administrator chooses the portal → realm; the demo user can never
+    // pick or widen its own role/realm/portal.
+    const portal = input.portal as Portal;
+    const realm = PORTAL_REALM[portal];
+    if (permissionsFor(realm, input.role as never).length === 0) {
+      return reply.code(400).send({ error: `Role "${input.role}" is not valid for the ${portal} portal` });
+    }
+
+    // Resolve + validate the tenant for tenant-scoped portals.
+    let telcoId: string | null = null;
+    let advertiserId: string | null = null;
+    let organisation = input.organisation ?? null;
+    if (realm === 'telco') {
+      if (!input.tenantId) return reply.code(400).send({ error: 'tenantId (telco) required for this portal' });
+      const telco = await store.getTelco(input.tenantId);
+      if (!telco) return reply.code(400).send({ error: 'Unknown telco tenant' });
+      telcoId = telco.id;
+      organisation = organisation ?? telco.name;
+    } else if (realm === 'advertiser') {
+      if (input.tenantId) {
+        const adv = await store.getAdvertiser(input.tenantId);
+        if (!adv) return reply.code(400).send({ error: 'Unknown advertiser tenant' });
+        advertiserId = adv.id;
+        telcoId = adv.telcoId;
+        organisation = organisation ?? adv.name;
+      }
+    }
+
+    const now = Date.now();
+    const validFrom = input.validFrom ?? new Date(now).toISOString();
+    const expiresAt =
+      input.expiresAt ?? new Date(Date.parse(validFrom) + input.durationHours! * 3600_000).toISOString();
+    if (Date.parse(expiresAt) <= Date.parse(validFrom)) {
+      return reply.code(400).send({ error: 'expiresAt must be after validFrom' });
+    }
+
+    const plainPassword = input.password ?? generatePassword();
+    const user = {
+      id: asId<'UserId'>(randomUUID()),
+      name: input.name,
+      email: input.email,
+      realm,
+      portal,
+      role: input.role as never,
+      telcoId: telcoId ? asId<'TelcoId'>(telcoId) : null,
+      advertiserId: advertiserId ? asId<'AdvertiserId'>(advertiserId) : null,
+      status: 'Active' as const,
+      lastLoginAt: null,
+      passwordHash: hashPassword(plainPassword), // bcrypt — plaintext never stored
+      isDemo: true,
+      organisation,
+      createdAt: new Date(now).toISOString(),
+      createdByUserId: asId<'UserId'>(req.auth!.sub),
+      createdByName: req.auth!.name,
+      validFrom,
+      expiresAt,
+      revokedAt: null,
+      disabled: false,
+    };
+    const created = await store.createUser(user);
+    await audit(req, {
+      action: 'Created demo access',
+      target: `${input.email} · ${portal} · ${input.role}`,
+      before: null,
+      after: `valid ${validFrom} → ${expiresAt}`,
+    });
+    // The plaintext password is returned exactly once, here, so the admin can
+    // hand it to the invited user. It is never persisted or retrievable again.
+    return reply.code(201).send({
+      user: toDemoView(created, now),
+      credentials: { email: created.email, password: plainPassword, portal, expiresAt },
+    });
+  });
+
+  const getDemoUserOr404 = async (id: string, reply: FastifyReply) => {
+    const u = await store.getUserById(id);
+    if (!u || !u.isDemo) {
+      reply.code(404).send({ error: 'Demo user not found' });
+      return null;
+    }
+    return u;
+  };
+
+  app.post('/admin/demo-users/:id/extend', { preHandler: authenticate }, async (req, reply) => {
+    if (!requireAdmin(req, reply)) return;
+    const parsed = extendDemoUserSchema.safeParse(req.body);
+    if (!parsed.success) return reply.code(400).send({ error: 'Invalid expiry' });
+    const u = await getDemoUserOr404((req.params as { id: string }).id, reply);
+    if (!u) return;
+    const updated = await store.updateUser(u.id, { expiresAt: parsed.data.expiresAt });
+    await audit(req, { action: 'Changed demo access expiry', target: u.email, before: u.expiresAt, after: parsed.data.expiresAt });
+    return { user: toDemoView(updated, Date.now()) };
+  });
+
+  app.post('/admin/demo-users/:id/revoke', { preHandler: authenticate }, async (req, reply) => {
+    if (!requireAdmin(req, reply)) return;
+    const u = await getDemoUserOr404((req.params as { id: string }).id, reply);
+    if (!u) return;
+    const updated = await store.updateUser(u.id, { revokedAt: new Date().toISOString() });
+    await audit(req, { action: 'Revoked demo access', target: u.email, before: 'active', after: 'revoked' });
+    return { user: toDemoView(updated, Date.now()) };
+  });
+
+  app.post('/admin/demo-users/:id/disable', { preHandler: authenticate }, async (req, reply) => {
+    if (!requireAdmin(req, reply)) return;
+    const u = await getDemoUserOr404((req.params as { id: string }).id, reply);
+    if (!u) return;
+    const updated = await store.updateUser(u.id, { disabled: true });
+    await audit(req, { action: 'Disabled demo access', target: u.email, before: 'enabled', after: 'disabled' });
+    return { user: toDemoView(updated, Date.now()) };
+  });
+
+  app.post('/admin/demo-users/:id/enable', { preHandler: authenticate }, async (req, reply) => {
+    if (!requireAdmin(req, reply)) return;
+    const u = await getDemoUserOr404((req.params as { id: string }).id, reply);
+    if (!u) return;
+    // Re-enable only clears the disabled flag; a revoked or expired account
+    // stays inaccessible (the window still governs access).
+    const updated = await store.updateUser(u.id, { disabled: false });
+    await audit(req, { action: 'Re-enabled demo access', target: u.email, before: 'disabled', after: 'enabled' });
+    return { user: toDemoView(updated, Date.now()) };
+  });
+
+  app.post('/admin/demo-users/:id/reset-password', { preHandler: authenticate }, async (req, reply) => {
+    if (!requireAdmin(req, reply)) return;
+    const parsed = resetDemoPasswordSchema.safeParse(req.body ?? {});
+    if (!parsed.success) return reply.code(400).send({ error: 'Invalid reset payload' });
+    const u = await getDemoUserOr404((req.params as { id: string }).id, reply);
+    if (!u) return;
+    const plainPassword = parsed.data.password ?? generatePassword();
+    await store.updateUser(u.id, { passwordHash: hashPassword(plainPassword) });
+    await audit(req, { action: 'Reset demo access password', target: u.email, before: null, after: null });
+    return { credentials: { email: u.email, password: plainPassword, portal: u.portal, expiresAt: u.expiresAt } };
+  });
 
   // ── reference data ───────────────────────────────────────────────────────────
   app.get('/formats', { preHandler: authenticate }, async () => ({ formats: listFormats() }));

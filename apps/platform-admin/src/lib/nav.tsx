@@ -9,4 +9,8 @@ export const NAV: NavGroup[] = [
       { id: 'terms', label: 'Commercial Terms' },
     ],
   },
+  {
+    group: 'Access & Security',
+    items: [{ id: 'demo-access', label: 'Demo Access' }],
+  },
 ];

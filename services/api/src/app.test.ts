@@ -2,7 +2,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import type { FastifyInstance } from 'fastify';
 import { buildApp } from './app';
 import { MemoryStore } from './store/memory-store';
-import { hashPassword, signToken } from './auth';
+import { hashPassword } from './auth';
 import { env } from './env';
 
 let app: FastifyInstance;
@@ -167,16 +167,9 @@ describe('tenant isolation & RBAC (server-enforced)', () => {
   });
 
   it('a foreign advertiser cannot read another advertiser’s campaign', async () => {
-    const foreignToken = signToken({
-      sub: 'user_foreign',
-      email: 'x@other.example',
-      name: 'Foreign',
-      realm: 'advertiser',
-      role: 'Campaign Manager',
-      telcoId: 'telco_mtn_ng',
-      advertiserId: 'adv_other',
-    });
-    // Jumia's seeded campaign belongs to adv_jumia, not adv_other.
+    // A real seeded advertiser (Toyota) attempts to read Jumia's campaign.
+    // Tenant isolation must return 404 rather than leak another tenant's data.
+    const foreignToken = await login('bola@toyota.example');
     const res = await app.inject({
       method: 'GET',
       url: '/campaigns/camp_jumia_flash',

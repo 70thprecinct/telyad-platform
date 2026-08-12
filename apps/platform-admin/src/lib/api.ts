@@ -1,4 +1,11 @@
-import type { AuthUser, Campaign, Telco } from '@telyad/types';
+import type { AuthUser, Campaign, CreateDemoUserRequest, DemoUserView, Telco } from '@telyad/types';
+
+export interface DemoCredentials {
+  email: string;
+  password: string;
+  portal: string;
+  expiresAt: string | null;
+}
 
 const BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000';
 const TOKEN_KEY = 'telyad_platform_token';
@@ -42,9 +49,33 @@ export const api = {
   login: (email: string, password: string) =>
     request<{ token: string; user: AuthUser }>('/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email, password, portal: 'admin' }),
     }),
   me: () => request<{ user: AuthUser }>('/auth/me'),
   listTelcos: () => request<{ telcos: Telco[] }>('/telcos'),
   listCampaigns: () => request<{ campaigns: Campaign[] }>('/campaigns'),
+
+  // ── demo access ──────────────────────────────────────────────────────────
+  listDemoUsers: () => request<{ users: DemoUserView[] }>('/admin/demo-users'),
+  createDemoUser: (input: CreateDemoUserRequest) =>
+    request<{ user: DemoUserView; credentials: DemoCredentials }>('/admin/demo-users', {
+      method: 'POST',
+      body: JSON.stringify(input),
+    }),
+  extendDemoUser: (id: string, expiresAt: string) =>
+    request<{ user: DemoUserView }>(`/admin/demo-users/${id}/extend`, {
+      method: 'POST',
+      body: JSON.stringify({ expiresAt }),
+    }),
+  revokeDemoUser: (id: string) =>
+    request<{ user: DemoUserView }>(`/admin/demo-users/${id}/revoke`, { method: 'POST' }),
+  disableDemoUser: (id: string) =>
+    request<{ user: DemoUserView }>(`/admin/demo-users/${id}/disable`, { method: 'POST' }),
+  enableDemoUser: (id: string) =>
+    request<{ user: DemoUserView }>(`/admin/demo-users/${id}/enable`, { method: 'POST' }),
+  resetDemoPassword: (id: string) =>
+    request<{ credentials: DemoCredentials }>(`/admin/demo-users/${id}/reset-password`, {
+      method: 'POST',
+      body: JSON.stringify({ generatePassword: true }),
+    }),
 };
