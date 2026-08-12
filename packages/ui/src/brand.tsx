@@ -10,6 +10,8 @@ import type { CSSProperties } from 'react';
  * height is fixed and width is `auto`, so the supplied proportions are
  * preserved exactly (no stretch / squeeze / recolour).
  *
+ * The portal branding is logo-only — there is no payoff/tagline line.
+ *
  * Until the asset is present, `src` is omitted and a neutral text wordmark is
  * shown as a placeholder so the layout is complete. It is intentionally NOT a
  * recreation of the official mark.
@@ -25,15 +27,13 @@ export interface BrandProps {
   variant?: 'full' | 'mark';
   /** Rendered height in px; width scales to preserve the exact aspect ratio. */
   height?: number;
-  /** Optional payoff line ("SMART ADS. REAL RESULTS.") for spacious brand moments. */
-  withTagline?: boolean;
   className?: string;
   style?: CSSProperties;
 }
 
-export function Brand({ src, variant = 'full', height = 30, withTagline = false, className, style }: BrandProps) {
+export function Brand({ src, variant = 'full', height = 30, className, style }: BrandProps) {
   return (
-    <div className={className} style={{ display: 'inline-flex', flexDirection: 'column', gap: 6, ...style }}>
+    <div className={className} style={{ display: 'inline-flex', alignItems: 'center', ...style }}>
       {src ? (
         <img
           src={src}
@@ -77,19 +77,6 @@ export function Brand({ src, variant = 'full', height = 30, withTagline = false,
               Tely<span style={{ color: 'var(--tly-accent-ink)' }}>Ad</span>
             </span>
           )}
-        </span>
-      )}
-      {withTagline && variant === 'full' && (
-        <span
-          style={{
-            fontFamily: 'var(--tly-font-mono)',
-            fontSize: 9.5,
-            letterSpacing: '0.14em',
-            textTransform: 'uppercase',
-            color: 'var(--tly-text-faint)',
-          }}
-        >
-          Smart ads. Real results.
         </span>
       )}
     </div>

@@ -38,7 +38,7 @@ export default function LoginPage() {
     >
       <form onSubmit={onSubmit} className="tly-card" style={{ width: 400, marginBottom: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-          <Brand height={34} withTagline />
+          <Brand height={30} />
           <div className="tly-brand-name tly-faint" style={{ fontSize: 13 }}>
             Master Admin
           </div>

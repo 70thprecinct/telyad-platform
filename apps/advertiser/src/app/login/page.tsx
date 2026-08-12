@@ -43,7 +43,7 @@ export default function LoginPage() {
         style={{ width: 'min(400px, 92vw)', marginBottom: 0 }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 6 }}>
-          <Brand height={34} withTagline />
+          <Brand height={30} />
           <div className="tly-brand-name tly-faint" style={{ fontSize: 13 }}>
             Advertiser
           </div>

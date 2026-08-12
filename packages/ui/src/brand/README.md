@@ -17,9 +17,7 @@ white enterprise UI).
 | `telyad-logo-reversed.svg` | Reversed/light lockup | dark surfaces (e.g. inside phone previews) |
 | `telyad-mark.svg` | Icon/mark only | compact sidebar / favicon |
 
-The payoff line **“SMART ADS. REAL RESULTS.”** is available via the
-`withTagline` prop for spacious brand moments (login). The compact
-sidebar/header uses the wordmark **without** the tagline.
+Portal branding is **logo-only** — no payoff/tagline line is shown anywhere.
 
 ## Where the files go
 
@@ -37,7 +35,7 @@ apps/telydial/public/brand/telyad-logo.svg
 
 ```tsx
 <Brand src="/brand/telyad-logo.svg" height={30} />          // sidebar/header
-<Brand src="/brand/telyad-logo.svg" height={40} withTagline /> // login brand moment
+<Brand src="/brand/telyad-logo.svg" height={40} />          // login brand moment
 ```
 
 Until the asset is added, `<Brand>` (called without `src`) renders a neutral

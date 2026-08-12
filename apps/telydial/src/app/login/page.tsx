@@ -43,7 +43,7 @@ export default function LoginPage() {
         style={{ width: 400, marginBottom: 0 }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-          <Brand height={34} withTagline />
+          <Brand height={30} />
           <div className="tly-brand-name tly-faint" style={{ fontSize: 13 }}>
             TelyDial — MVAS
           </div>
