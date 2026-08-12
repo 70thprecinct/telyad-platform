@@ -1,19 +1,16 @@
 @import '@telyad/ui/styles.css';
 
-/* Tely Master Admin theme — cyan on very-dark (from the approved prototype). */
+/* Tely Master Admin theme — premium light with a deepened cyan/teal accent that
+   stays legible on white as both a fill and text (the prototype's bright cyan was
+   tuned for dark). This is the cross-telco control plane. */
 :root {
-  --tly-bg: #06090f;
-  --tly-card: #0d1420;
-  --tly-card-2: #121a28;
-  --tly-card-3: #172238;
-  --tly-primary: #22d3ee;
-  --tly-primary-dim: rgba(34, 211, 238, 0.15);
-  --tly-primary-contrast: #021014;
-  --tly-secondary: #818cf8;
-  --tly-info-dim: rgba(129, 140, 248, 0.16);
-  --tly-text: #e9edf6;
-  --tly-text-dim: #8b9ab8;
-  --tly-text-faint: #566079;
+  --tly-bg: #f4f7f9;
+  --tly-primary: #0891b2;
+  --tly-primary-dim: rgba(8, 145, 178, 0.12);
+  --tly-primary-contrast: #ffffff;
+  --tly-accent-ink: #0e7490;
+  --tly-secondary: #4f46e5;
+  --tly-info-dim: rgba(8, 145, 178, 0.1);
   --tly-radius: 12px;
 }
 
@@ -32,6 +29,9 @@ a {
   height: 10px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1c2840;
+  background: #cfdae0;
   border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #bccdd4;
 }

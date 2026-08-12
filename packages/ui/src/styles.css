@@ -6,33 +6,57 @@
    ============================================================================ */
 
 :root {
-  /* default (advertiser dark) token values — apps override these */
-  --tly-bg: #0b0e14;
-  --tly-card: #131722;
-  --tly-card-2: #1a2030;
-  --tly-card-3: #212939;
-  --tly-border: rgba(255, 255, 255, 0.08);
-  --tly-border-soft: rgba(255, 255, 255, 0.05);
-  --tly-primary: #ff6a3d;
-  --tly-primary-dim: rgba(255, 106, 61, 0.16);
-  --tly-primary-contrast: #1a0a04;
-  --tly-secondary: #4f6ef7;
-  --tly-success: #00d97e;
-  --tly-success-dim: rgba(0, 217, 126, 0.14);
-  --tly-warning: #ffb547;
-  --tly-warning-dim: rgba(255, 181, 71, 0.14);
-  --tly-danger: #ff5e5e;
-  --tly-danger-dim: rgba(255, 94, 94, 0.14);
-  --tly-info-dim: rgba(79, 110, 247, 0.16);
-  --tly-text: #f0f2f7;
-  --tly-text-dim: #97a0b8;
-  --tly-text-faint: #5c6478;
+  /* Premium light enterprise system (advertiser defaults). Apps override the
+     brand tokens (--tly-primary / --tly-accent-ink / --tly-secondary) and the
+     canvas in their globals.css; neutrals are shared. Handset previews re-declare
+     dark tokens locally (see `.tly-phone` below) so device mockups stay realistic
+     while the surrounding application is light. */
+  --tly-bg: #f4f6f9;
+  --tly-card: #ffffff;
+  --tly-card-2: #f1f4f8;
+  --tly-card-3: #e8edf3;
+  --tly-border: #e3e8ee;
+  --tly-border-soft: #eef1f5;
+  --tly-primary: #ee5d2b;
+  --tly-primary-dim: rgba(238, 93, 43, 0.12);
+  --tly-primary-contrast: #ffffff;
+  --tly-accent-ink: #cf4c1c; /* brand colour legible as text/border on light */
+  --tly-secondary: #3b5bdb;
+  --tly-success: #0a9d5e;
+  --tly-success-dim: rgba(10, 157, 94, 0.13);
+  --tly-warning: #b26a00;
+  --tly-warning-dim: rgba(178, 106, 0, 0.13);
+  --tly-danger: #d64141;
+  --tly-danger-dim: rgba(214, 65, 65, 0.12);
+  --tly-info-dim: rgba(59, 91, 219, 0.1);
+  --tly-text: #10192a;
+  --tly-text-dim: #586271;
+  --tly-text-faint: #8a94a3;
+  --tly-shadow: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.05);
+  --tly-shadow-md: 0 6px 18px rgba(16, 24, 40, 0.08), 0 2px 6px rgba(16, 24, 40, 0.05);
   --tly-radius: 14px;
   --tly-radius-sm: 10px;
   --tly-font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
   --tly-font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --tly-font-mono: 'JetBrains Mono', ui-monospace, monospace;
   --tly-sidebar-w: 240px;
+}
+
+/* Handset preview surfaces keep a realistic dark device context even though the
+   application is light. Scoped token override — every .tly-xp-* / .tly-stk /
+   .tly-sms / .tly-ussd surface inside a phone inherits these. Non-phone
+   renderers (journey / DOOH / geo / trigger) live outside .tly-phone and stay
+   light. */
+.tly-phone {
+  --tly-card: #131722;
+  --tly-card-2: #1a2030;
+  --tly-card-3: #212939;
+  --tly-border: rgba(255, 255, 255, 0.1);
+  --tly-border-soft: rgba(255, 255, 255, 0.06);
+  --tly-text: #f0f2f7;
+  --tly-text-dim: #9aa4b8;
+  --tly-text-faint: #6b7488;
+  --tly-accent-ink: var(--tly-primary); /* bright brand is legible on dark device */
 }
 
 *,
@@ -49,6 +73,8 @@
   font-family: var(--tly-font-body);
   font-size: 14px;
   -webkit-font-smoothing: antialiased;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 .tly-mono {
@@ -139,7 +165,9 @@
 }
 .tly-sb-item.active {
   background: var(--tly-primary-dim);
-  color: var(--tly-primary);
+  color: var(--tly-accent-ink);
+  font-weight: 600;
+  box-shadow: inset 3px 0 0 var(--tly-primary);
 }
 .tly-sb-item .ic {
   width: 16px;
@@ -172,15 +200,18 @@
   min-width: 0;
 }
 .tly-topbar {
-  height: 58px;
+  height: 60px;
   border-bottom: 1px solid var(--tly-border);
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 0 22px;
+  padding: 0 24px;
   flex-shrink: 0;
-  background: color-mix(in srgb, var(--tly-card) 65%, transparent);
-  backdrop-filter: blur(8px);
+  background: color-mix(in srgb, var(--tly-card) 85%, transparent);
+  backdrop-filter: saturate(1.1) blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 20;
 }
 .tly-topbar-title {
   font-family: var(--tly-font-display);
@@ -244,15 +275,16 @@
 .tly-eyebrow {
   font-family: var(--tly-font-mono);
   font-size: 10.5px;
-  color: var(--tly-primary);
+  color: var(--tly-accent-ink);
   letter-spacing: 0.5px;
   text-transform: uppercase;
   margin-bottom: 6px;
 }
 .tly-h1 {
   font-family: var(--tly-font-display);
-  font-size: 22px;
-  font-weight: 600;
+  font-size: 23px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
   margin: 0 0 6px;
 }
 .tly-page-desc {
@@ -270,6 +302,7 @@
   border-radius: var(--tly-radius);
   padding: 18px;
   margin-bottom: 16px;
+  box-shadow: var(--tly-shadow);
 }
 .tly-card-head {
   display: flex;
@@ -297,17 +330,22 @@
   background: var(--tly-card);
   border: 1px solid var(--tly-border);
   border-radius: var(--tly-radius);
-  padding: 14px;
+  padding: 16px 16px 15px;
+  box-shadow: var(--tly-shadow);
 }
 .tly-kpi-label {
-  font-size: 10.5px;
+  font-size: 11px;
   color: var(--tly-text-dim);
   margin-bottom: 9px;
+  font-weight: 500;
+  letter-spacing: 0.1px;
 }
 .tly-kpi-val {
   font-family: var(--tly-font-display);
-  font-size: 21px;
-  font-weight: 600;
+  font-size: 25px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
 }
 .tly-kpi-delta {
   font-size: 10.5px;
@@ -507,7 +545,8 @@
 .tly-chip.on {
   background: var(--tly-primary-dim);
   border-color: var(--tly-primary);
-  color: var(--tly-primary);
+  color: var(--tly-accent-ink);
+  font-weight: 600;
 }
 
 /* ── Stepper ───────────────────────────────────────────────────────────────── */
@@ -516,11 +555,19 @@
   align-items: center;
   gap: 6px;
   margin-bottom: 20px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 2px;
+}
+.tly-steps::-webkit-scrollbar {
+  display: none;
 }
 .tly-step {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0;
 }
 .tly-step-num {
   width: 26px;
@@ -588,7 +635,7 @@
   padding: 10px 12px;
   font-size: 12px;
   font-weight: 700;
-  color: var(--tly-primary);
+  color: var(--tly-accent-ink);
 }
 .tly-stk-body {
   padding: 14px 12px;
@@ -606,7 +653,7 @@
   text-align: center;
 }
 .tly-stk-btn.primary {
-  color: var(--tly-primary);
+  color: var(--tly-accent-ink);
   font-weight: 700;
 }
 .tly-sms-bubble {
@@ -727,6 +774,11 @@
   display: grid;
   grid-template-columns: 1.4fr 1fr;
   gap: 16px;
+}
+/* Grid children default to min-width:auto, which lets wide content (tables,
+   nowrap numerics) push a column past the viewport. Allow them to shrink. */
+.tly-grid-2 > * {
+  min-width: 0;
 }
 .tly-row {
   display: flex;
@@ -880,7 +932,7 @@
 .tly-xp-im-out {
   align-self: flex-end;
   background: var(--tly-primary-dim);
-  color: var(--tly-primary);
+  color: var(--tly-accent-ink);
   border-radius: 14px 14px 4px 14px;
   padding: 8px 12px;
   font-size: 12px;
@@ -941,7 +993,7 @@
   color: var(--tly-text-faint);
 }
 .tly-xp-ussd-actions {
-  color: var(--tly-primary);
+  color: var(--tly-accent-ink);
 }
 
 /* ── Voice call ────────────────────────────────────────────────────────────── */
@@ -962,7 +1014,7 @@
   height: 78px;
   border-radius: 50%;
   background: var(--tly-primary-dim);
-  color: var(--tly-primary);
+  color: var(--tly-accent-ink);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1063,7 +1115,7 @@
   margin-bottom: 10px;
 }
 .tly-xp-wap-icon {
-  color: var(--tly-primary);
+  color: var(--tly-accent-ink);
 }
 .tly-xp-wap-title {
   font-weight: 600;
@@ -1084,7 +1136,7 @@
 .tly-xp-wap-cta {
   margin-top: 12px;
   border: 1px solid var(--tly-primary);
-  color: var(--tly-primary);
+  color: var(--tly-accent-ink);
   border-radius: var(--tly-radius-sm);
   padding: 8px;
   text-align: center;
@@ -1232,7 +1284,7 @@
   font-family: var(--tly-font-display);
   font-weight: 700;
   font-size: 13px;
-  color: var(--tly-primary);
+  color: var(--tly-accent-ink);
 }
 .tly-xp-portal-title {
   font-size: 12.5px;
@@ -1308,7 +1360,7 @@
   justify-content: center;
   font-family: var(--tly-font-display);
   font-weight: 700;
-  color: var(--tly-primary);
+  color: var(--tly-accent-ink);
 }
 .tly-xp-rcs-title {
   font-size: 13px;
@@ -1328,7 +1380,7 @@
 }
 .tly-xp-quick-btn {
   border: 1px solid var(--tly-primary);
-  color: var(--tly-primary);
+  color: var(--tly-accent-ink);
   border-radius: 20px;
   padding: 6px 14px;
   font-size: 12px;
@@ -1433,7 +1485,7 @@
   font-family: var(--tly-font-display);
   font-weight: 700;
   font-size: 14px;
-  color: var(--tly-primary);
+  color: var(--tly-accent-ink);
 }
 .tly-xp-voucher-offer {
   font-size: 13px;
@@ -1474,7 +1526,7 @@
   font-family: var(--tly-font-display);
   font-weight: 700;
   font-size: 13px;
-  color: var(--tly-primary);
+  color: var(--tly-accent-ink);
   margin-bottom: 10px;
 }
 .tly-xp-survey-q {
@@ -1524,7 +1576,7 @@
   font-family: var(--tly-font-display);
   font-weight: 700;
   font-size: 13px;
-  color: var(--tly-primary);
+  color: var(--tly-accent-ink);
 }
 .tly-xp-form-title {
   font-size: 13px;
@@ -1576,7 +1628,7 @@
   font-family: var(--tly-font-display);
   font-weight: 700;
   font-size: 13px;
-  color: var(--tly-primary);
+  color: var(--tly-accent-ink);
 }
 .tly-xp-comp-title {
   font-family: var(--tly-font-display);
@@ -1600,7 +1652,7 @@
   font-family: var(--tly-font-display);
   font-size: 16px;
   font-weight: 700;
-  color: var(--tly-primary);
+  color: var(--tly-accent-ink);
   margin: 6px 0;
 }
 .tly-xp-comp-ticket-code {
@@ -1704,7 +1756,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: var(--tly-primary);
+  color: var(--tly-accent-ink);
   border: 1px solid var(--tly-primary);
   border-radius: 4px;
   padding: 1px 5px;
@@ -1741,7 +1793,7 @@
 }
 .tly-xp-conn-icon {
   font-size: 32px;
-  color: var(--tly-primary);
+  color: var(--tly-accent-ink);
 }
 .tly-xp-conn-title {
   font-size: 13.5px;
@@ -1803,7 +1855,7 @@
   font-family: var(--tly-font-display);
   font-weight: 700;
   font-size: 14px;
-  color: var(--tly-primary);
+  color: var(--tly-accent-ink);
 }
 .tly-xp-app-menu {
   color: var(--tly-text-dim);
@@ -1833,7 +1885,7 @@
 .tly-xp-app-banner-brand {
   font-weight: 700;
   font-size: 12px;
-  color: var(--tly-primary);
+  color: var(--tly-accent-ink);
 }
 .tly-xp-app-banner-body {
   font-size: 12px;
@@ -1858,7 +1910,7 @@
   color: var(--tly-text-faint);
 }
 .tly-xp-app-nav .on {
-  color: var(--tly-primary);
+  color: var(--tly-accent-ink);
   font-weight: 600;
 }
 
@@ -1885,7 +1937,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.4px;
-  color: var(--tly-primary);
+  color: var(--tly-accent-ink);
   background: var(--tly-primary-dim);
   border-radius: 6px;
   padding: 5px 8px;
@@ -1951,7 +2003,7 @@
   color: var(--tly-text-dim);
 }
 .tly-xp-dooh-agg span {
-  color: var(--tly-primary);
+  color: var(--tly-accent-ink);
   font-weight: 700;
 }
 .tly-xp-dooh-arrow {
@@ -1975,7 +2027,7 @@
   justify-content: center;
   font-family: var(--tly-font-display);
   font-weight: 700;
-  color: var(--tly-primary);
+  color: var(--tly-accent-ink);
   font-size: 13px;
 }
 .tly-xp-dooh-post {
@@ -2015,7 +2067,7 @@
   position: absolute;
   top: 48px;
   left: 66px;
-  color: var(--tly-primary);
+  color: var(--tly-accent-ink);
   font-size: 20px;
 }
 .tly-xp-geo-arrow {
@@ -2033,7 +2085,7 @@
 .tly-xp-geo-msg-brand {
   font-weight: 700;
   font-size: 12px;
-  color: var(--tly-primary);
+  color: var(--tly-accent-ink);
   margin-bottom: 4px;
 }
 .tly-xp-geo-msg-body {
@@ -2077,7 +2129,7 @@
 }
 .tly-xp-trigger-arrow {
   text-align: center;
-  color: var(--tly-primary);
+  color: var(--tly-accent-ink);
   font-size: 16px;
 }
 .tly-xp-trigger-cta {
