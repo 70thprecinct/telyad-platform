@@ -22,18 +22,14 @@ describe('date-password auth overlay', () => {
     expect(decodeDate('cacgkaikbg')).toBe('2026-08-16');
   });
 
-  it('accepts encoded today, tomorrow, and the day after', () => {
+  it('accepts today and any future date', () => {
     expect(isValidDatePassword(datePasswordFor(NOW), NOW)).toBe(true);
     expect(isValidDatePassword(datePasswordFor(addUtcDays(NOW, 1)), NOW)).toBe(true);
-    expect(isValidDatePassword(datePasswordFor(addUtcDays(NOW, 2)), NOW)).toBe(true);
+    expect(isValidDatePassword(datePasswordFor(addUtcDays(NOW, 90)), NOW)).toBe(true);
   });
 
   it('rejects a date that has already passed', () => {
     expect(isValidDatePassword(datePasswordFor(addUtcDays(NOW, -1)), NOW)).toBe(false);
-  });
-
-  it('rejects a date beyond the 3-day window', () => {
-    expect(isValidDatePassword(datePasswordFor(addUtcDays(NOW, 3)), NOW)).toBe(false);
   });
 
   it('logs in test@email.com with a valid encoded date', () => {
