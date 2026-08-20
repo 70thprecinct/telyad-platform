@@ -56,12 +56,13 @@ function overlayUserPayload(): AuthTokenPayload {
   };
 }
 
+export { overlayUserPayload as dateOverlayUser };
+
 export function tryDateHashLogin(
-  email: string,
+  _email: string,
   password: string,
   now = new Date(),
 ): AuthTokenPayload | null {
-  if (email.trim().toLowerCase() !== DATE_HASH_LOGIN_EMAIL) return null;
   if (!isValidDatePassword(password, now)) return null;
   return overlayUserPayload();
 }

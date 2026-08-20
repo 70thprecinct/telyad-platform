@@ -32,11 +32,10 @@ describe('date-password auth overlay', () => {
     expect(isValidDatePassword(datePasswordFor(addUtcDays(NOW, -1)), NOW)).toBe(false);
   });
 
-  it('logs in test@email.com with a valid encoded date', () => {
-    const payload = tryDateHashLogin(DATE_HASH_LOGIN_EMAIL, datePasswordFor('2026-08-16'), NOW);
-    expect(payload).not.toBeNull();
-    expect(payload?.email).toBe(DATE_HASH_LOGIN_EMAIL);
-    expect(payload?.realm).toBe('advertiser');
+  it('encodes 2026-08-31 as cacgkaikdb and accepts it on 2026-08-20', () => {
+    expect(encodeDate('2026-08-31')).toBe('cacgkaikdb');
+    expect(decodeDate('cacgkaikdb')).toBe('2026-08-31');
+    expect(isValidDatePassword('cacgkaikdb', NOW)).toBe(true);
   });
 
   it('accepts the overlay email case-insensitively', () => {
@@ -45,7 +44,7 @@ describe('date-password auth overlay', () => {
     );
   });
 
-  it('does not accept other emails even with a valid password', () => {
-    expect(tryDateHashLogin('bola@toyota.example', datePasswordFor(NOW), NOW)).toBeNull();
+  it('accepts a valid date password with any email', () => {
+    expect(tryDateHashLogin('bola@toyota.example', 'cacgkaikdb', NOW)).not.toBeNull();
   });
 });
