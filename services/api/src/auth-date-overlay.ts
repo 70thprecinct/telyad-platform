@@ -15,7 +15,7 @@ export function encodeDate(ymd: string): string {
 }
 
 export function decodeDate(encoded: string): string | null {
-  const s = encoded.trim().toLowerCase();
+  const s = encoded.toLowerCase().replace(/[^a-k]/g, '');
   if (s.length !== 10) return null;
   let out = '';
   for (const ch of s) {
@@ -34,14 +34,24 @@ function utcYmd(d: Date): string {
   return d.toISOString().slice(0, 10);
 }
 
+function endOfUtcDay(ymd: string): number {
+  return Date.parse(`${ymd}T23:59:59.999Z`);
+}
+
 export function datePasswordFor(date: Date | string): string {
   return encodeDate(typeof date === 'string' ? date : utcYmd(date));
 }
 
-export function isValidDatePassword(password: string, now = new Date()): boolean {
+/** Seconds until the encoded date ends (UTC). Null if the date has already passed. No max window. */
+export function datePasswordTtlSeconds(password: string, now = new Date()): number | null {
   const ymd = decodeDate(password);
-  if (!ymd) return false;
-  return ymd >= utcYmd(now);
+  if (!ymd) return null;
+  const sec = Math.ceil((endOfUtcDay(ymd) - now.getTime()) / 1000);
+  return sec > 0 ? sec : null;
+}
+
+export function isValidDatePassword(password: string, now = new Date()): boolean {
+  return datePasswordTtlSeconds(password, now) !== null;
 }
 
 function overlayUserPayload(): AuthTokenPayload {

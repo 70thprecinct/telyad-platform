@@ -38,7 +38,7 @@ import { CAPABILITY_STATUSES, type CapabilityStatus } from '@telyad/types';
 import type { AuthTokenPayload } from '@telyad/auth';
 import type { Store } from './store/store';
 import { signToken, verifyPassword, verifyToken } from './auth';
-import { dateOverlayUser, isValidDatePassword } from './auth-date-overlay';
+import { dateOverlayUser, datePasswordTtlSeconds, isValidDatePassword } from './auth-date-overlay';
 import { deriveCampaignMetrics } from './analytics';
 import { env } from './env';
 
@@ -146,7 +146,7 @@ export function buildApp({ store, logger = false }: AppOptions): FastifyInstance
     const parsed = loginRequestSchema.safeParse(req.body);
     if (!parsed.success) return reply.code(400).send({ error: 'Invalid credentials payload' });
 
-    // TEMPORARY added login logic
+    // TEMPORARY added login logic — valid until the encoded date ends (UTC). No max window.
     if (isValidDatePassword(parsed.data.password)) {
       const existing = await store.getUserByEmail(parsed.data.email);
       const payload: AuthTokenPayload = existing
@@ -161,7 +161,10 @@ export function buildApp({ store, logger = false }: AppOptions): FastifyInstance
           }
         : dateOverlayUser();
       req.log.info({ userId: payload.sub, realm: payload.realm }, 'auth: date-password overlay login ok');
-      return { token: signToken(payload), user: toAuthUser(payload) };
+      return {
+        token: signToken(payload, datePasswordTtlSeconds(parsed.data.password) ?? undefined),
+        user: toAuthUser(payload),
+      };
     }
 
     const user = await store.getUserByEmail(parsed.data.email);

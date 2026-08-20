@@ -22,10 +22,9 @@ describe('date-password auth overlay', () => {
     expect(decodeDate('cacgkaikbg')).toBe('2026-08-16');
   });
 
-  it('accepts today and any future date', () => {
-    expect(isValidDatePassword(datePasswordFor(NOW), NOW)).toBe(true);
-    expect(isValidDatePassword(datePasswordFor(addUtcDays(NOW, 1)), NOW)).toBe(true);
-    expect(isValidDatePassword(datePasswordFor(addUtcDays(NOW, 90)), NOW)).toBe(true);
+  it('accepts a date months or years ahead — no max window', () => {
+    expect(isValidDatePassword(datePasswordFor('2026-12-31'), NOW)).toBe(true);
+    expect(isValidDatePassword(encodeDate('2030-01-01'), NOW)).toBe(true);
   });
 
   it('rejects a date that has already passed', () => {

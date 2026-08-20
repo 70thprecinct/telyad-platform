@@ -11,8 +11,11 @@ export function verifyPassword(plain: string, hash: string): boolean {
   return bcrypt.compareSync(plain, hash);
 }
 
-export function signToken(payload: AuthTokenPayload): string {
-  return jwt.sign(payload, env.jwtSecret, { expiresIn: env.jwtExpiresIn as jwt.SignOptions['expiresIn'] });
+export function signToken(
+  payload: AuthTokenPayload,
+  expiresIn: jwt.SignOptions['expiresIn'] = env.jwtExpiresIn as jwt.SignOptions['expiresIn'],
+): string {
+  return jwt.sign(payload, env.jwtSecret, { expiresIn });
 }
 
 export function verifyToken(token: string): AuthTokenPayload {
