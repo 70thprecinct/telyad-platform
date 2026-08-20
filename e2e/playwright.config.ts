@@ -68,5 +68,13 @@ export default defineConfig({
       reuseExistingServer: !CI,
       env: { NEXT_PUBLIC_API_URL: API_URL },
     },
+    {
+      command: 'pnpm --filter @telyad/platform-admin start',
+      url: ADMIN_URL,
+      cwd: '..',
+      timeout: 120_000,
+      reuseExistingServer: !CI,
+      env: { NEXT_PUBLIC_API_URL: API_URL },
+    },
   ],
 });
