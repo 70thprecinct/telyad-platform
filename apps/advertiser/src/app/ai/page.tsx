@@ -100,9 +100,9 @@ export default function AiPage() {
   return (
     <PortalShell active="ai">
       <PageHeader
-        eyebrow="Discover"
-        title="AI Campaign Copilot"
-        desc="Generate a suggested media plan across the TelyAd capability portfolio."
+        eyebrow="Delivery · AI Tools"
+        title="AI Tools"
+        desc="Deterministic, rule-based intelligence across the campaign lifecycle. Demonstration intelligence — not production ML."
       />
       <div
         style={{
@@ -115,6 +115,27 @@ export default function AiPage() {
         }}
       >
         Demonstration intelligence — deterministic, rule-based suggestions. Not production ML.
+      </div>
+
+      {/* AI module suite — Campaign Copilot below is the interactive tool. */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12, marginBottom: 18 }}>
+        {[
+          { name: 'Campaign Copilot', desc: 'Generate a full media plan from a brief.', active: true },
+          { name: 'Media Planner', desc: 'Allocate budget across the 48-capability portfolio.', active: true },
+          { name: 'Audience Opportunity', desc: 'Surface high-intent segments and reach upside.', active: true },
+          { name: 'Creative Intelligence', desc: 'Format-fit guidance and creative previews.', active: false },
+          { name: 'Multilingual Intelligence', desc: 'Pidgin / Yoruba / Hausa / Igbo variants — human review required.', active: true },
+          { name: 'Budget Optimisation', desc: 'Shift spend toward best-performing channels.', active: false },
+          { name: 'Forecasting', desc: 'Project reach, frequency and cost before launch.', active: true },
+        ].map((m) => (
+          <Card key={m.name}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+              <div style={{ fontWeight: 600, fontSize: 13 }}>{m.name}</div>
+              <Badge tone={m.active ? 'success' : 'neutral'}>{m.active ? 'Active' : 'Preview'}</Badge>
+            </div>
+            <div className="tly-faint" style={{ fontSize: 11.5, lineHeight: 1.45 }}>{m.desc}</div>
+          </Card>
+        ))}
       </div>
 
       <div className="tly-grid-2">
