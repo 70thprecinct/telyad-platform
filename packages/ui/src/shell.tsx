@@ -14,7 +14,12 @@ export interface NavGroup {
 }
 
 export interface AppShellProps {
-  brandMark: string;
+  /** URL of the official TelyAd logo (served from each app's public/). When set,
+   *  it replaces the temporary letter mark. Aspect ratio is preserved. */
+  brandLogo?: string;
+  /** Fallback letter mark, shown only when no brandLogo is supplied. */
+  brandMark?: string;
+  /** Portal descriptor shown beside the logo (e.g. "Advertiser"). */
   brandName: string;
   netBadge?: { label: string; value: string };
   nav: NavGroup[];
@@ -35,7 +40,17 @@ export function AppShell(props: AppShellProps) {
     <div className="tly-app">
       <aside className={cx('tly-sidebar', open && 'open')}>
         <div className="tly-sb-brand">
-          <div className="tly-brand-mark">{props.brandMark}</div>
+          {props.brandLogo ? (
+            <img
+              src={props.brandLogo}
+              alt="TelyAd"
+              className="tly-brand-logo"
+              // Fixed height, width auto → the official proportions are preserved.
+              style={{ height: 26, width: 'auto', display: 'block' }}
+            />
+          ) : (
+            <div className="tly-brand-mark">{props.brandMark}</div>
+          )}
           <div className="tly-brand-name">{props.brandName}</div>
         </div>
         {props.netBadge && (

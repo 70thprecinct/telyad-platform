@@ -21,7 +21,7 @@ export function AdminShell({ active, children }: { active: string; children: Rea
 
   return (
     <AppShell
-      brandMark="T"
+      brandLogo="/images/logo.png"
       brandName="Master Admin"
       netBadge={{ label: 'Console', value: 'All Telcos' }}
       nav={NAV}

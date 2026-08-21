@@ -21,7 +21,7 @@ export function ConsoleShell({ active, children }: { active: string; children: R
 
   return (
     <AppShell
-      brandMark="M"
+      brandLogo="/images/logo.png"
       brandName="Telco Operations"
       netBadge={{ label: 'Environment', value: 'MTN Nigeria' }}
       nav={NAV}

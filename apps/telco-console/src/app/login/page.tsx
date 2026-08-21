@@ -38,7 +38,7 @@ export default function LoginPage() {
     >
       <form onSubmit={onSubmit} className="tly-card" style={{ width: 'min(400px, 92vw)', marginBottom: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-          <Brand height={30} />
+          <Brand src="/images/logo.png" height={34} />
           <div className="tly-brand-name tly-faint" style={{ fontSize: 13 }}>
             MTN Nigeria — Operations
           </div>

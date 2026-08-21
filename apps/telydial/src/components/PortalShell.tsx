@@ -25,7 +25,7 @@ export function PortalShell({ active, children }: { active: string; children: Re
 
   return (
     <AppShell
-      brandMark="T"
+      brandLogo="/images/logo.png"
       brandName="TelyDial"
       netBadge={{ label: 'MVAS Module', value: 'MTN Nigeria' }}
       nav={NAV}
