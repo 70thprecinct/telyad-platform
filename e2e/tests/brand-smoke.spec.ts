@@ -14,7 +14,7 @@ const PORTALS: { dir: string; base: string; email: string }[] = [
   { dir: 'telydial', base: TELYDIAL_URL, email: 'provider@telydial.example' },
 ];
 
-async function login(page: Page, base: string, email: string) {
+async function signIn(page: Page, email: string) {
   await page.getByLabel('Work email').fill(email);
   await page.getByLabel('Password').fill(DEMO_PASSWORD);
   await page.getByRole('button', { name: 'Sign in' }).click();
@@ -38,7 +38,7 @@ for (const p of PORTALS) {
     expect(loginBody).not.toContain('REAL RESULTS');
 
     // Shell chrome: the logo image is in the sidebar.
-    await login(page, p.base, p.email);
+    await signIn(page, p.email);
     await expect(page.getByAltText('TelyAd').first()).toBeVisible();
     await page.screenshot({ path: `${OUT}/${p.dir}-shell.png`, fullPage: false });
   });
