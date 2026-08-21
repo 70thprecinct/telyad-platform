@@ -35,7 +35,10 @@ async function request<T>(path: string, opts: RequestInit = {}): Promise<T> {
   const res = await fetch(`${BASE}${path}`, {
     ...opts,
     headers: {
-      'Content-Type': 'application/json',
+      // Only declare a JSON content-type when we actually send a body — an
+      // empty application/json POST (e.g. /campaigns/:id/submit) is rejected
+      // by the server ("Body cannot be empty…").
+      ...(opts.body !== undefined ? { 'Content-Type': 'application/json' } : {}),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...(opts.headers ?? {}),
     },
@@ -68,4 +71,6 @@ export const api = {
     }),
   submitCampaign: (id: string) =>
     request<{ campaign: Campaign }>(`/campaigns/${id}/submit`, { method: 'POST' }),
+  health: () => request<{ ok: boolean; env: string }>('/health'),
+  ready: () => request<{ ready: boolean; store: string; db: string }>('/ready'),
 };
