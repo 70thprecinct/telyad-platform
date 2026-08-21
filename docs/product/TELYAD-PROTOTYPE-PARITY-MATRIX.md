@@ -1,74 +1,58 @@
 # TelyAd — Prototype Parity Matrix
 
-Source of truth for product breadth: the four approved HTML prototypes. Runtime
-foundation: the production Next.js monorepo. Status: **IMPLEMENTED · PARTIAL ·
-MISSING · PLACEHOLDER**. Data: **REAL** (persisted API) · **DEMO** (deterministic
-demonstration, labelled in-UI) · **EXT** (external integration required).
+Traceability from the four approved HTML prototypes
+(`/Users/osaumweni/Desktop/TELY AD PLATFORMS HTML/`) to the production Next.js
+apps, rebuilt on the approved **Light Enterprise** design system.
 
-Delivery: PARITY-01 Advertiser (PR #7) · **PARITY-02 Telco (this PR)** ·
-PARITY-03 Master Admin · PARITY-04 TelyDial · PARITY-05 QA.
+Each portal is delivered as its own parity work package, its own branch, and its
+own PR — independently mergeable. Data-honesty policy: every surface is labelled
+**REAL** (persisted platform/API data), **DEMO** (deterministic demonstration
+data — never presented as production), or **EXT** (external carrier/infra
+integration required). No subscriber PII / MSISDN / individual lookup anywhere.
 
----
-
-## Advertiser Portal — PARITY-01 (PR #7)
-
-All 12 destinations IMPLEMENTED (Dashboard · Campaigns · Analytics · Audience ·
-Segments · Reach & Verify · Channels · Creatives · AI Tools · Billing ·
-Notifications · Settings), 0 dead routes. See PR #7 for the full row-level table.
-
----
-
-## Telco / Operator Console — PARITY-02 (this PR)
-
-| Prototype feature | Nav group | Production route | Status | Data | Notes |
+| Prototype | Portal | WP | Branch | PR | Status |
 |---|---|---|---|---|---|
-| Dashboard / Executive Overview | Overview | `/dashboard` | IMPLEMENTED | REAL + DEMO | Real revenue intelligence + campaigns; enriched with network/channel status, operational alerts, opportunity cards |
-| Advertiser Management | Advertisers & Campaigns | `/advertisers` | IMPLEMENTED | REAL | Existing; advertiser directory |
-| Campaign Approval | Advertisers & Campaigns | `/approvals` | IMPLEMENTED | REAL | Audience snapshot + capability plan + subscriber preview + approve/reject + audit preserved |
-| Campaign Monitoring | Advertisers & Campaigns | `/monitoring` | IMPLEMENTED | DEMO | Delivery progress, spend, anomalies |
-| Audience Monitoring | Audience & Traffic | `/audience` | IMPLEMENTED | DEMO | Aggregate; geography/age/device; privacy threshold |
-| Traffic Monitoring | Audience & Traffic | `/traffic` | IMPLEMENTED | DEMO + EXT | Request/delivery time-series + per-channel; live carrier throughput = EXT |
-| Subscriber Insights | Audience & Traffic | `/subscribers` | IMPLEMENTED | DEMO | Aggregate only — no MSISDN, no lookup |
-| Messaging Channels | Audience & Traffic | `/channels` | IMPLEMENTED | REAL (48 registry) + DEMO util | Operator governance over the same 48-capability registry (single source) |
-| Pricing & Revenue | Finance | `/revenue` | IMPLEMENTED | REAL | Existing Revenue & Commercials; RBAC-gated |
-| Wallet Monitoring | Finance | `/wallet` | IMPLEMENTED | DEMO | Balances, exposure, low-balance alerts; no payment processing |
-| Compliance | Governance | `/compliance` | IMPLEMENTED | DEMO + EXT | Score/risk/DND/consent/flags; live NCC/ARCON = EXT |
-| Consent & DND | Governance | `/consent` | IMPLEMENTED | DEMO + EXT | Aggregate suppression; DND registry sync = EXT; no PII |
-| Content Moderation | Governance | `/moderation` | IMPLEMENTED | DEMO | Creative queue, approve/reject with reason |
-| Approvals (governance) | Governance | `/governance/approvals` | IMPLEMENTED | DEMO | Maker/checker governance — distinct from campaign approval |
-| Reports | Intelligence | `/reports` | IMPLEMENTED | DEMO | Report catalogue; no fabricated generated files |
-| Analytics | Intelligence | `/analytics` | IMPLEMENTED | DEMO | Trends/charts — separate from AI Intelligence |
-| Users & Roles | Access & System | `/users` | IMPLEMENTED | REAL engine (PR #6) + DEMO surface | Console surface for the Demo Access engine (not rebuilt); permission matrix; RBAC authoritative |
-| Audit Logs | Access & System | `/audit` | IMPLEMENTED | REAL | Existing audit trail |
-| API Monitoring | Access & System | `/api-monitoring` | IMPLEMENTED | REAL health + DEMO | Live /health + /ready; demo endpoint telemetry |
-| Notifications | Access & System | `/notifications` | IMPLEMENTED | REAL (demo fallback) | Wires /notifications |
-| Support Centre | Access & System | `/support` | IMPLEMENTED | DEMO | Tickets, FAQ, escalation shell — no live backend |
-| Settings | Access & System | `/settings` | IMPLEMENTED | DEMO | Workspace/approval/governance prefs; no secrets |
-| Platform Health | Access & System | `/platform-health` | IMPLEMENTED | REAL health + EXT + DEMO | Live API/DB via /health,/ready; gateways = EXT; history = DEMO |
-
-**Telco parity: 23/23 destinations IMPLEMENTED · 0 MISSING · 0 dead routes.**
-(`/inventory` and `/ai` remain reachable; superseded in nav by Messaging Channels
-and Analytics respectively — no feature lost.)
-
-Demo Access integration: `/users` is the operator console **surface** for the Demo
-Access engine on `feature/demo-access-control` (PR #6) — reused, not rebuilt. The
-live create/expiry/revoke/extend/reset lifecycle + server-side enforcement land
-when PR #6 merges.
-
-48-capability registry: `/channels` is the operator governance view over the
-**existing** registry (`listCapabilities`) — no parallel channel catalogue.
+| `tely_advertiser_portal_3.html` | Advertiser Portal | PARITY-01 | `feature/parity-advertiser` | #7 | ✅ Delivered |
+| `Tely_Telco_Operations_Dashboard.html` | Telco Console | PARITY-02 | `feature/parity-telco` | #8 | ✅ Delivered |
+| `Tely_Master_Admin_3_2.html` | Master Admin | PARITY-03 | `feature/parity-admin` | this PR | ✅ Delivered |
+| `telydial.html` | TelyDial | PARITY-04 | — | — | ⏳ Not started |
 
 ---
 
-## Master Admin — PARITY-03 (planned) · TelyDial — PARITY-04 (planned)
+## PARITY-03 — Master Admin (`apps/platform-admin`)
 
-See PARITY-01 audit for the destination-level plan.
+The Tely-owned cross-telco control plane. **Aggregate only** — no subscriber-level
+data ever appears here. Cross-telco isolation is a **hard gate**: global pages
+aggregate only; the scoped drill-down shows exactly one telco; RBAC is enforced
+server-side; no Telco / Advertiser / TelyDial user can reach these routes.
 
----
+| # | Prototype destination | Route | Page | Classification | Parity notes |
+|---|---|---|---|---|---|
+| 1 | Global Dashboard (`renderGlobal`) | `/dashboard` | `dashboard/page.tsx` | REAL + DEMO | Telco list & status REAL (`/telcos`); reach/revenue/advertisers DEMO. KPIs, revenue-by-telco bar (`g1`), platform-growth line (`g2`), Active Telco Summary table. |
+| 2 | Telco Directory (`renderDirectory`) | `/directory` | `directory/page.tsx` | DEMO | Telco cards + status filter. **Onboard modal** (`openOnboard`) creates an environment record (EXT to provision). **Scoped drill-down** (`enterTelco`) → isolation banner "Viewing [TELCO] scoped environment" + settlement summary + **Exit to global view** (`exitTelco`). |
+| 3 | Commercial Terms (`renderTerms`) | `/terms` | `terms/page.tsx` | REAL + DEMO | Share %/status REAL; settlement cadence, contract, effective date DEMO. Revenue-share model explainer + KPI strip. |
+| 4 | Platform Health (`renderHealth`) | `/platform-health` | `platform-health/page.tsx` | REAL + DEMO + EXT | **Live** `/health` + `/ready` probes (REAL); per-app & per-telco environment health (DEMO); carrier gateways (EXT). Infra-load 24h line (`h1`). |
+| 5 | Master Admin Users (`renderAdmin`) | `/users` | `users/page.tsx` | DEMO | Admin users table with time-limited **Demo Access** accounts (server-side lifecycle, not a client toggle — reuses PR #6 engine) + **role permission matrix** (6 permission columns × 5 roles). |
+| 6 | Engine Dashboards (`renderEngineering`) | `/engines` | `engines/page.tsx` | DEMO | Overview cards for all four engines (scope = all telco environments), status + volume, drill into each. |
+| 7 | — TelySignal | `/engines/telysignal` | `engines/telysignal/page.tsx` | DEMO | Carrier audience intelligence. Pseudonymisation gateway (no raw MSISDN downstream), ingestion-load 24h line, segment generation. |
+| 8 | — TelyXchange | `/engines/telyxchange` | `engines/telyxchange/page.tsx` | DEMO + EXT | Programmatic exchange; RTB decisioning seam. Demand/inventory/pricing mix. |
+| 9 | — TelyAds | `/engines/telyads` | `engines/telyads/page.tsx` | DEMO | Multi-channel execution mapped to the **48-capability registry**; throughput-by-channel bar. |
+| 10 | — TelyReach | `/engines/telyreach` | `engines/telyreach/page.tsx` | DEMO + EXT | Reach/attribution/verification funnel; external postback attribution. |
 
-## Frozen (never regressed)
+**Navigation (recovered):** Global → Global Dashboard · Partnerships → Telco
+Directory, Commercial Terms · Platform → Platform Health, Master Admin Users ·
+Engineering → Engine Dashboards. All 10 destinations are real, populated routes —
+no dead navigation, no "coming soon".
 
-Fastify API · Prisma/Postgres · RBAC · tenant isolation · campaign lifecycle ·
-MTN approval · 48-capability registry + previews · Audience Match · snapshot &
-capability-plan persistence · AI intelligence · multilingual · demo-access logic ·
-Light Enterprise UI · deployment · CI.
+**Preserved platform capabilities (hard freeze, no regression):** Fastify API,
+Prisma/Postgres, RBAC, tenant isolation, cross-telco privacy boundaries, Demo
+Access engine (PR #6), audit, Light Enterprise UI, 48-capability registry,
+campaign/operator/advertiser workflows, Audience Match, AI intelligence,
+multilingual.
+
+**Verification:** `pnpm --filter @telyad/platform-admin typecheck | lint | build`
+all green (13 static routes). Playwright `admin-parity.spec.ts` (5 tests:
+unauthenticated-redirect access control, 10-destination nav sweep with no-PII /
+no-dead-route assertions, scoped drill-down + exit, onboard modal, users + role
+matrix) — all green. Full e2e suite (19 tests incl. preserved Maltina demo
+journey) green. Visual evidence in `visual-review-parity/admin/`.

@@ -47,4 +47,6 @@ export const api = {
   me: () => request<{ user: AuthUser }>('/auth/me'),
   listTelcos: () => request<{ telcos: Telco[] }>('/telcos'),
   listCampaigns: () => request<{ campaigns: Campaign[] }>('/campaigns'),
+  health: () => request<{ ok: boolean; env: string }>('/health'),
+  ready: () => request<{ ready: boolean; store: string; db: string }>('/ready'),
 };
