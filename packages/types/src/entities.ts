@@ -8,8 +8,10 @@ import type {
   CampaignStatus,
   ComplianceCheckType,
   ComplianceResult,
+  DemoAccessStatus,
   LedgerEntryType,
   Permission,
+  Portal,
   PricingModel,
   Realm,
   RiskLevel,
@@ -85,6 +87,8 @@ export interface User {
   name: string;
   email: string;
   realm: Realm;
+  /** The portal (product surface) this user signs into. Distinct from realm. */
+  portal: Portal;
   role: AnyRole;
   /** Null for platform users (cross-telco); set for telco/advertiser users. */
   telcoId: TelcoId | null;
@@ -92,6 +96,59 @@ export interface User {
   advertiserId: AdvertiserId | null;
   status: 'Active' | 'Suspended';
   lastLoginAt: string | null;
+
+  // ── Temporary demo-access fields (null/false for standing accounts) ─────────
+  /** True for time-limited demonstration accounts issued by an administrator. */
+  isDemo: boolean;
+  /** Display name of the tenant/organisation this account represents. */
+  organisation: string | null;
+  createdAt: string;
+  createdByUserId: UserId | null;
+  createdByName: string | null;
+  /** Access window (ISO). Access is valid only while validFrom <= now < expiresAt. */
+  validFrom: string | null;
+  expiresAt: string | null;
+  /** Set when an administrator revokes the account before its natural expiry. */
+  revokedAt: string | null;
+  /** Administrator can disable/re-enable within a still-valid window. */
+  disabled: boolean;
+}
+
+/** Window (ms) before expiry within which a demo account reads "Expiring Soon". */
+export const DEMO_EXPIRING_SOON_MS = 60 * 60 * 1000;
+
+/**
+ * Derive the demo-access lifecycle status from the stored window + flags.
+ * Pure and time-parameterised so both server and UI compute the same value.
+ * Non-demo (standing) accounts always read "Active".
+ */
+export function deriveDemoStatus(
+  u: Pick<User, 'isDemo' | 'disabled' | 'revokedAt' | 'validFrom' | 'expiresAt'>,
+  nowMs: number,
+): DemoAccessStatus {
+  if (!u.isDemo) return 'Active';
+  if (u.revokedAt) return 'Revoked';
+  if (u.disabled) return 'Disabled';
+  if (u.validFrom && nowMs < Date.parse(u.validFrom)) return 'Scheduled';
+  if (u.expiresAt) {
+    const exp = Date.parse(u.expiresAt);
+    if (nowMs >= exp) return 'Expired';
+    if (exp - nowMs <= DEMO_EXPIRING_SOON_MS) return 'Expiring Soon';
+  }
+  return 'Active';
+}
+
+/** Whether the account may authenticate / hold a live session at `nowMs`. */
+export function isDemoAccessLive(
+  u: Pick<User, 'isDemo' | 'disabled' | 'revokedAt' | 'validFrom' | 'expiresAt' | 'status'>,
+  nowMs: number,
+): boolean {
+  if (u.status === 'Suspended') return false;
+  if (!u.isDemo) return true;
+  if (u.revokedAt || u.disabled) return false;
+  if (u.validFrom && nowMs < Date.parse(u.validFrom)) return false;
+  if (u.expiresAt && nowMs >= Date.parse(u.expiresAt)) return false;
+  return true;
 }
 
 export interface RoleDefinition {

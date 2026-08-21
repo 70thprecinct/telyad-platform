@@ -69,7 +69,7 @@ export const api = {
   login: (email: string, password: string) =>
     request<{ token: string; user: AuthUser }>('/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email, password, portal: 'advertiser' }),
     }),
   me: () => request<{ user: AuthUser }>('/auth/me'),
   formats: () => request<{ formats: AdvertisingFormat[] }>('/formats'),

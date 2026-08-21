@@ -46,6 +46,7 @@ model User {
   name         String
   email        String  @unique
   realm        String
+  portal       String  @default("advertiser")
   role         String
   telcoId      String?
   advertiserId String?
@@ -53,8 +54,21 @@ model User {
   lastLoginAt  String?
   passwordHash String
 
+  // Temporary demo-access lifecycle (null/false for standing accounts).
+  isDemo          Boolean @default(false)
+  organisation    String?
+  createdAt       String  @default("")
+  createdByUserId String?
+  createdByName   String?
+  validFrom       String?
+  expiresAt       String?
+  revokedAt       String?
+  disabled        Boolean @default(false)
+
   @@index([telcoId])
   @@index([advertiserId])
+  @@index([portal])
+  @@index([isDemo])
 }
 
 model Campaign {

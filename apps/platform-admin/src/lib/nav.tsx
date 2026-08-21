@@ -16,6 +16,7 @@ export const NAV: NavGroup[] = [
     items: [
       { id: 'platform-health', label: 'Platform Health' },
       { id: 'users', label: 'Master Admin Users' },
+      { id: 'demo-access', label: 'Demo Access' },
     ],
   },
   {

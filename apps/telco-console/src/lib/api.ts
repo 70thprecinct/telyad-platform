@@ -70,7 +70,7 @@ export const api = {
   login: (email: string, password: string) =>
     request<{ token: string; user: AuthUser }>('/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email, password, portal: 'telco' }),
     }),
   me: () => request<{ user: AuthUser }>('/auth/me'),
   listCampaigns: () => request<{ campaigns: Campaign[] }>('/campaigns'),

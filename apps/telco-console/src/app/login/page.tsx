@@ -1,13 +1,13 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button, Field, Input } from '@telyad/ui';
+import { Brand, Button, Field, Input } from '@telyad/ui';
 import { useAuth } from '@/lib/auth';
 
 export default function LoginPage() {
   const { login } = useAuth();
   const router = useRouter();
-  const [email, setEmail] = useState('ops.lead@mtn.example');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
@@ -38,8 +38,8 @@ export default function LoginPage() {
     >
       <form onSubmit={onSubmit} className="tly-card" style={{ width: 'min(400px, 92vw)', marginBottom: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-          <div className="tly-brand-mark">M</div>
-          <div className="tly-brand-name" style={{ fontSize: 18 }}>
+          <Brand height={30} />
+          <div className="tly-brand-name tly-faint" style={{ fontSize: 13 }}>
             MTN Nigeria — Operations
           </div>
         </div>
@@ -61,7 +61,7 @@ export default function LoginPage() {
             onChange={(e) => setPassword(e.target.value)}
             type="password"
             required
-            placeholder="Enter your demo password"
+            placeholder="Enter your password"
           />
         </Field>
         <Button type="submit" block disabled={busy}>
