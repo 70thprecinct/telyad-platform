@@ -74,10 +74,13 @@ export default function NewCampaignPage() {
   const [pricingModel, setPricingModel] = useState<PricingModel>('CPA');
   const [daily, setDaily] = useState(25000);
   const [total, setTotal] = useState(500000);
+  const [lifetime, setLifetime] = useState(0);
+  const [maxSubs, setMaxSubs] = useState(0);
   const [priority, setPriority] = useState('Standard');
   const [speed, setSpeed] = useState('Normal');
   const [startDate, setStartDate] = useState('2026-08-24');
   const [endDate, setEndDate] = useState('2026-09-24');
+  const [freqDay, setFreqDay] = useState(2);
   const [busy, setBusy] = useState(false);
 
   const audience: AudienceDefinition = useMemo(
@@ -152,8 +155,10 @@ export default function NewCampaignPage() {
         pricingModel,
         dailyCap: { minor: daily * 100, currency: 'NGN' },
         total: { minor: total * 100, currency: 'NGN' },
+        ...(lifetime > 0 ? { lifetimeCap: { minor: lifetime * 100, currency: 'NGN' as const } } : {}),
         startDate,
         endDate,
+        ...(freqDay > 0 ? { frequencyCapPerDay: freqDay } : {}),
         deliverySpeed: 'standard',
       },
     };
@@ -336,10 +341,13 @@ export default function NewCampaignPage() {
             <Field label="Campaign budget (₦)"><Input type="number" value={total} onChange={(e) => setTotal(Number(e.target.value) || 0)} data-testid="b-total" /></Field>
             <Group label="Campaign priority"><ToggleRow options={['Standard', 'High', 'Premium']} value={priority} onSelect={setPriority} /></Group>
             <Group label="Delivery speed"><ToggleRow options={['Normal', 'Accelerated', 'Even']} value={speed} onSelect={setSpeed} /></Group>
+            <Field label="Lifetime budget (₦)" hint="Optional overall ceiling"><Input type="number" value={lifetime || ''} onChange={(e) => setLifetime(Number(e.target.value) || 0)} placeholder="Optional" data-testid="b-lifetime" /></Field>
+            <Field label="Max subscribers to acquire" hint="Optional cap"><Input type="number" value={maxSubs || ''} onChange={(e) => setMaxSubs(Number(e.target.value) || 0)} placeholder="Optional" data-testid="b-maxsubs" /></Field>
             <Field label="Start date"><Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} /></Field>
             <Field label="End date"><Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} /></Field>
+            <Field label="Frequency cap — max pushes per subscriber / day"><Input type="number" value={freqDay || ''} onChange={(e) => setFreqDay(Number(e.target.value) || 0)} placeholder="e.g. 2" data-testid="b-freq" /></Field>
           </div>
-          <BudgetImpact daily={daily} total={total} forecastOptIns={forecastOptIns} forecastCpa={forecastCpa} />
+          <BudgetImpact daily={daily} total={total} maxSubs={maxSubs} forecastOptIns={forecastOptIns} forecastCpa={forecastCpa} />
           <WizardNav onBack={() => setStep(3)} onNext={() => setStep(5)} nextLabel="Review campaign" />
         </Card>
       )}
@@ -527,9 +535,10 @@ function EstimateBox({ estimate, forecastOptIns, forecastCpa, pricingModel }: { 
   );
 }
 
-function BudgetImpact({ daily, total, forecastOptIns, forecastCpa }: { daily: number; total: number; forecastOptIns: number; forecastCpa: number }) {
+function BudgetImpact({ daily, total, maxSubs, forecastOptIns, forecastCpa }: { daily: number; total: number; maxSubs: number; forecastOptIns: number; forecastCpa: number }) {
   const wallet = 450000;
-  const acquireForBudget = forecastCpa > 0 ? Math.round(total / forecastCpa) : 0;
+  const budgetAcq = forecastCpa > 0 ? Math.round(total / forecastCpa) : 0;
+  const acquireForBudget = maxSubs > 0 ? Math.min(budgetAcq, maxSubs) : budgetAcq;
   const remaining = wallet - total;
   return (
     <div style={{ marginTop: 14, padding: 13, borderRadius: 8, background: 'var(--tly-primary-dim)', border: '1px solid var(--tly-primary)', fontSize: 11.5, lineHeight: 1.9 }}>
