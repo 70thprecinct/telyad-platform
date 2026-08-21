@@ -1,104 +1,74 @@
 # TelyAd — Prototype Parity Matrix
 
-Source of truth for product breadth: the four approved HTML prototypes
-(`tely_advertiser_portal_3`, `Tely_Telco_Operations_Dashboard`,
-`Tely_Master_Admin_3_2`, `telydial`). Runtime foundation: the production
-Next.js monorepo. This matrix tracks every prototype navigation destination and
-significant interaction against its production equivalent.
+Source of truth for product breadth: the four approved HTML prototypes. Runtime
+foundation: the production Next.js monorepo. Status: **IMPLEMENTED · PARTIAL ·
+MISSING · PLACEHOLDER**. Data: **REAL** (persisted API) · **DEMO** (deterministic
+demonstration, labelled in-UI) · **EXT** (external integration required).
 
-Status legend: **IMPLEMENTED** · **PARTIAL** · **MISSING** · **PLACEHOLDER**.
-Data source: **REAL** (persisted API objects) · **DEMO** (deterministic
-demonstration data, labelled in the UI) · **EXT** (external integration
-required). Delivery is tracked per work package: PARITY-01 Advertiser,
-PARITY-02 Telco, PARITY-03 Master Admin, PARITY-04 TelyDial, PARITY-05 QA.
+Delivery: PARITY-01 Advertiser (PR #7) · **PARITY-02 Telco (this PR)** ·
+PARITY-03 Master Admin · PARITY-04 TelyDial · PARITY-05 QA.
 
 ---
 
-## Advertiser Portal — PARITY-01 (this PR)
+## Advertiser Portal — PARITY-01 (PR #7)
 
-| Portal | Prototype feature | Prototype nav | Production equivalent | Status | Gap severity | Target route | Backend/data | Impl. | Visual parity | Tests | Notes |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| Advertiser | Dashboard | Overview | Enriched dashboard (portfolio KPIs + performance strip + spend/channel charts + campaigns + quick actions + alerts) | IMPLEMENTED | — | `/dashboard` | REAL campaigns + DEMO perf | Done | High | route+e2e | `+ New Campaign` + campaign nav preserved |
-| Advertiser | Campaigns | Overview | Campaigns list + KPI summary + status/objective filters + dates/actions | IMPLEMENTED | — | `/campaigns` | REAL | Done | High | route | Maltina journey preserved |
-| Advertiser | Analytics | Overview | Analytics centre — KPI strip, spend line, channel doughnut, channel table, conversions bar | IMPLEMENTED | — | `/analytics` | DEMO | Done | High | route | Labelled demonstration analytics |
-| Advertiser | Audience | Targeting | Audience centre — aggregate overview, eligibility + privacy, saved definitions | IMPLEMENTED | — | `/audience` | REAL match + DEMO aggregates | Done | High | route | Aggregate only, no PII |
-| Advertiser | Segments | Targeting | Segment management — list, create modal, detail, size estimate, status | IMPLEMENTED | — | `/segments` | DEMO | Done | High | route | Persistence deferred (documented) |
-| Advertiser | Reach & Verify | Targeting | Selected→Eligible→Targeted→Delivered→Verified funnel + verification status | IMPLEMENTED | — | `/reach` | DEMO + EXT (verify) | Done | High | route | Forecast≠Delivered≠Verified distinguished |
-| Advertiser | Channels | Delivery | Business view over the 48-capability registry — families, filters, detail + preview | IMPLEMENTED | — | `/channels` | REAL (48 registry) | Done | High | route | Single source = 48 registry; `/marketplace` retained |
-| Advertiser | Creatives | Delivery | Creative Library — list, status, language, per-row handset preview | IMPLEMENTED | — | `/creatives` | DEMO + REAL preview renderer | Done | High | route | Reuses ExperiencePreview (no 2nd preview arch) |
-| Advertiser | AI Tools | Delivery | AI module suite + working Campaign Copilot / Media Planner | IMPLEMENTED | — | `/ai` | DEMO intelligence | Done | High | route+e2e | Not production ML; copy honest |
-| Advertiser | Billing & Budget | Account | Budget summary, allocations, ledger, invoices, alerts | IMPLEMENTED | — | `/billing` | DEMO | Done | High | route | No real payment processing |
-| Advertiser | Notifications | Account | Notifications centre — real API, read/unread, filter | IMPLEMENTED | — | `/notifications` | REAL (demo fallback) | Done | High | route | Wires `/notifications` |
-| Advertiser | Settings | Account | Org profile, notification prefs, campaign defaults, security summary | IMPLEMENTED | — | `/settings` | DEMO | Done | High | route | No secrets exposed |
-| Advertiser | Campaign wizard | (button) | 5-step wizard: objective → capabilities → audience match → creative/language → review | IMPLEMENTED (preserved) | — | `/campaigns/new` | REAL + 48-cap + Audience Match | Preserved | High | e2e | 48 caps, eligible/target/forecast/cost/plan intact |
-
-**Advertiser parity: 12/12 nav destinations IMPLEMENTED · 0 MISSING · 0 dead routes.**
+All 12 destinations IMPLEMENTED (Dashboard · Campaigns · Analytics · Audience ·
+Segments · Reach & Verify · Channels · Creatives · AI Tools · Billing ·
+Notifications · Settings), 0 dead routes. See PR #7 for the full row-level table.
 
 ---
 
-## Telco / Operator Console — PARITY-02 (planned)
+## Telco / Operator Console — PARITY-02 (this PR)
 
-| Feature | Prototype nav | Status | Target route | Backend/data |
-|---|---|---|---|---|
-| Dashboard / Exec Overview | Overview | IMPLEMENTED | `/dashboard` | REAL |
-| Advertiser Management | Advertisers & Campaigns | IMPLEMENTED | `/advertisers` | REAL |
-| Campaign Approval | Advertisers & Campaigns | IMPLEMENTED | `/approvals` | REAL |
-| Campaign Monitoring | Advertisers & Campaigns | MISSING | `/monitoring` | DEMO |
-| Audience Monitoring | Audience & Traffic | MISSING | `/audience` | DEMO |
-| Traffic Monitoring | Audience & Traffic | MISSING | `/traffic` | DEMO |
-| Subscriber Insights | Audience & Traffic | MISSING | `/subscribers` | DEMO (no PII) |
-| Messaging Channels | Audience & Traffic | PARTIAL (`/inventory`) | `/channels` | REAL (48-cap) |
-| Pricing & Revenue | Finance | IMPLEMENTED | `/revenue` | REAL |
-| Wallet Monitoring | Finance | MISSING | `/wallet` | DEMO |
-| Compliance | Governance | MISSING | `/compliance` | DEMO |
-| Consent & DND | Governance | MISSING | `/consent` | DEMO |
-| Content Moderation | Governance | MISSING | `/moderation` | DEMO |
-| Approvals (governance) | Governance | PARTIAL | `/governance/approvals` | REAL |
-| Reports | Intelligence | MISSING | `/reports` | DEMO |
-| Analytics | Intelligence | PARTIAL (`/ai`) | `/analytics` | REAL |
-| Users & Roles | Access & System | MISSING on main (built on PR #6) | `/users` | REAL (demo-access) |
-| Audit Logs | Access & System | IMPLEMENTED | `/audit` | REAL |
-| API Monitoring | Access & System | MISSING | `/api-monitoring` | REAL health + DEMO |
-| Notifications | Access & System | MISSING | `/notifications` | REAL |
-| Support Centre | Access & System | MISSING | `/support` | DEMO |
-| Settings | Access & System | MISSING | `/settings` | DEMO |
-| Platform Health | Access & System | MISSING | `/platform-health` | REAL health |
+| Prototype feature | Nav group | Production route | Status | Data | Notes |
+|---|---|---|---|---|---|
+| Dashboard / Executive Overview | Overview | `/dashboard` | IMPLEMENTED | REAL + DEMO | Real revenue intelligence + campaigns; enriched with network/channel status, operational alerts, opportunity cards |
+| Advertiser Management | Advertisers & Campaigns | `/advertisers` | IMPLEMENTED | REAL | Existing; advertiser directory |
+| Campaign Approval | Advertisers & Campaigns | `/approvals` | IMPLEMENTED | REAL | Audience snapshot + capability plan + subscriber preview + approve/reject + audit preserved |
+| Campaign Monitoring | Advertisers & Campaigns | `/monitoring` | IMPLEMENTED | DEMO | Delivery progress, spend, anomalies |
+| Audience Monitoring | Audience & Traffic | `/audience` | IMPLEMENTED | DEMO | Aggregate; geography/age/device; privacy threshold |
+| Traffic Monitoring | Audience & Traffic | `/traffic` | IMPLEMENTED | DEMO + EXT | Request/delivery time-series + per-channel; live carrier throughput = EXT |
+| Subscriber Insights | Audience & Traffic | `/subscribers` | IMPLEMENTED | DEMO | Aggregate only — no MSISDN, no lookup |
+| Messaging Channels | Audience & Traffic | `/channels` | IMPLEMENTED | REAL (48 registry) + DEMO util | Operator governance over the same 48-capability registry (single source) |
+| Pricing & Revenue | Finance | `/revenue` | IMPLEMENTED | REAL | Existing Revenue & Commercials; RBAC-gated |
+| Wallet Monitoring | Finance | `/wallet` | IMPLEMENTED | DEMO | Balances, exposure, low-balance alerts; no payment processing |
+| Compliance | Governance | `/compliance` | IMPLEMENTED | DEMO + EXT | Score/risk/DND/consent/flags; live NCC/ARCON = EXT |
+| Consent & DND | Governance | `/consent` | IMPLEMENTED | DEMO + EXT | Aggregate suppression; DND registry sync = EXT; no PII |
+| Content Moderation | Governance | `/moderation` | IMPLEMENTED | DEMO | Creative queue, approve/reject with reason |
+| Approvals (governance) | Governance | `/governance/approvals` | IMPLEMENTED | DEMO | Maker/checker governance — distinct from campaign approval |
+| Reports | Intelligence | `/reports` | IMPLEMENTED | DEMO | Report catalogue; no fabricated generated files |
+| Analytics | Intelligence | `/analytics` | IMPLEMENTED | DEMO | Trends/charts — separate from AI Intelligence |
+| Users & Roles | Access & System | `/users` | IMPLEMENTED | REAL engine (PR #6) + DEMO surface | Console surface for the Demo Access engine (not rebuilt); permission matrix; RBAC authoritative |
+| Audit Logs | Access & System | `/audit` | IMPLEMENTED | REAL | Existing audit trail |
+| API Monitoring | Access & System | `/api-monitoring` | IMPLEMENTED | REAL health + DEMO | Live /health + /ready; demo endpoint telemetry |
+| Notifications | Access & System | `/notifications` | IMPLEMENTED | REAL (demo fallback) | Wires /notifications |
+| Support Centre | Access & System | `/support` | IMPLEMENTED | DEMO | Tickets, FAQ, escalation shell — no live backend |
+| Settings | Access & System | `/settings` | IMPLEMENTED | DEMO | Workspace/approval/governance prefs; no secrets |
+| Platform Health | Access & System | `/platform-health` | IMPLEMENTED | REAL health + EXT + DEMO | Live API/DB via /health,/ready; gateways = EXT; history = DEMO |
+
+**Telco parity: 23/23 destinations IMPLEMENTED · 0 MISSING · 0 dead routes.**
+(`/inventory` and `/ai` remain reachable; superseded in nav by Messaging Channels
+and Analytics respectively — no feature lost.)
+
+Demo Access integration: `/users` is the operator console **surface** for the Demo
+Access engine on `feature/demo-access-control` (PR #6) — reused, not rebuilt. The
+live create/expiry/revoke/extend/reset lifecycle + server-side enforcement land
+when PR #6 merges.
+
+48-capability registry: `/channels` is the operator governance view over the
+**existing** registry (`listCapabilities`) — no parallel channel catalogue.
 
 ---
 
-## Master Admin — PARITY-03 (planned)
+## Master Admin — PARITY-03 (planned) · TelyDial — PARITY-04 (planned)
 
-| Feature | Status | Target route | Backend/data |
-|---|---|---|---|
-| Global Dashboard | IMPLEMENTED | `/dashboard` | REAL |
-| Telco Directory (+ onboard modal, enter-console drill-down) | PARTIAL | `/directory` | REAL |
-| Commercial Terms | IMPLEMENTED | `/terms` | REAL |
-| Platform Health | MISSING | `/platform-health` | REAL health + DEMO |
-| Master Admin Users | MISSING | `/users` | REAL access-control |
-| Engine Dashboards — TelySignal/TelyXchange/TelyAds/TelyReach | MISSING | `/engines/*` | DEMO ops |
-
----
-
-## TelyDial — PARITY-04 (planned)
-
-| Feature | Status | Target route | Backend/data |
-|---|---|---|---|
-| Dashboard | IMPLEMENTED | `/dashboard` | REAL |
-| Campaigns | IMPLEMENTED | `/campaigns` | REAL |
-| Create campaign (product-ID verify, emoji picker, dual-OS preview, SMS fallback) | PARTIAL | `/campaigns/new` | REAL + 48-cap |
-| Products | MISSING | `/products` | DEMO |
-| Analytics | MISSING | `/analytics` | DEMO |
-| Wallet | MISSING | `/wallet` | DEMO |
-| Reports | MISSING | `/reports` | DEMO |
-| Notifications | MISSING | `/notifications` | REAL |
-| Support | MISSING | `/support` | DEMO |
+See PARITY-01 audit for the destination-level plan.
 
 ---
 
 ## Frozen (never regressed)
 
-Fastify API · PostgreSQL/Prisma · RBAC · tenant isolation · campaign lifecycle ·
-MTN approval · 48-capability registry · capability previews · Audience Match
-(eligible / selected target / forecast / frequency / cost) · audience-snapshot &
-capability-plan persistence · AI intelligence · multilingual architecture ·
-Light Enterprise UI · deployment configuration · CI · Playwright.
+Fastify API · Prisma/Postgres · RBAC · tenant isolation · campaign lifecycle ·
+MTN approval · 48-capability registry + previews · Audience Match · snapshot &
+capability-plan persistence · AI intelligence · multilingual · demo-access logic ·
+Light Enterprise UI · deployment · CI.
