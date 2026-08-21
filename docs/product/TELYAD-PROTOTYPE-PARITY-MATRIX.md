@@ -1,82 +1,113 @@
-# TelyAd — Prototype Parity Matrix
+# TelyAd — Prototype Parity Matrix (authoritative)
 
-Traceability from the four approved HTML prototypes to the production Next.js
-apps, rebuilt on the approved **Light Enterprise** design system. Each portal is
-its own parity work package / branch / PR — independently mergeable.
+Reconciled in PARITY-05 from the four approved HTML prototypes
+(`tely_advertiser_portal_3`, `Tely_Telco_Operations_Dashboard`,
+`Tely_Master_Admin_3_2`, `telydial(1)`) into ONE integrated platform on the
+approved **Light Enterprise** UI.
 
-Data-honesty policy: every surface is **REAL** (persisted platform/API data),
-**DEMO** (deterministic demonstration data — never presented as production), or
-**EXT** (external carrier/registry/gateway integration required). No subscriber
-PII / MSISDN / individual lookup anywhere.
+**Coverage: 54/54 primary destinations IMPLEMENTED · 0 PARTIAL · 0 MISSING · 0 dead routes.**
+(+ legitimate supporting routes: campaign/detail, marketplace, capability detail,
+directory drill-down, Demo Access console, login.)
 
-| Prototype | Portal | WP | Branch | PR | Status |
-|---|---|---|---|---|---|
-| `tely_advertiser_portal_3.html` | Advertiser Portal | PARITY-01 | `feature/parity-advertiser` | #7 | ✅ Delivered |
-| `Tely_Telco_Operations_Dashboard.html` | Telco Console | PARITY-02 | `feature/parity-telco` | #8 | ✅ Delivered |
-| `Tely_Master_Admin_3_2.html` | Master Admin | PARITY-03 | `feature/parity-admin` | #9 | ✅ Delivered |
-| `telydial(1).html` | TelyDial | PARITY-04 | `feature/parity-telydial` | this PR | ✅ Delivered |
+Data classification — **REAL** (persisted platform/API state) · **DEMO**
+(deterministic demonstration data, labelled in-UI) · **EXT** (external
+carrier/registry/gateway integration required). Mobile certified at 390×844
+(no page-level horizontal overflow). Evidence: `visual-review-final/` +
+`e2e/tests/final-integration.spec.ts` (54-route hard gate) + per-portal parity
+specs. No subscriber PII / MSISDN anywhere.
 
 ---
 
-## PARITY-04 — TelyDial (`apps/telydial`)
+## Advertiser Portal — PARITY-01 (PR #7) · 12/12
 
-TelyDial is the **MVAS / telco-product acquisition module** inside TelyAd: a
-provider uses approved MTN VAS products to acquire subscribers through
-network-controlled STK campaign experiences. It stays part of the TelyAd
-ecosystem (shared UI, shared auth, shared API, shared audience models,
-48-capability architecture) — not a standalone legacy app.
+| # | Prototype destination | Route | State | Key functionality & interactions | Data | Mobile | Visual | Known limitation |
+|---|---|---|---|---|---|---|---|---|
+| 1 | Dashboard | `/dashboard` | IMPLEMENTED | Portfolio KPIs, daily-spend line, channel-mix doughnut, campaigns table, quick actions, alerts | REAL campaigns + DEMO perf | ✓ | High | perf figures demo |
+| 2 | Campaigns | `/campaigns` | IMPLEMENTED | List + KPI summary + status/objective filters + row→detail | REAL | ✓ | High | — |
+| 3 | Analytics | `/analytics` | IMPLEMENTED | KPI strip, spend line, channel doughnut + table, conversions bar | DEMO | ✓ | High | labelled demo |
+| 4 | Audience | `/audience` | IMPLEMENTED | Aggregate overview, eligibility + privacy, saved definitions | REAL match + DEMO | ✓ | High | aggregate only |
+| 5 | Segments | `/segments` | IMPLEMENTED | List, create modal, detail, size estimate | DEMO | ✓ | High | persistence deferred |
+| 6 | Reach & Verify | `/reach` | IMPLEMENTED | Selected→Eligible→Targeted→Delivered→Verified funnel | DEMO + EXT | ✓ | High | verify=EXT |
+| 7 | Channels | `/channels` | IMPLEMENTED | Business view over the 48-capability registry + preview | REAL (48 registry) | ✓ | High | — |
+| 8 | Creatives | `/creatives` | IMPLEMENTED | Creative Library, per-row handset preview | DEMO + REAL preview | ✓ | High | — |
+| 9 | AI Tools | `/ai` | IMPLEMENTED | AI module suite + working Campaign Copilot / Media Planner | DEMO intelligence | ✓ | High | not production ML |
+| 10 | Billing & Budget | `/billing` | IMPLEMENTED | Budget summary, allocations, ledger, invoices | DEMO | ✓ | High | no real payment |
+| 11 | Notifications | `/notifications` | IMPLEMENTED | Real API, read/unread, filter | REAL (+demo fallback) | ✓ | High | — |
+| 12 | Settings | `/settings` | IMPLEMENTED | Org profile, prefs, defaults, security summary | DEMO | ✓ | High | no secrets exposed |
+| + | Campaign wizard | `/campaigns/new` | PRESERVED | 5-step: objective→capabilities→**Audience Match** (eligible≠target)→creative/language→review→submit→MTN approval | REAL + 48-cap | ✓ | High | — |
+| + | Marketplace / capability detail | `/marketplace` | IMPLEMENTED | 48/48 capability previews | REAL | ✓ | High | — |
 
-**9 destinations — all real, populated routes (no dead nav, no "coming soon"):**
+## Telco / Operator Console — PARITY-02 (PR #8) · 23/23
 
-| # | Prototype destination | Route | Page | Classification |
-|---|---|---|---|---|
-| 1 | Dashboard | `/dashboard` | `dashboard/page.tsx` | REAL (campaign counts) + DEMO + EXT (delivery) |
-| 2 | Campaigns | `/campaigns` | `campaigns/page.tsx` | REAL (live table) + DEMO (management table) |
-| 3 | Create Campaign (hero builder) | `/campaigns/new` | `campaigns/new/page.tsx` | REAL (submit persists) + DEMO (registry/forecast) |
-| 4 | Products | `/products` | `products/page.tsx` | DEMO + EXT (MTN registry) |
-| 5 | Analytics | `/analytics` | `analytics/page.tsx` | DEMO + EXT (carrier volumes) |
-| 6 | Wallet | `/wallet` | `wallet/page.tsx` | DEMO (no real payment processing) |
-| 7 | Reports | `/reports` | `reports/page.tsx` | DEMO + one REAL client-side CSV export |
-| 8 | Notifications | `/notifications` | `notifications/page.tsx` | DEMO |
-| 9 | Support | `/support` | `support/page.tsx` | DEMO (no live ticketing) |
+| # | Prototype destination | Route | State | Data | Mobile | Visual |
+|---|---|---|---|---|---|---|
+| 1 | Executive Overview | `/dashboard` | IMPLEMENTED | REAL + DEMO | ✓ | High |
+| 2 | Advertiser Management | `/advertisers` | IMPLEMENTED | REAL | ✓ | High |
+| 3 | Campaign Approval | `/approvals` | IMPLEMENTED | REAL | ✓ | High |
+| 4 | Campaign Monitoring | `/monitoring` | IMPLEMENTED | DEMO | ✓ | High |
+| 5 | Audience Monitoring | `/audience` | IMPLEMENTED | DEMO (no PII) | ✓ | High |
+| 6 | Traffic Monitoring | `/traffic` | IMPLEMENTED | DEMO + EXT | ✓ | High |
+| 7 | Subscriber Insights | `/subscribers` | IMPLEMENTED | DEMO (aggregate, no PII) | ✓ | High |
+| 8 | Messaging Channels | `/channels` | IMPLEMENTED | REAL (48-cap) | ✓ | High |
+| 9 | Pricing & Revenue | `/revenue` | IMPLEMENTED | REAL | ✓ | High |
+| 10 | Wallet Monitoring | `/wallet` | IMPLEMENTED | DEMO | ✓ | High |
+| 11 | Compliance | `/compliance` | IMPLEMENTED | DEMO + EXT | ✓ | High |
+| 12 | Consent & DND | `/consent` | IMPLEMENTED | DEMO + EXT | ✓ | High |
+| 13 | Content Moderation | `/moderation` | IMPLEMENTED | DEMO | ✓ | High |
+| 14 | Governance Approvals | `/governance/approvals` | IMPLEMENTED | REAL | ✓ | High |
+| 15 | Reports | `/reports` | IMPLEMENTED | DEMO | ✓ | High |
+| 16 | Analytics | `/analytics` | IMPLEMENTED | REAL + DEMO | ✓ | High |
+| 17 | Users & Roles | `/users` | IMPLEMENTED | REAL (RBAC) | ✓ | High |
+| 18 | Audit Logs | `/audit` | IMPLEMENTED | REAL | ✓ | High |
+| 19 | API Monitoring | `/api-monitoring` | IMPLEMENTED | REAL health + DEMO | ✓ | High |
+| 20 | Notifications | `/notifications` | IMPLEMENTED | REAL | ✓ | High |
+| 21 | Support Centre | `/support` | IMPLEMENTED | DEMO | ✓ | High |
+| 22 | Settings | `/settings` | IMPLEMENTED | DEMO | ✓ | High |
+| 23 | Platform Health | `/platform-health` | IMPLEMENTED | REAL health + DEMO | ✓ | High |
 
-**Navigation (recovered):** Core → Dashboard · Campaigns · Create Campaign ·
-Product → Products · Intelligence → Analytics · Finance → Wallet · Operations →
-Reports · Notifications · Support.
+Cross-telco isolation banner ("viewing MTN Nigeria's isolated environment only"). Approval journey reviews the **immutable Audience Snapshot** the advertiser submitted (eligible / selected target / forecast / cost / capabilities). No subscriber PII.
 
-### Campaign builder (the hero experience)
+## Master Admin — PARITY-03 (PR #9) · 10/10
 
-Five-step wizard (`Stepper`), preserving the existing backend campaign lifecycle
-(`api.createCampaign` → `api.submitCampaign`, format `stk`, shared
-`AudienceDefinition`):
+| # | Prototype destination | Route | State | Data | Mobile | Visual |
+|---|---|---|---|---|---|---|
+| 1 | Global Dashboard | `/dashboard` | IMPLEMENTED | REAL + DEMO | ✓ | High |
+| 2 | Telco Directory (+ onboard modal, scoped drill-down, isolation banner, exit) | `/directory` | IMPLEMENTED | DEMO | ✓ | High |
+| 3 | Commercial Terms | `/terms` | IMPLEMENTED | REAL + DEMO | ✓ | High |
+| 4 | Platform Health (live /health + /ready) | `/platform-health` | IMPLEMENTED | REAL + DEMO + EXT | ✓ | High |
+| 5 | Master Admin Users | `/users` | IMPLEMENTED | DEMO | ✓ | High |
+| 6 | Engine Overview | `/engines` | IMPLEMENTED | DEMO | ✓ | High |
+| 7 | TelySignal | `/engines/telysignal` | IMPLEMENTED | DEMO | ✓ | High |
+| 8 | TelyXchange | `/engines/telyxchange` | IMPLEMENTED | DEMO + EXT | ✓ | High |
+| 9 | TelyAds | `/engines/telyads` | IMPLEMENTED | DEMO | ✓ | High |
+| 10 | TelyReach | `/engines/telyreach` | IMPLEMENTED | DEMO + EXT | ✓ | High |
+| + | Demo Access console | `/demo-access` | IMPLEMENTED | REAL (server-side lifecycle) | ✓ | High |
 
-| Feature | Behaviour |
-|---|---|
-| **Product ID verification** | Deterministic demo registry seam (`verifyProductId`). Known IDs verify and show a product summary; unknown IDs return **not found** — never treated as network-approved. Live lookup = EXT. |
-| **Creative builder** | Campaign name, internal reference, service name, body copy (char counts), CTA, SMS fallback. |
-| **Emoji picker** | Lightweight local component (`EmojiField`) — search, categories, insert-at-cursor, Escape/outside-click close. No external package. |
-| **CTA presets** | Subscribe · Join now · Play now · Activate · Continue · Learn more, plus a custom label; renders live in the device preview. |
-| **SMS fallback** | Dedicated creative field; labelled — live fallback delivery requires gateway integration (EXT). |
-| **Android STK preview** | Realistic STK dialog; updates live with service name / body / CTA. |
-| **iOS experience preview** | iPhone frame + configured subscriber experience; **honestly labelled "not native SIM Toolkit"**. |
-| **Device switcher** | Android / iOS tabs; creative state is preserved (state lives in the parent — no refresh, no static image). |
-| **Audience** | Shared audience architecture: categories, ARPU band, network type, language, national/by-state location. Aggregate only, DND/existing-subscriber exclusion always on. |
-| **Audience estimate** | Live `estimateAudience` — eligible reach range, excluded (compliance), forecast opt-ins, forecast CPA, quality score. Labelled forecast/demo. |
-| **Commercial / Budget** | CPA / CPM model cards; daily & campaign budget; priority; delivery speed; schedule; budget-impact + wallet-remaining forecast (no real charge). |
-| **Review** | Per-section summary (Product / Creative / Audience / Commercial) with Edit links + forecast + wallet line. |
-| **Submit** | Persists a real campaign and submits it to MTN telco approval; redirects to campaign detail. |
+Cross-telco isolation is a hard gate: scoped drill-down shows exactly one telco. TelyAds throughput chart normalises mixed units (M/h vs k/h) — regression-tested.
 
-### Preserved (hard freeze, no regression)
-Fastify API · Prisma/Postgres · tenant isolation · RBAC · Demo Access · campaign
-lifecycle · Light Enterprise UI · shared 48-capability architecture · existing
-TelyDial campaign persistence · deployment config · CI · Playwright.
+## TelyDial — PARITY-04 (PR #10) · 9/9
 
-### Data classification summary
-- **REAL:** authenticated session; campaigns created/listed via the platform API; the working CSV export.
-- **DEMO:** dashboard/analytics/wallet figures, product registry, ledger, notifications, FAQ, forecasts.
-- **EXT (integration required):** MTN product registry, STK/SMS gateway, DCB charging, live acquisition/delivery events, real payment processing.
+| # | Prototype destination | Route | State | Data | Mobile | Visual |
+|---|---|---|---|---|---|---|
+| 1 | Dashboard | `/dashboard` | IMPLEMENTED | REAL + DEMO + EXT | ✓ | High |
+| 2 | Campaigns | `/campaigns` | IMPLEMENTED | REAL + DEMO | ✓ | High |
+| 3 | Create Campaign (hero builder) | `/campaigns/new` | IMPLEMENTED | REAL + DEMO | ✓ | High |
+| 4 | Products | `/products` | IMPLEMENTED | DEMO + EXT | ✓ | High |
+| 5 | Analytics | `/analytics` | IMPLEMENTED | DEMO + EXT | ✓ | High |
+| 6 | Wallet | `/wallet` | IMPLEMENTED | DEMO | ✓ | High |
+| 7 | Reports | `/reports` | IMPLEMENTED | DEMO + REAL CSV | ✓ | High |
+| 8 | Notifications | `/notifications` | IMPLEMENTED | DEMO | ✓ | High |
+| 9 | Support | `/support` | IMPLEMENTED | DEMO | ✓ | High |
 
-### Verification
-`platform typecheck / lint / build` green; Playwright `telydial-parity.spec.ts`
-(9-destination nav sweep + campaign-builder + no-PII) green; preserved Maltina
-advertiser→MTN journey green. Visual evidence in `visual-review-parity/telydial/`.
+Hero builder: product-ID verification (demo registry; unknown IDs rejected), emoji picker, CTA presets, SMS fallback, Android STK + iOS preview (honestly labelled *not native SIM Toolkit*), device switch preserves creative, audience + live estimate, budget + wallet impact, review + submit → telco approval. TelyDial provider account is a `telydial`-portal account (advertiser realm).
+
+---
+
+## Frozen core (never regressed)
+
+Fastify API · PostgreSQL/Prisma · RBAC · tenant isolation · cross-telco isolation ·
+campaign lifecycle · MTN approval · 48-capability registry · capability previews ·
+Audience Match (eligible / selected target / forecast / frequency / cost) ·
+audience-snapshot & capability-plan persistence · AI intelligence · multilingual
+architecture · **Demo Access** (portal isolation, server-side expiry/revocation,
+hashed passwords, audit) · Light Enterprise UI · CI · Playwright.
