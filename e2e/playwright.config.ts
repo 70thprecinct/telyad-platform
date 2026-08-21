@@ -19,6 +19,7 @@ const DEMO_USER_PASSWORD = process.env.DEMO_USER_PASSWORD ?? 'dev-demo-password-
 export const ADVERTISER_URL = process.env.ADVERTISER_URL ?? 'http://localhost:3001';
 export const TELCO_URL = process.env.TELCO_URL ?? 'http://localhost:3002';
 export const ADMIN_URL = process.env.ADMIN_URL ?? 'http://localhost:3003';
+export const TELYDIAL_URL = process.env.TELYDIAL_URL ?? 'http://localhost:3004';
 export const API_URL = process.env.API_URL ?? 'http://localhost:4000';
 export const DEMO_PASSWORD = DEMO_USER_PASSWORD;
 
@@ -63,6 +64,14 @@ export default defineConfig({
     {
       command: 'pnpm --filter @telyad/telco-console start',
       url: TELCO_URL,
+      cwd: '..',
+      timeout: 120_000,
+      reuseExistingServer: !CI,
+      env: { NEXT_PUBLIC_API_URL: API_URL },
+    },
+    {
+      command: 'pnpm --filter @telyad/telydial start',
+      url: TELYDIAL_URL,
       cwd: '..',
       timeout: 120_000,
       reuseExistingServer: !CI,

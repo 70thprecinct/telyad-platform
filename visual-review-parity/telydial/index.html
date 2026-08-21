@@ -1,0 +1,77 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>PARITY-04 — TelyDial Visual Review</title>
+<style>
+  :root { --ink:#0f172a; --dim:#64748b; --line:#e2e8f0; --violet:#6d5ae6; --bg:#f6f6fb; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:14px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; color:var(--ink); background:var(--bg); }
+  header { padding:28px 32px; background:#fff; border-bottom:1px solid var(--line); }
+  h1 { margin:0 0 6px; font-size:20px; } .sub { color:var(--dim); font-size:13px; }
+  .wrap { padding:24px 32px; max-width:1200px; margin:0 auto; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:12px; margin-bottom:20px; overflow:hidden; }
+  .card > h2 { margin:0; padding:14px 18px; font-size:15px; border-bottom:1px solid var(--line); display:flex; gap:10px; align-items:center; }
+  .card > p { margin:0; padding:10px 18px 0; color:var(--dim); font-size:12.5px; }
+  .card img { width:100%; display:block; border-top:1px solid var(--line); margin-top:12px; }
+  .tag { font-size:10.5px; font-weight:700; letter-spacing:.4px; padding:2px 8px; border-radius:999px; }
+  .real { background:#dcfce7; color:#166534; } .demo { background:#ede9fe; color:#5b21b6; } .ext { background:#fef3c7; color:#92400e; }
+  .n { margin-left:auto; color:var(--dim); font-weight:400; font-size:12px; }
+  table { width:100%; border-collapse:collapse; } td,th { padding:8px 18px; text-align:left; border-bottom:1px solid var(--line); font-size:12.5px; } th { color:var(--dim); font-weight:600; }
+  code { background:#f1f5f9; padding:1px 5px; border-radius:4px; font-size:12px; }
+  .mob { display:flex; gap:14px; flex-wrap:wrap; padding:12px 18px; }
+  .mob figure { margin:0; width:200px; } .mob img { width:100%; border:1px solid var(--line); border-radius:10px; }
+  .mob figcaption { font-size:11px; color:var(--dim); text-align:center; margin-top:5px; }
+</style>
+<header>
+  <h1>PARITY-04 · TelyDial — Prototype Parity Visual Review</h1>
+  <div class="sub">Source prototype: <code>telydial(1).html</code> → rebuilt in <code>apps/telydial</code> on the Light Enterprise design system (subtle violet identity). 9 destinations · hero campaign builder · REAL/DEMO/EXT classified · no subscriber PII.</div>
+</header>
+<div class="wrap">
+
+  <div class="card">
+    <h2>Destination coverage <span class="n">9 / 9 prototype destinations</span></h2>
+    <table>
+      <tr><th>#</th><th>Prototype view</th><th>Route</th><th>Class</th></tr>
+      <tr><td>1</td><td>Dashboard</td><td><code>/dashboard</code></td><td><span class="tag real">REAL</span> <span class="tag demo">DEMO</span> <span class="tag ext">EXT</span></td></tr>
+      <tr><td>2</td><td>Campaigns (live + management table)</td><td><code>/campaigns</code></td><td><span class="tag real">REAL</span> <span class="tag demo">DEMO</span></td></tr>
+      <tr><td>3</td><td>Create Campaign (hero builder)</td><td><code>/campaigns/new</code></td><td><span class="tag real">REAL</span> <span class="tag demo">DEMO</span></td></tr>
+      <tr><td>4</td><td>Products (+ verification + detail)</td><td><code>/products</code></td><td><span class="tag demo">DEMO</span> <span class="tag ext">EXT</span></td></tr>
+      <tr><td>5</td><td>Analytics</td><td><code>/analytics</code></td><td><span class="tag demo">DEMO</span> <span class="tag ext">EXT</span></td></tr>
+      <tr><td>6</td><td>Wallet</td><td><code>/wallet</code></td><td><span class="tag demo">DEMO</span></td></tr>
+      <tr><td>7</td><td>Reports (+ working CSV export)</td><td><code>/reports</code></td><td><span class="tag demo">DEMO</span> <span class="tag real">REAL CSV</span></td></tr>
+      <tr><td>8</td><td>Notifications</td><td><code>/notifications</code></td><td><span class="tag demo">DEMO</span></td></tr>
+      <tr><td>9</td><td>Support (FAQ + escalation)</td><td><code>/support</code></td><td><span class="tag demo">DEMO</span></td></tr>
+    </table>
+  </div>
+
+  <div class="card"><h2>Hero · Campaign builder — Creative (Android STK preview)</h2>
+    <p>Step 2: emoji fields, CTA presets, SMS fallback, live Android STK preview + composition meta.</p>
+    <img src="create-creative-android.png" alt="Creative Android" /></div>
+  <div class="card"><h2>Hero · Campaign builder — Creative (iOS preview)</h2>
+    <p>Device switch preserves creative state. iOS is honestly labelled "configured subscriber experience — not native SIM Toolkit".</p>
+    <img src="create-creative-ios.png" alt="Creative iOS" /></div>
+  <div class="card"><h2>Hero · Product verification <span class="tag demo">DEMO</span><span class="tag ext">EXT</span></h2>
+    <p>Deterministic registry seam — known IDs verify; unknown IDs are rejected, never treated as approved.</p>
+    <img src="create-verified.png" alt="Product verified" /></div>
+
+  <div class="card"><h2>1 · Dashboard <span class="tag real">REAL</span><span class="tag demo">DEMO</span></h2><img src="dashboard.png" alt="Dashboard" /></div>
+  <div class="card"><h2>2 · Campaigns <span class="tag real">REAL</span><span class="tag demo">DEMO</span></h2><img src="campaigns.png" alt="Campaigns" /></div>
+  <div class="card"><h2>4 · Products <span class="tag demo">DEMO</span><span class="tag ext">EXT</span></h2><img src="products.png" alt="Products" /></div>
+  <div class="card"><h2>5 · Analytics <span class="tag demo">DEMO</span><span class="tag ext">EXT</span></h2><img src="analytics.png" alt="Analytics" /></div>
+  <div class="card"><h2>6 · Wallet <span class="tag demo">DEMO</span></h2><img src="wallet.png" alt="Wallet" /></div>
+  <div class="card"><h2>7 · Reports <span class="tag demo">DEMO</span><span class="tag real">REAL CSV</span></h2><img src="reports.png" alt="Reports" /></div>
+  <div class="card"><h2>8 · Notifications <span class="tag demo">DEMO</span></h2><img src="notifications.png" alt="Notifications" /></div>
+  <div class="card"><h2>9 · Support <span class="tag demo">DEMO</span></h2><img src="support.png" alt="Support" /></div>
+
+  <div class="card">
+    <h2>Mobile · 390 × 844</h2>
+    <div class="mob">
+      <figure><img src="m-dashboard.png" alt="m dashboard" /><figcaption>Dashboard</figcaption></figure>
+      <figure><img src="m-campaigns.png" alt="m campaigns" /><figcaption>Campaigns</figcaption></figure>
+      <figure><img src="m-create.png" alt="m create" /><figcaption>Create</figcaption></figure>
+      <figure><img src="m-products.png" alt="m products" /><figcaption>Products</figcaption></figure>
+      <figure><img src="m-wallet.png" alt="m wallet" /><figcaption>Wallet</figcaption></figure>
+      <figure><img src="m-analytics.png" alt="m analytics" /><figcaption>Analytics</figcaption></figure>
+    </div>
+  </div>
+
+</div>
