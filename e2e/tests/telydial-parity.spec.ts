@@ -6,7 +6,7 @@ const MSISDN = /\b234[789]\d{9}\b/;
 
 async function login(page: Page) {
   await page.goto(`${TELYDIAL_URL}/login`);
-  await page.getByLabel('Work email').fill('bola@toyota.example');
+  await page.getByLabel('Work email').fill('provider@telydial.example');
   await page.getByLabel('Password').fill(DEMO_PASSWORD);
   await page.getByRole('button', { name: 'Sign in' }).click();
   await expect(page).toHaveURL(/\/dashboard/);

@@ -55,8 +55,9 @@ export function buildSeed(passwordHash: string): SeedBundle {
     name: u.name,
     email: u.email,
     realm: u.realm,
-    // Standing seed accounts map portal directly from their realm.
-    portal: u.realm === 'telco' ? 'telco' : u.realm === 'platform' ? 'admin' : 'advertiser',
+    // Standing seed accounts map portal from their realm, unless one is set
+    // explicitly (TelyDial: advertiser realm, telydial portal).
+    portal: u.portal ?? (u.realm === 'telco' ? 'telco' : u.realm === 'platform' ? 'admin' : 'advertiser'),
     role: u.role as AnyRole,
     telcoId: u.telcoId,
     advertiserId: u.advertiserId,

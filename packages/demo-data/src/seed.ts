@@ -5,6 +5,7 @@ import {
   type AdvertiserType,
   type Budget,
   type Campaign,
+  type Portal,
   type Realm,
   type TelcoId,
   type UserId,
@@ -118,6 +119,9 @@ export interface DemoUser {
   name: string;
   email: string;
   realm: Realm;
+  /** Product surface this account signs into. Defaults to the realm-derived
+   *  portal; set explicitly for TelyDial (advertiser realm, telydial portal). */
+  portal?: Portal;
   role: string;
   telcoId: TelcoId | null;
   advertiserId: AdvertiserId | null;
@@ -171,6 +175,17 @@ export const DEMO_USERS: DemoUser[] = [
     role: 'Campaign Manager',
     telcoId: MTN_TELCO_ID,
     advertiserId: MALTINA_ADVERTISER_ID,
+  },
+  // TelyDial portal — MVAS acquisition provider (advertiser realm, telydial portal)
+  {
+    id: asId<'UserId'>('user_telydial_provider'),
+    name: 'Femi Okoro',
+    email: 'provider@telydial.example',
+    realm: 'advertiser',
+    portal: 'telydial',
+    role: 'Advertiser Admin',
+    telcoId: MTN_TELCO_ID,
+    advertiserId: TOYOTA_ADVERTISER_ID,
   },
   // Telco realm — MTN commercial manager (inventory + revenue governance)
   {
