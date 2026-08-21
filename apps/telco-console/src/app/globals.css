@@ -1,17 +1,22 @@
 @import '@telyad/ui/styles.css';
 
-/* MTN Telco Operations theme — premium light with MTN yellow used as a strategic
-   accent (active states, KPIs, chart highlights, status), never as a full-screen
-   wash. `--tly-accent-ink` is a dark gold so brand-coloured *text* stays legible
-   on white; the bright yellow is reserved for fills and indicators. */
+/* TelyAd for Telco Operations — master TelyAd orange brand, with a restrained MTN
+   operator-gold portal accent on portal-identity surfaces (network badge, active
+   nav). Operator yellow is a fill/indicator; `--tly-portal-accent-ink` is a dark
+   gold so operator-context *text* stays legible on white. Never a yellow wash. */
 :root {
-  --tly-bg: #f6f7f4;
-  --tly-primary: #ffcc08;
-  --tly-primary-dim: rgba(255, 204, 8, 0.2);
-  --tly-primary-contrast: #1a1400;
-  --tly-accent-ink: #8a6a00;
+  --tly-bg: #f7f6f3;
+  /* Master brand (shared) */
+  --tly-primary: #ee5d2b;
+  --tly-primary-dim: rgba(238, 93, 43, 0.12);
+  --tly-primary-contrast: #ffffff;
+  --tly-primary-hover: #d64c1e;
+  --tly-accent-ink: #cf4c1c;
   --tly-secondary: #3b5bdb;
-  --tly-info-dim: rgba(255, 204, 8, 0.16);
+  /* Portal accent — restrained MTN operator gold */
+  --tly-portal-accent: #ffcc08;
+  --tly-portal-accent-dim: rgba(255, 204, 8, 0.2);
+  --tly-portal-accent-ink: #8a6a00;
   --tly-radius: 12px;
 }
 

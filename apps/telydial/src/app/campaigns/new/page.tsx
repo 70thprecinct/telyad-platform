@@ -263,9 +263,9 @@ export default function NewCampaignPage() {
                     onClick={() => setCta(c)}
                     style={{
                       padding: '4px 11px', borderRadius: 14, fontSize: 11, cursor: 'pointer',
-                      border: cta === c ? '1.5px solid var(--tly-primary)' : '1px solid var(--tly-border)',
-                      background: cta === c ? 'var(--tly-primary-dim)' : 'var(--tly-card)',
-                      color: cta === c ? 'var(--tly-accent-ink)' : 'var(--tly-text-dim)', fontWeight: cta === c ? 600 : 400,
+                      border: cta === c ? '1.5px solid var(--tly-portal-accent)' : '1px solid var(--tly-border)',
+                      background: cta === c ? 'var(--tly-portal-accent-dim)' : 'var(--tly-card)',
+                      color: cta === c ? 'var(--tly-portal-accent-ink)' : 'var(--tly-text-dim)', fontWeight: cta === c ? 600 : 400,
                     }}
                   >
                     {c}
@@ -327,11 +327,11 @@ export default function NewCampaignPage() {
                 onClick={() => setPricingModel(m.id)}
                 style={{
                   flex: 1, minWidth: 220, textAlign: 'left', padding: 13, borderRadius: 9, cursor: 'pointer',
-                  border: pricingModel === m.id ? '1.5px solid var(--tly-primary)' : '1px solid var(--tly-border)',
-                  background: pricingModel === m.id ? 'var(--tly-primary-dim)' : 'var(--tly-card)',
+                  border: pricingModel === m.id ? '1.5px solid var(--tly-portal-accent)' : '1px solid var(--tly-border)',
+                  background: pricingModel === m.id ? 'var(--tly-portal-accent-dim)' : 'var(--tly-card)',
                 }}
               >
-                <div style={{ fontWeight: 600, marginBottom: 3, color: pricingModel === m.id ? 'var(--tly-accent-ink)' : 'var(--tly-text)' }}>{m.title}</div>
+                <div style={{ fontWeight: 600, marginBottom: 3, color: pricingModel === m.id ? 'var(--tly-portal-accent-ink)' : 'var(--tly-text)' }}>{m.title}</div>
                 <div className="tly-faint" style={{ fontSize: 11 }}>{m.desc}</div>
               </button>
             ))}
@@ -373,7 +373,7 @@ export default function NewCampaignPage() {
             </div>
           </div>
 
-          <div style={{ marginTop: 12, padding: '10px 14px', borderRadius: 8, background: 'var(--tly-primary-dim)', display: 'flex', justifyContent: 'space-between', fontSize: 12.5 }}>
+          <div style={{ marginTop: 12, padding: '10px 14px', borderRadius: 8, background: 'var(--tly-portal-accent-dim)', display: 'flex', justifyContent: 'space-between', fontSize: 12.5 }}>
             <span>Wallet balance available</span><strong>₦450,000</strong>
           </div>
 
@@ -423,9 +423,9 @@ function ChipRow({ options, selected, onToggle, testid }: { options: string[]; s
         return (
           <button key={o} type="button" onClick={() => onToggle(o)} style={{
             padding: '3px 10px', borderRadius: 14, fontSize: 11, cursor: 'pointer',
-            border: on ? '1.5px solid var(--tly-primary)' : '1px solid var(--tly-border)',
-            background: on ? 'var(--tly-primary-dim)' : 'var(--tly-card)',
-            color: on ? 'var(--tly-accent-ink)' : 'var(--tly-text-dim)', fontWeight: on ? 600 : 400,
+            border: on ? '1.5px solid var(--tly-portal-accent)' : '1px solid var(--tly-border)',
+            background: on ? 'var(--tly-portal-accent-dim)' : 'var(--tly-card)',
+            color: on ? 'var(--tly-portal-accent-ink)' : 'var(--tly-text-dim)', fontWeight: on ? 600 : 400,
           }}>{o}</button>
         );
       })}
@@ -441,9 +441,9 @@ function ToggleRow({ options, value, onSelect }: { options: string[]; value: str
         return (
           <button key={o} type="button" onClick={() => onSelect(o)} style={{
             flex: 1, padding: '6px 0', borderRadius: 6, fontSize: 10.5, cursor: 'pointer', textAlign: 'center',
-            border: on ? '1.5px solid var(--tly-primary)' : '1px solid var(--tly-border)',
-            background: on ? 'var(--tly-primary-dim)' : 'var(--tly-card)',
-            color: on ? 'var(--tly-accent-ink)' : 'var(--tly-text-dim)', fontWeight: on ? 600 : 400,
+            border: on ? '1.5px solid var(--tly-portal-accent)' : '1px solid var(--tly-border)',
+            background: on ? 'var(--tly-portal-accent-dim)' : 'var(--tly-card)',
+            color: on ? 'var(--tly-portal-accent-ink)' : 'var(--tly-text-dim)', fontWeight: on ? 600 : 400,
           }}>{o}</button>
         );
       })}
@@ -459,7 +459,7 @@ function DevicePreview({ device, setDevice, serviceName, body, cta }: { device: 
     <Card>
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
         <div className="tly-faint" style={{ fontSize: 9, letterSpacing: '.07em', textTransform: 'uppercase' }}>Live preview</div>
-        <div style={{ display: 'flex', gap: 4, width: '100%', background: 'var(--tly-primary-dim)', borderRadius: 8, padding: 3 }} data-testid="device-tabs">
+        <div style={{ display: 'flex', gap: 4, width: '100%', background: 'var(--tly-portal-accent-dim)', borderRadius: 8, padding: 3 }} data-testid="device-tabs">
           {(['android', 'ios'] as const).map((d) => (
             <button key={d} type="button" onClick={() => setDevice(d)} data-testid={`device-${d}`} style={{
               flex: 1, padding: '5px 0', borderRadius: 6, fontSize: 10.5, border: 'none', cursor: 'pointer', textTransform: 'capitalize',
@@ -477,7 +477,7 @@ function DevicePreview({ device, setDevice, serviceName, body, cta }: { device: 
               <div data-testid="preview-body" style={{ color: '#94a3b8', fontSize: 8.5, lineHeight: 1.55, marginBottom: 11, wordBreak: 'break-word' }}>{msg}</div>
               <div style={{ display: 'flex', gap: 5 }}>
                 <div style={{ flex: 1, border: '0.5px solid rgba(255,255,255,.1)', color: '#64748b', borderRadius: 5, padding: '5px 0', fontSize: 7.5 }}>Cancel</div>
-                <div data-testid="preview-accept" style={{ flex: 1, background: 'var(--tly-primary)', color: '#fff', borderRadius: 5, padding: '5px 0', fontSize: 7.5 }}>{accept}</div>
+                <div data-testid="preview-accept" style={{ flex: 1, background: 'var(--tly-portal-accent)', color: '#fff', borderRadius: 5, padding: '5px 0', fontSize: 7.5 }}>{accept}</div>
               </div>
             </div>
           </div>
@@ -505,7 +505,7 @@ function DevicePreview({ device, setDevice, serviceName, body, cta }: { device: 
         <div className="tly-faint" style={{ fontSize: 9, textAlign: 'center' }}>
           {device === 'android' ? 'Android STK push' : 'iOS — configured subscriber experience (not native SIM Toolkit)'}
         </div>
-        <div style={{ width: '100%', padding: 9, background: 'var(--tly-primary-dim)', borderRadius: 6, fontSize: 9.5, color: 'var(--tly-text-dim)', lineHeight: 1.7 }}>
+        <div style={{ width: '100%', padding: 9, background: 'var(--tly-portal-accent-dim)', borderRadius: 6, fontSize: 9.5, color: 'var(--tly-text-dim)', lineHeight: 1.7 }}>
           <strong style={{ display: 'block', fontSize: 10, color: 'var(--tly-text)' }}>Composition</strong>
           <div>Title: {serviceName.length}/32</div>
           <div>Body: {body.length}/160</div>
@@ -518,7 +518,7 @@ function DevicePreview({ device, setDevice, serviceName, body, cta }: { device: 
 
 function EstimateBox({ estimate, forecastOptIns, forecastCpa, pricingModel }: { estimate: { estimatedReach: number; reachLow: number; reachHigh: number; excludedForCompliance: number; qualityScore: number }; forecastOptIns: number; forecastCpa: number; pricingModel: PricingModel }) {
   return (
-    <div data-testid="audience-estimate" style={{ marginTop: 14, padding: 13, borderRadius: 8, background: 'var(--tly-primary-dim)', border: '1px solid var(--tly-primary)' }}>
+    <div data-testid="audience-estimate" style={{ marginTop: 14, padding: 13, borderRadius: 8, background: 'var(--tly-portal-accent-dim)', border: '1px solid var(--tly-portal-accent)' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
         <div>
           <div style={{ fontSize: 10.5, fontWeight: 500 }}>Estimated audience (forecast · demonstration)</div>
@@ -541,7 +541,7 @@ function BudgetImpact({ daily, total, maxSubs, forecastOptIns, forecastCpa }: { 
   const acquireForBudget = maxSubs > 0 ? Math.min(budgetAcq, maxSubs) : budgetAcq;
   const remaining = wallet - total;
   return (
-    <div style={{ marginTop: 14, padding: 13, borderRadius: 8, background: 'var(--tly-primary-dim)', border: '1px solid var(--tly-primary)', fontSize: 11.5, lineHeight: 1.9 }}>
+    <div style={{ marginTop: 14, padding: 13, borderRadius: 8, background: 'var(--tly-portal-accent-dim)', border: '1px solid var(--tly-portal-accent)', fontSize: 11.5, lineHeight: 1.9 }}>
       <div style={{ fontWeight: 600, marginBottom: 4 }}>Budget impact (forecast · demonstration)</div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(150px,1fr))', gap: 6 }}>
         <div>Daily spend: <strong>₦{daily.toLocaleString()}</strong></div>
@@ -562,7 +562,7 @@ function ReviewSection({ title, rows, onEdit }: { title: string; rows: [string, 
     <div style={{ border: '1px solid var(--tly-border)', borderRadius: 10, padding: 13 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
         <div style={{ fontWeight: 600, fontSize: 12 }}>{title}</div>
-        <button type="button" onClick={onEdit} style={{ border: 'none', background: 'none', color: 'var(--tly-accent-ink)', fontSize: 11, cursor: 'pointer' }}>Edit</button>
+        <button type="button" onClick={onEdit} style={{ border: 'none', background: 'none', color: 'var(--tly-portal-accent-ink)', fontSize: 11, cursor: 'pointer' }}>Edit</button>
       </div>
       {rows.map(([k, v]) => (
         <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px dashed var(--tly-border-soft)', fontSize: 11.5, gap: 12 }}>

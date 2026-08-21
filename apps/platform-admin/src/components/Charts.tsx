@@ -28,7 +28,15 @@ export function BarChart({
   const w = 640, h = height, pad = { t: 12, r: 12, b: 34, l: 44 };
   const max = Math.max(...data.map((d) => d.value), 1), bw = (w - pad.l - pad.r) / data.length;
   const y = (v: number) => pad.t + (1 - v / max) * (h - pad.t - pad.b);
-  const palette = colors ?? ['var(--tly-primary)', '#0a9d5e', '#3b5bdb', '#7c3aed', '#b26a00'];
+  // Brand-controlled categorical palette: master orange + portal accent + neutral
+  // supporting tones (not a rainbow). Semantic status colours stay separate.
+  const palette = colors ?? [
+    'var(--tly-primary)',
+    'var(--tly-portal-accent)',
+    '#f2a48a',
+    '#94a3b8',
+    '#cbd5e1',
+  ];
   return (
     <svg viewBox={`0 0 ${w} ${h}`} width="100%" height={h} role="img">
       {data.map((d, i) => {

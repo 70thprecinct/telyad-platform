@@ -1,14 +1,21 @@
 @import '@telyad/ui/styles.css';
 
-/* TelyDial — premium light shared shell with a distinct violet accent (MVAS
-   acquisition module). Same light structure as the rest of the ecosystem. */
+/* TelyDial — master TelyAd orange brand with a controlled violet portal accent
+   (MVAS acquisition module). Violet is a product identifier on portal-identity
+   surfaces, not a replacement brand; the master shell stays TelyAd. */
 :root {
-  --tly-bg: #f6f6fb;
-  --tly-primary: #6d5ae6;
-  --tly-primary-dim: rgba(109, 90, 230, 0.12);
+  --tly-bg: #f7f6f9;
+  /* Master brand (shared) */
+  --tly-primary: #ee5d2b;
+  --tly-primary-dim: rgba(238, 93, 43, 0.12);
   --tly-primary-contrast: #ffffff;
-  --tly-accent-ink: #5646c9;
+  --tly-primary-hover: #d64c1e;
+  --tly-accent-ink: #cf4c1c;
   --tly-secondary: #2a78d6;
+  /* Portal accent — controlled violet (SIM/device engagement) */
+  --tly-portal-accent: #6d5ae6;
+  --tly-portal-accent-dim: rgba(109, 90, 230, 0.12);
+  --tly-portal-accent-ink: #5646c9;
 }
 
 html,
