@@ -14,6 +14,7 @@ import type {
   LanguageVariant,
   MediaPlan,
   MediaPlanRequest,
+  Notification,
 } from '@telyad/types';
 
 const BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:4000';
@@ -78,6 +79,7 @@ export const api = {
       body: JSON.stringify(audience),
     }),
   listCampaigns: () => request<{ campaigns: Campaign[] }>('/campaigns'),
+  listNotifications: () => request<{ notifications: Notification[] }>('/notifications'),
   getCampaign: (id: string) => request<{ campaign: Campaign }>(`/campaigns/${id}`),
   createCampaign: (input: CreateCampaignRequest) =>
     request<{ campaign: Campaign }>('/campaigns', {
