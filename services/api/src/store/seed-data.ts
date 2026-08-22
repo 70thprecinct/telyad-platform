@@ -55,12 +55,25 @@ export function buildSeed(passwordHash: string): SeedBundle {
     name: u.name,
     email: u.email,
     realm: u.realm,
+    // Standing seed accounts map portal from their realm, unless one is set
+    // explicitly (TelyDial: advertiser realm, telydial portal).
+    portal: u.portal ?? (u.realm === 'telco' ? 'telco' : u.realm === 'platform' ? 'admin' : 'advertiser'),
     role: u.role as AnyRole,
     telcoId: u.telcoId,
     advertiserId: u.advertiserId,
     status: 'Active',
     lastLoginAt: null,
     passwordHash,
+    // Standing (non-demo) accounts: no validity window.
+    isDemo: false,
+    organisation: null,
+    createdAt: SEED_TS,
+    createdByUserId: null,
+    createdByName: null,
+    validFrom: null,
+    expiresAt: null,
+    revokedAt: null,
+    disabled: false,
   }));
 
   const campaigns: Campaign[] = CAMPAIGNS.map((c) => ({ ...c }));

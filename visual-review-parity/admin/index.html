@@ -1,0 +1,80 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>PARITY-03 — Master Admin Visual Review</title>
+<style>
+  :root { --ink:#0f172a; --dim:#64748b; --line:#e2e8f0; --cyan:#0891b2; --bg:#f6f8fa; }
+  * { box-sizing: border-box; }
+  body { margin:0; font:14px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; color:var(--ink); background:var(--bg); }
+  header { padding:28px 32px; background:#fff; border-bottom:1px solid var(--line); }
+  h1 { margin:0 0 6px; font-size:20px; }
+  .sub { color:var(--dim); font-size:13px; }
+  .wrap { padding:24px 32px; max-width:1200px; margin:0 auto; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:12px; margin-bottom:20px; overflow:hidden; }
+  .card > h2 { margin:0; padding:14px 18px; font-size:15px; border-bottom:1px solid var(--line); display:flex; gap:10px; align-items:center; }
+  .card > p { margin:0; padding:10px 18px 0; color:var(--dim); font-size:12.5px; }
+  .card img { width:100%; display:block; border-top:1px solid var(--line); margin-top:12px; }
+  .tag { font-size:10.5px; font-weight:700; letter-spacing:.4px; padding:2px 8px; border-radius:999px; }
+  .real { background:#dcfce7; color:#166534; } .demo { background:#e0f2fe; color:#075985; } .ext { background:#fef3c7; color:#92400e; }
+  .n { margin-left:auto; color:var(--dim); font-weight:400; font-size:12px; }
+  table { width:100%; border-collapse:collapse; }
+  td,th { padding:8px 18px; text-align:left; border-bottom:1px solid var(--line); font-size:12.5px; }
+  th { color:var(--dim); font-weight:600; }
+  code { background:#f1f5f9; padding:1px 5px; border-radius:4px; font-size:12px; }
+</style>
+<header>
+  <h1>PARITY-03 · Master Admin — Prototype Parity Visual Review</h1>
+  <div class="sub">Source prototype: <code>Tely_Master_Admin_3_2.html</code> → rebuilt in <code>apps/platform-admin</code> on the Light Enterprise design system. 10 destinations · REAL/DEMO/EXT classified · cross-telco isolation enforced · no subscriber PII.</div>
+</header>
+<div class="wrap">
+
+  <div class="card">
+    <h2>Destination coverage <span class="n">10 / 10 prototype destinations</span></h2>
+    <table>
+      <tr><th>#</th><th>Prototype view</th><th>Route</th><th>Class</th></tr>
+      <tr><td>1</td><td>Global Dashboard (renderGlobal)</td><td><code>/dashboard</code></td><td><span class="tag real">REAL</span> <span class="tag demo">DEMO</span></td></tr>
+      <tr><td>2</td><td>Telco Directory + onboard + scoped drill-down (renderDirectory / enterTelco / exitTelco)</td><td><code>/directory</code></td><td><span class="tag demo">DEMO</span></td></tr>
+      <tr><td>3</td><td>Commercial Terms (renderTerms)</td><td><code>/terms</code></td><td><span class="tag real">REAL</span> <span class="tag demo">DEMO</span></td></tr>
+      <tr><td>4</td><td>Platform Health (renderHealth) — live /health + /ready</td><td><code>/platform-health</code></td><td><span class="tag real">REAL</span> <span class="tag demo">DEMO</span> <span class="tag ext">EXT</span></td></tr>
+      <tr><td>5</td><td>Master Admin Users + role matrix (renderAdmin)</td><td><code>/users</code></td><td><span class="tag demo">DEMO</span></td></tr>
+      <tr><td>6</td><td>Engine Dashboards overview (renderEngineering)</td><td><code>/engines</code></td><td><span class="tag demo">DEMO</span></td></tr>
+      <tr><td>7–10</td><td>TelySignal · TelyXchange · TelyAds · TelyReach</td><td><code>/engines/*</code></td><td><span class="tag demo">DEMO</span> <span class="tag ext">EXT</span></td></tr>
+    </table>
+  </div>
+
+  <div class="card"><h2>1 · Global Dashboard <span class="tag real">REAL</span><span class="tag demo">DEMO</span></h2>
+    <p>KPIs (telcos live REAL via /telcos; reach/revenue DEMO), revenue-by-telco bar, growth line, Active Telco Summary.</p>
+    <img src="dashboard.png" alt="Global Dashboard" /></div>
+
+  <div class="card"><h2>2 · Telco Directory <span class="tag demo">DEMO</span></h2>
+    <p>Telco cards + status filter. Onboard modal and scoped drill-down are captured below.</p>
+    <img src="directory.png" alt="Telco Directory" /></div>
+
+  <div class="card"><h2>2a · Scoped drill-down — cross-telco isolation banner + Exit to global view</h2>
+    <p>enterTelco → shows ONLY that telco's data with an explicit isolation banner and a settlement summary; exitTelco returns to global.</p>
+    <img src="directory-scoped.png" alt="Scoped telco view" /></div>
+
+  <div class="card"><h2>2b · Onboard new telco (modal)</h2>
+    <p>Creates an environment record (status pending/provisioning); production provisioning is external integration.</p>
+    <img src="directory-onboard-modal.png" alt="Onboard modal" /></div>
+
+  <div class="card"><h2>3 · Commercial Terms <span class="tag real">REAL</span><span class="tag demo">DEMO</span></h2>
+    <p>Share %/status REAL; settlement, contract, effective date DEMO. Revenue-share model explainer.</p>
+    <img src="terms.png" alt="Commercial Terms" /></div>
+
+  <div class="card"><h2>4 · Platform Health <span class="tag real">REAL</span><span class="tag demo">DEMO</span><span class="tag ext">EXT</span></h2>
+    <p>Live /health + /ready probes (REAL); per-app & per-telco health (DEMO); carrier gateways (EXT); infra-load line.</p>
+    <img src="platform-health.png" alt="Platform Health" /></div>
+
+  <div class="card"><h2>5 · Master Admin Users <span class="tag demo">DEMO</span></h2>
+    <p>Admin users incl. time-limited Demo Access accounts (server-side lifecycle) + role permission matrix (RBAC authoritative).</p>
+    <img src="users.png" alt="Master Admin Users" /></div>
+
+  <div class="card"><h2>6 · Engine Dashboards (overview) <span class="tag demo">DEMO</span></h2>
+    <img src="engines.png" alt="Engine Dashboards" /></div>
+
+  <div class="card"><h2>7 · TelySignal <span class="tag demo">DEMO</span></h2><img src="engines-telysignal.png" alt="TelySignal" /></div>
+  <div class="card"><h2>8 · TelyXchange <span class="tag demo">DEMO</span><span class="tag ext">EXT</span></h2><img src="engines-telyxchange.png" alt="TelyXchange" /></div>
+  <div class="card"><h2>9 · TelyAds <span class="tag demo">DEMO</span></h2><img src="engines-telyads.png" alt="TelyAds" /></div>
+  <div class="card"><h2>10 · TelyReach <span class="tag demo">DEMO</span><span class="tag ext">EXT</span></h2><img src="engines-telyreach.png" alt="TelyReach" /></div>
+
+</div>

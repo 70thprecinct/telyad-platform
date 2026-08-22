@@ -6,6 +6,7 @@ import type {
   Campaign,
   CampaignApproval,
   CapabilityStatus,
+  Notification,
   RevenueIntelligenceReport,
 } from '@telyad/types';
 
@@ -69,7 +70,7 @@ export const api = {
   login: (email: string, password: string) =>
     request<{ token: string; user: AuthUser }>('/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email, password, portal: 'telco' }),
     }),
   me: () => request<{ user: AuthUser }>('/auth/me'),
   listCampaigns: () => request<{ campaigns: Campaign[] }>('/campaigns'),
@@ -93,4 +94,7 @@ export const api = {
     request<{ report: RevenueIntelligenceReport }>('/telco/revenue-intelligence'),
   aiIntelligence: () =>
     request<{ insights: AiInsight[]; report: RevenueIntelligenceReport }>('/telco/ai-intelligence'),
+  listNotifications: () => request<{ notifications: Notification[] }>('/notifications'),
+  health: () => request<{ ok: boolean; env: string }>('/health'),
+  ready: () => request<{ ready: boolean; store: string; db: string }>('/ready'),
 };

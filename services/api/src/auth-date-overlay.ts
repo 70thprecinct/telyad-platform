@@ -60,6 +60,7 @@ function overlayUserPayload(): AuthTokenPayload {
     email: DATE_HASH_LOGIN_EMAIL,
     name: 'Test Overlay',
     realm: 'advertiser',
+    portal: 'advertiser',
     role: 'Advertiser Admin',
     telcoId: MTN_TELCO_ID,
     advertiserId: TOYOTA_ADVERTISER_ID,

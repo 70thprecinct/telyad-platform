@@ -17,11 +17,23 @@
   --tly-card-3: #e8edf3;
   --tly-border: #e3e8ee;
   --tly-border-soft: #eef1f5;
+  /* ── Master brand — TelyAd orange (derived from the official logo). Shared by
+     all four portals: primary buttons, focus, steppers, primary CTAs, key
+     emphasis. One master brand across the ecosystem. ── */
   --tly-primary: #ee5d2b;
   --tly-primary-dim: rgba(238, 93, 43, 0.12);
   --tly-primary-contrast: #ffffff;
+  --tly-primary-hover: #d64c1e;
   --tly-accent-ink: #cf4c1c; /* brand colour legible as text/border on light */
   --tly-secondary: #3b5bdb;
+  /* ── Portal accent — ONE controlled secondary per portal, used only on
+     portal-identity surfaces (network badge, active-nav indicator). Each app's
+     globals.css overrides these; the default is the master brand itself. ── */
+  --tly-portal-accent: var(--tly-primary);
+  --tly-portal-accent-dim: var(--tly-primary-dim);
+  --tly-portal-accent-ink: var(--tly-accent-ink);
+  --tly-surface: var(--tly-card);
+  --tly-surface-raised: var(--tly-card-2);
   --tly-success: #0a9d5e;
   --tly-success-dim: rgba(10, 157, 94, 0.13);
   --tly-warning: #b26a00;
@@ -126,7 +138,8 @@
   margin: 4px 8px 12px;
   padding: 7px 10px;
   border-radius: var(--tly-radius-sm);
-  background: var(--tly-primary-dim);
+  background: var(--tly-portal-accent-dim);
+  box-shadow: inset 2px 0 0 var(--tly-portal-accent);
   font-size: 10.5px;
   line-height: 1.4;
 }
@@ -164,10 +177,10 @@
   color: var(--tly-text);
 }
 .tly-sb-item.active {
-  background: var(--tly-primary-dim);
-  color: var(--tly-accent-ink);
+  background: var(--tly-portal-accent-dim);
+  color: var(--tly-portal-accent-ink);
   font-weight: 600;
-  box-shadow: inset 3px 0 0 var(--tly-primary);
+  box-shadow: inset 3px 0 0 var(--tly-portal-accent);
 }
 .tly-sb-item .ic {
   width: 16px;
@@ -543,9 +556,9 @@
   cursor: pointer;
 }
 .tly-chip.on {
-  background: var(--tly-primary-dim);
-  border-color: var(--tly-primary);
-  color: var(--tly-accent-ink);
+  background: var(--tly-portal-accent-dim);
+  border-color: var(--tly-portal-accent);
+  color: var(--tly-portal-accent-ink);
   font-weight: 600;
 }
 

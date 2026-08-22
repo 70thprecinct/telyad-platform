@@ -7,3 +7,4 @@ export * from './experience-preview';
 export * from './modal';
 export * from './toast';
 export * from './table';
+export * from './brand';

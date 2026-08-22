@@ -1,16 +1,21 @@
 @import '@telyad/ui/styles.css';
 
-/* Tely Master Admin theme — premium light with a deepened cyan/teal accent that
-   stays legible on white as both a fill and text (the prototype's bright cyan was
-   tuned for dark). This is the cross-telco control plane. */
+/* TelyAd Master Admin — master TelyAd orange brand, with a deep teal/cyan portal
+   accent (subordinate to the master identity) marking the cross-telco control
+   plane on portal-identity surfaces. Teal stays legible on white. */
 :root {
-  --tly-bg: #f4f7f9;
-  --tly-primary: #0891b2;
-  --tly-primary-dim: rgba(8, 145, 178, 0.12);
+  --tly-bg: #f5f7f8;
+  /* Master brand (shared) */
+  --tly-primary: #ee5d2b;
+  --tly-primary-dim: rgba(238, 93, 43, 0.12);
   --tly-primary-contrast: #ffffff;
-  --tly-accent-ink: #0e7490;
+  --tly-primary-hover: #d64c1e;
+  --tly-accent-ink: #cf4c1c;
   --tly-secondary: #4f46e5;
-  --tly-info-dim: rgba(8, 145, 178, 0.1);
+  /* Portal accent — deep teal/cyan (control plane) */
+  --tly-portal-accent: #0891b2;
+  --tly-portal-accent-dim: rgba(8, 145, 178, 0.12);
+  --tly-portal-accent-ink: #0e7490;
   --tly-radius: 12px;
 }
 

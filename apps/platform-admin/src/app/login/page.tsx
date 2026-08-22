@@ -1,13 +1,13 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button, Field, Input } from '@telyad/ui';
+import { Brand, Button, Field, Input } from '@telyad/ui';
 import { useAuth } from '@/lib/auth';
 
 export default function LoginPage() {
   const { login } = useAuth();
   const router = useRouter();
-  const [email, setEmail] = useState('admin@tely.example');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
@@ -38,9 +38,9 @@ export default function LoginPage() {
     >
       <form onSubmit={onSubmit} className="tly-card" style={{ width: 400, marginBottom: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-          <div className="tly-brand-mark">T</div>
-          <div className="tly-brand-name" style={{ fontSize: 18 }}>
-            Tely Master Admin
+          <Brand src="/images/logo.png" height={34} />
+          <div className="tly-brand-name tly-faint" style={{ fontSize: 13 }}>
+            Master Admin
           </div>
         </div>
         <p className="tly-page-desc" style={{ marginBottom: 8 }}>
@@ -58,7 +58,7 @@ export default function LoginPage() {
             onChange={(e) => setPassword(e.target.value)}
             type="password"
             required
-            placeholder="Enter your demo password"
+            placeholder="Enter your password"
           />
         </Field>
         <Button type="submit" block disabled={busy}>

@@ -1,6 +1,6 @@
 # Render blueprint — managed PostgreSQL + the TelyAd API.
 # One reliable, custom-domain-capable, rollback-friendly host for the API and DB.
-# The three Next.js apps deploy to Vercel (see docs/deployment/DEPLOYMENT.md).
+# The four Next.js apps deploy to Vercel (see docs/deployment/DEPLOYMENT.md).
 #
 # Usage: connect this repo as a Render Blueprint. Set the two `sync: false`
 # secrets (DEMO_USER_PASSWORD) in the dashboard. After first deploy, run a
@@ -41,7 +41,7 @@ services:
       - key: DEMO_USER_PASSWORD
         sync: false
       - key: ALLOWED_ORIGINS
-        value: https://advertiser.telyad.com,https://mtn.telyad.com,https://admin.telyad.com
+        value: https://advertiser.telyad.com,https://mtn.telyad.com,https://admin.telyad.com,https://telydial.telyad.com
       - key: API_BASE_URL
         value: https://api.telyad.com
       - key: TELYAD_ENV_LABEL

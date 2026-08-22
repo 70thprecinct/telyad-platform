@@ -34,6 +34,10 @@ export interface Store {
   // auth / directory
   getUserByEmail(email: string): Promise<StoredUser | null>;
   getUserById(id: string): Promise<StoredUser | null>;
+  createUser(user: StoredUser): Promise<StoredUser>;
+  updateUser(id: string, patch: Partial<StoredUser>): Promise<StoredUser>;
+  /** All administrator-issued demo accounts (isDemo=true). Never returns hashes to callers. */
+  listDemoUsers(): Promise<StoredUser[]>;
   listTelcos(): Promise<Telco[]>;
   getTelco(id: string): Promise<Telco | null>;
   listAdvertisers(telcoId: string): Promise<Advertiser[]>;

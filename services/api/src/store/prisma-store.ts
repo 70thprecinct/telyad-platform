@@ -115,29 +115,79 @@ export class PrismaStore implements Store {
     const u = await this.prisma.user.findUnique({ where: { id } });
     return u ? this.mapUser(u) : null;
   }
+  async createUser(user: StoredUser): Promise<StoredUser> {
+    const created = await this.prisma.user.create({ data: this.userToRow(user) as never });
+    return this.mapUser(created);
+  }
+  async updateUser(id: string, patch: Partial<StoredUser>): Promise<StoredUser> {
+    // Only persist columns that were provided.
+    const data: Record<string, unknown> = {};
+    for (const k of [
+      'name', 'email', 'realm', 'portal', 'role', 'telcoId', 'advertiserId', 'status',
+      'lastLoginAt', 'passwordHash', 'isDemo', 'organisation', 'createdAt', 'createdByUserId',
+      'createdByName', 'validFrom', 'expiresAt', 'revokedAt', 'disabled',
+    ] as const) {
+      if (k in patch) data[k] = (patch as Record<string, unknown>)[k];
+    }
+    const updated = await this.prisma.user.update({ where: { id }, data });
+    return this.mapUser(updated);
+  }
+  async listDemoUsers(): Promise<StoredUser[]> {
+    const rows = await this.prisma.user.findMany({ where: { isDemo: true } });
+    return rows.map((u) => this.mapUser(u));
+  }
+  private userToRow(u: StoredUser): Record<string, unknown> {
+    return {
+      id: u.id, name: u.name, email: u.email, realm: u.realm, portal: u.portal, role: u.role,
+      telcoId: u.telcoId, advertiserId: u.advertiserId, status: u.status, lastLoginAt: u.lastLoginAt,
+      passwordHash: u.passwordHash, isDemo: u.isDemo, organisation: u.organisation, createdAt: u.createdAt,
+      createdByUserId: u.createdByUserId, createdByName: u.createdByName, validFrom: u.validFrom,
+      expiresAt: u.expiresAt, revokedAt: u.revokedAt, disabled: u.disabled,
+    };
+  }
   private mapUser(u: {
     id: string;
     name: string;
     email: string;
     realm: string;
+    portal: string;
     role: string;
     telcoId: string | null;
     advertiserId: string | null;
     status: string;
     lastLoginAt: string | null;
     passwordHash: string;
+    isDemo: boolean;
+    organisation: string | null;
+    createdAt: string;
+    createdByUserId: string | null;
+    createdByName: string | null;
+    validFrom: string | null;
+    expiresAt: string | null;
+    revokedAt: string | null;
+    disabled: boolean;
   }): StoredUser {
     return {
       id: asId<'UserId'>(u.id),
       name: u.name,
       email: u.email,
       realm: u.realm as Realm,
+      portal: u.portal as StoredUser['portal'],
       role: u.role as AnyRole,
       telcoId: u.telcoId ? asId<'TelcoId'>(u.telcoId) : null,
       advertiserId: u.advertiserId ? asId<'AdvertiserId'>(u.advertiserId) : null,
       status: u.status as 'Active' | 'Suspended',
       lastLoginAt: u.lastLoginAt,
       passwordHash: u.passwordHash,
+      isDemo: u.isDemo,
+      organisation: u.organisation,
+      createdAt: u.createdAt,
+      createdByUserId: u.createdByUserId ? asId<'UserId'>(u.createdByUserId) : null,
+      createdByName: u.createdByName,
+      validFrom: u.validFrom,
+      expiresAt: u.expiresAt,
+      revokedAt: u.revokedAt,
+      disabled: u.disabled,
     };
   }
 

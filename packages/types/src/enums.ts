@@ -68,6 +68,32 @@ export type ApprovalDecision = (typeof APPROVAL_DECISIONS)[number];
 export const REALMS = ['advertiser', 'telco', 'platform'] as const;
 export type Realm = (typeof REALMS)[number];
 
+// ── Portals (product surfaces) ───────────────────────────────────────────────
+// A portal is the app a user signs into. It is distinct from the RBAC realm:
+// Advertiser and TelyDial are separate portals that share the 'advertiser'
+// realm, so portal isolation must be enforced independently of realm.
+export const PORTALS = ['advertiser', 'telco', 'admin', 'telydial'] as const;
+export type Portal = (typeof PORTALS)[number];
+
+/** The RBAC realm a portal authenticates against. */
+export const PORTAL_REALM: Record<Portal, Realm> = {
+  advertiser: 'advertiser',
+  telydial: 'advertiser',
+  telco: 'telco',
+  admin: 'platform',
+};
+
+// ── Demo access lifecycle ────────────────────────────────────────────────────
+export const DEMO_ACCESS_STATUSES = [
+  'Scheduled',
+  'Active',
+  'Expiring Soon',
+  'Expired',
+  'Revoked',
+  'Disabled',
+] as const;
+export type DemoAccessStatus = (typeof DEMO_ACCESS_STATUSES)[number];
+
 export const ADVERTISER_ROLES = [
   'Advertiser Admin',
   'Campaign Manager',

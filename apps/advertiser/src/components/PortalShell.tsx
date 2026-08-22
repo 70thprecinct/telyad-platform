@@ -25,8 +25,8 @@ export function PortalShell({ active, children }: { active: string; children: Re
 
   return (
     <AppShell
-      brandMark="T"
-      brandName="TelyAds"
+      brandLogo="/images/logo.png"
+      brandName="Advertiser"
       netBadge={{ label: 'Live network', value: '🇳🇬 MTN Nigeria' }}
       nav={NAV}
       activeId={active}
