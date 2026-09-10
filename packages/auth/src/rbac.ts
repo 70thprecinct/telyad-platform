@@ -23,6 +23,24 @@ export const ROLE_PERMISSIONS: Record<Realm, Record<string, Permission[]>> = {
     Analyst: ['campaign:view', 'reports:export'],
     Finance: ['campaign:view', 'wallet:manage', 'reports:export'],
     'Read Only': ['campaign:view'],
+    // TelyDial portal roles (same advertiser realm; distinct display labels).
+    'TelyDial Admin': [
+      'campaign:create',
+      'campaign:submit',
+      'campaign:view',
+      'campaign:launch',
+      'creative:manage',
+      'wallet:manage',
+      'reports:export',
+      'users:manage',
+    ],
+    'Acquisition/Marketing Manager': [
+      'campaign:create',
+      'campaign:submit',
+      'campaign:view',
+      'creative:manage',
+      'reports:export',
+    ],
   },
   telco: {
     'Telco Super Admin': [

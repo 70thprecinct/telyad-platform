@@ -236,3 +236,89 @@ describe('demo access — audit', () => {
     expect(serialised).not.toContain(pw);
   });
 });
+
+describe('DA-01 — telco tenant selection', () => {
+  it('rejects MTN/operator console create without tenantId', async () => {
+    const t = await adminToken();
+    const res = await createDemo(t, {
+      email: 'ops-demo@company.example',
+      portal: 'telco',
+      role: 'Operations Manager',
+      organisation: 'MTN Nigeria',
+    });
+    expect(res.statusCode).toBe(400);
+    expect(res.json().error).toMatch(/tenantId/);
+  });
+
+  it('accepts a real telco id and persists telcoId (not the display name)', async () => {
+    const t = await adminToken();
+    const res = await createDemo(t, {
+      email: 'ops-tenant@company.example',
+      portal: 'telco',
+      role: 'Operations Manager',
+      tenantId: 'telco_mtn_ng',
+    });
+    expect(res.statusCode).toBe(201);
+    const u = await store.getUserByEmail('ops-tenant@company.example');
+    expect(u?.portal).toBe('telco');
+    expect(u?.realm).toBe('telco');
+    expect(u?.telcoId).toBe('telco_mtn_ng');
+    expect(u?.organisation).toBe('MTN Nigeria');
+  });
+});
+
+describe('DA-02 — TelyDial role catalogue', () => {
+  it('creates a TelyDial user with portal=telydial and a TelyDial role', async () => {
+    const t = await adminToken();
+    const res = await createDemo(t, {
+      email: 'dial@company.example',
+      portal: 'telydial',
+      role: 'TelyDial Admin',
+    });
+    expect(res.statusCode).toBe(201);
+    expect(res.json().user.portal).toBe('telydial');
+    expect(res.json().user.role).toBe('TelyDial Admin');
+    expect(res.json().user.role).not.toBe('Advertiser Admin');
+    const u = await store.getUserByEmail('dial@company.example');
+    expect(u?.portal).toBe('telydial');
+    expect(u?.realm).toBe('advertiser');
+    expect(u?.role).toBe('TelyDial Admin');
+  });
+
+  it('rejects Advertiser Admin for the telydial portal', async () => {
+    const t = await adminToken();
+    const res = await createDemo(t, {
+      email: 'wrong-role@company.example',
+      portal: 'telydial',
+      role: 'Advertiser Admin',
+    });
+    expect(res.statusCode).toBe(400);
+  });
+});
+
+describe('DA-03 — strong generated temporary passwords', () => {
+  it('never returns the shared default 12345678 and ignores client-supplied passwords', async () => {
+    const t = await adminToken();
+    const res = await createDemo(t, {
+      email: 'strong@company.example',
+      password: '12345678',
+      generatePassword: undefined,
+    });
+    expect(res.statusCode).toBe(201);
+    const pw = res.json().credentials.password as string;
+    expect(pw).not.toBe('12345678');
+    expect(pw.length).toBeGreaterThanOrEqual(16);
+    // Login works with the generated password, not the client-supplied one.
+    expect((await login('strong@company.example', '12345678', 'advertiser')).statusCode).toBe(401);
+    expect((await login('strong@company.example', pw, 'advertiser')).statusCode).toBe(200);
+  });
+
+  it('issues a unique password per account', async () => {
+    const t = await adminToken();
+    const a = await createDemo(t, { email: 'uniq-a@company.example' });
+    const b = await createDemo(t, { email: 'uniq-b@company.example' });
+    expect(a.statusCode).toBe(201);
+    expect(b.statusCode).toBe(201);
+    expect(a.json().credentials.password).not.toBe(b.json().credentials.password);
+  });
+});

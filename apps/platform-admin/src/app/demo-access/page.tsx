@@ -1,12 +1,11 @@
 'use client';
 import { useEffect, useMemo, useState } from 'react';
 import {
-  ADVERTISER_ROLES,
-  PLATFORM_ROLES,
-  TELCO_ROLES,
+  ROLES_FOR_PORTAL,
   type CreateDemoUserRequest,
   type DemoUserView,
   type Portal,
+  type Telco,
 } from '@telyad/types';
 import { Badge, Button, Card, CardHead, Field, Input, PageHeader, Select, Table } from '@telyad/ui';
 import { Modal } from '@telyad/ui';
@@ -18,13 +17,6 @@ const PORTAL_LABEL: Record<Portal, string> = {
   telco: 'MTN / Operator Console',
   admin: 'Tely Master Admin',
   telydial: 'TelyDial',
-};
-
-const ROLES_FOR: Record<Portal, readonly string[]> = {
-  advertiser: ADVERTISER_ROLES,
-  telydial: ADVERTISER_ROLES,
-  telco: TELCO_ROLES,
-  admin: PLATFORM_ROLES,
 };
 
 const DURATIONS: { label: string; hours: number }[] = [
@@ -167,29 +159,50 @@ function CreateDemoModal({ onClose, onCreated }: { onClose: () => void; onCreate
   const [email, setEmail] = useState('');
   const [portal, setPortal] = useState<Portal>('advertiser');
   const [organisation, setOrganisation] = useState('');
-  const [role, setRole] = useState<string>(ADVERTISER_ROLES[0]!);
+  const [telcoId, setTelcoId] = useState('');
+  const [telcos, setTelcos] = useState<Telco[]>([]);
+  const [telcosLoaded, setTelcosLoaded] = useState(false);
+  const [role, setRole] = useState<string>(ROLES_FOR_PORTAL.advertiser[0]!);
   const [hours, setHours] = useState(72);
-  const [pwMode, setPwMode] = useState<'generate' | 'manual'>('generate');
-  const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
 
-  const roles = ROLES_FOR[portal];
+  const roles = ROLES_FOR_PORTAL[portal];
   const validFrom = useMemo(() => new Date().toISOString(), []);
   const expiresAt = useMemo(() => new Date(Date.parse(validFrom) + hours * 3600_000).toISOString(), [validFrom, hours]);
 
+  useEffect(() => {
+    api
+      .listTelcos()
+      .then((r) => {
+        setTelcos(r.telcos);
+        if (r.telcos[0] && !telcoId) setTelcoId(r.telcos[0].id);
+      })
+      .catch(() => setTelcos([]))
+      .finally(() => setTelcosLoaded(true));
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- load once on mount
+  }, []);
+
   async function submit() {
     setErr('');
+    if (portal === 'telco' && !telcoId) {
+      setErr('Select a telco tenant for the operator console portal.');
+      return;
+    }
     setBusy(true);
     try {
       const input: CreateDemoUserRequest = {
         name,
         email,
         portal,
-        organisation: organisation || undefined,
         role,
         durationHours: hours,
-        ...(pwMode === 'manual' ? { password } : { generatePassword: true }),
+        generatePassword: true,
+        ...(portal === 'telco'
+          ? { tenantId: telcoId }
+          : organisation
+            ? { organisation }
+            : {}),
       };
       const res = await api.createDemoUser(input);
       onCreated(res.credentials);
@@ -215,13 +228,30 @@ function CreateDemoModal({ onClose, onCreated }: { onClose: () => void; onCreate
             onChange={(e) => {
               const p = e.target.value as Portal;
               setPortal(p);
-              setRole(ROLES_FOR[p][0]!);
+              setRole(ROLES_FOR_PORTAL[p][0]!);
             }}
           />
         </Field>
-        <Field label="Organisation / tenant">
-          <Input value={organisation} onChange={(e) => setOrganisation(e.target.value)} placeholder="Coca-Cola Demo" />
-        </Field>
+        {portal === 'telco' ? (
+          <Field label="Telco / tenant">
+            <Select
+              value={telcoId}
+              data-testid="telco-tenant-select"
+              options={
+                telcosLoaded && telcos.length === 0
+                  ? [{ value: '', label: 'No telcos available' }]
+                  : telcos.map((t) => ({ value: t.id, label: `${t.name} (${t.country})` }))
+              }
+              onChange={(e) => setTelcoId(e.target.value)}
+              disabled={!telcosLoaded || telcos.length === 0}
+            />
+            <div className="hint">Uses the persistent telco ID from the directory — not the display name.</div>
+          </Field>
+        ) : (
+          <Field label="Organisation">
+            <Input value={organisation} onChange={(e) => setOrganisation(e.target.value)} placeholder="Coca-Cola Demo" />
+          </Field>
+        )}
         <Field label="Role">
           <Select
             value={role}
@@ -238,24 +268,16 @@ function CreateDemoModal({ onClose, onCreated }: { onClose: () => void; onCreate
           <div className="hint">Valid {fmt(validFrom)} → {fmt(expiresAt)}</div>
         </Field>
         <Field label="Temporary password">
-          <div style={{ display: 'flex', gap: 8, marginBottom: pwMode === 'manual' ? 8 : 0 }}>
-            <Button size="sm" variant={pwMode === 'generate' ? 'primary' : 'ghost'} onClick={() => setPwMode('generate')}>
-              Generate strong password
-            </Button>
-            <Button size="sm" variant={pwMode === 'manual' ? 'primary' : 'ghost'} onClick={() => setPwMode('manual')}>
-              Set manually
-            </Button>
+          <div className="hint" data-testid="password-policy-hint">
+            A cryptographically strong unique password is generated server-side and shown once after creation.
           </div>
-          {pwMode === 'manual' && (
-            <Input type="text" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 8 characters" />
-          )}
         </Field>
         {err && <div className="hint" style={{ color: 'var(--tly-danger)' }}>{err}</div>}
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 10 }}>
           <Button variant="ghost" onClick={onClose}>Cancel</Button>
           <Button
             onClick={submit}
-            disabled={busy || !name || !email || (pwMode === 'manual' && password.length < 8)}
+            disabled={busy || !name || !email || (portal === 'telco' && !telcoId)}
             data-testid="submit-demo-user"
           >
             {busy ? 'Creating…' : 'Create Demo Access'}

@@ -183,7 +183,7 @@ export const DEMO_USERS: DemoUser[] = [
     email: 'provider@telydial.example',
     realm: 'advertiser',
     portal: 'telydial',
-    role: 'Advertiser Admin',
+    role: 'TelyDial Admin',
     telcoId: MTN_TELCO_ID,
     advertiserId: TOYOTA_ADVERTISER_ID,
   },

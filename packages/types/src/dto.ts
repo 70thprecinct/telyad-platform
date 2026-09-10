@@ -34,7 +34,11 @@ export const createDemoUserSchema = z
     tenantId: z.string().min(1).optional(),
     organisation: z.string().min(1).optional(),
     role: z.string().min(1),
-    /** Provide a manual password, or omit/set generate=true for a strong one. */
+    /**
+     * Client-supplied passwords are ignored. A cryptographically strong password
+     * is always generated server-side (DA-03). `generatePassword` remains accepted
+     * for backwards-compatible clients.
+     */
     password: z.string().min(8).optional(),
     generatePassword: z.boolean().optional(),
     /** ISO timestamps. validFrom defaults to now; provide expiresAt or durationHours. */
@@ -45,16 +49,12 @@ export const createDemoUserSchema = z
   .refine((v) => v.expiresAt || v.durationHours, {
     message: 'Provide expiresAt or durationHours',
     path: ['expiresAt'],
-  })
-  .refine((v) => v.password || v.generatePassword, {
-    message: 'Provide a password or set generatePassword',
-    path: ['password'],
   });
 export type CreateDemoUserRequest = z.infer<typeof createDemoUserSchema>;
 
 export const extendDemoUserSchema = z.object({ expiresAt: z.string().datetime() });
+/** Reset always generates a strong password server-side; body may be empty. */
 export const resetDemoPasswordSchema = z.object({
-  password: z.string().min(8).optional(),
   generatePassword: z.boolean().optional(),
 });
 
