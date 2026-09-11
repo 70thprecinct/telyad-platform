@@ -17,6 +17,7 @@ import {
   loginRequestSchema,
   PORTAL_REALM,
   resetDemoPasswordSchema,
+  ROLES_FOR_PORTAL,
   type AuditEvent,
   type AuthUser,
   type Campaign,
@@ -297,7 +298,8 @@ export function buildApp({ store, logger = false }: AppOptions): FastifyInstance
     // pick or widen its own role/realm/portal.
     const portal = input.portal as Portal;
     const realm = PORTAL_REALM[portal];
-    if (permissionsFor(realm, input.role as never).length === 0) {
+    const allowedRoles = ROLES_FOR_PORTAL[portal];
+    if (!allowedRoles.includes(input.role) || permissionsFor(realm, input.role as never).length === 0) {
       return reply.code(400).send({ error: `Role "${input.role}" is not valid for the ${portal} portal` });
     }
 
@@ -329,7 +331,9 @@ export function buildApp({ store, logger = false }: AppOptions): FastifyInstance
       return reply.code(400).send({ error: 'expiresAt must be after validFrom' });
     }
 
-    const plainPassword = input.password ?? generatePassword();
+    // DA-03: always generate a unique strong password server-side. Client-supplied
+    // passwords (including shared defaults like 12345678) are never accepted.
+    const plainPassword = generatePassword();
     const user = {
       id: asId<'UserId'>(randomUUID()),
       name: input.name,
@@ -422,7 +426,8 @@ export function buildApp({ store, logger = false }: AppOptions): FastifyInstance
     if (!parsed.success) return reply.code(400).send({ error: 'Invalid reset payload' });
     const u = await getDemoUserOr404((req.params as { id: string }).id, reply);
     if (!u) return;
-    const plainPassword = parsed.data.password ?? generatePassword();
+    // DA-03: reset always issues a new cryptographically strong password.
+    const plainPassword = generatePassword();
     await store.updateUser(u.id, { passwordHash: hashPassword(plainPassword) });
     await audit(req, { action: 'Reset demo access password', target: u.email, before: null, after: null });
     return { credentials: { email: u.email, password: plainPassword, portal: u.portal, expiresAt: u.expiresAt } };

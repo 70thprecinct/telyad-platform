@@ -25,4 +25,15 @@ describe('RBAC model', () => {
   it('returns no permissions for an unknown role', () => {
     expect(permissionsFor('telco', 'Nonexistent Role' as never)).toEqual([]);
   });
+
+  it('maps TelyDial Admin onto advertiser-realm admin permissions (DA-02)', () => {
+    expect(hasPermission('advertiser', 'TelyDial Admin', 'campaign:create')).toBe(true);
+    expect(hasPermission('advertiser', 'TelyDial Admin', 'users:manage')).toBe(true);
+    expect(hasPermission('advertiser', 'TelyDial Admin', 'campaign:approve')).toBe(false);
+  });
+
+  it('maps Acquisition/Marketing Manager without wallet or approve rights', () => {
+    expect(hasPermission('advertiser', 'Acquisition/Marketing Manager', 'campaign:submit')).toBe(true);
+    expect(hasPermission('advertiser', 'Acquisition/Marketing Manager', 'wallet:manage')).toBe(false);
+  });
 });

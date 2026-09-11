@@ -104,6 +104,17 @@ export const ADVERTISER_ROLES = [
 ] as const;
 export type AdvertiserRole = (typeof ADVERTISER_ROLES)[number];
 
+/** TelyDial portal roles (advertiser realm). Distinct labels from Advertiser Admin. */
+export const TELYDIAL_ROLES = [
+  'TelyDial Admin',
+  'Campaign Manager',
+  'Acquisition/Marketing Manager',
+  'Analyst',
+  'Finance',
+  'Read Only',
+] as const;
+export type TelyDialRole = (typeof TELYDIAL_ROLES)[number];
+
 export const TELCO_ROLES = [
   'Telco Super Admin',
   'Commercial Manager',
@@ -129,7 +140,15 @@ export const PLATFORM_ROLES = [
 ] as const;
 export type PlatformRole = (typeof PLATFORM_ROLES)[number];
 
-export type AnyRole = AdvertiserRole | TelcoRole | PlatformRole;
+export type AnyRole = AdvertiserRole | TelyDialRole | TelcoRole | PlatformRole;
+
+/** Roles permitted for each portal (Demo Access + admin UX). */
+export const ROLES_FOR_PORTAL: Record<Portal, readonly string[]> = {
+  advertiser: ADVERTISER_ROLES,
+  telydial: TELYDIAL_ROLES,
+  telco: TELCO_ROLES,
+  admin: PLATFORM_ROLES,
+};
 
 // ── Permissions (server-enforced) ────────────────────────────────────────────
 export const PERMISSIONS = [
