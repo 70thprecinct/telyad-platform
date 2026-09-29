@@ -1,4 +1,23 @@
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 /** Centralised environment access. Secrets come from env, never source. */
+
+if (typeof process.loadEnvFile === 'function') {
+  const candidates = [
+    path.resolve(process.cwd(), '.env'),
+    path.resolve(process.cwd(), 'services/api/.env'),
+    fileURLToPath(new URL('../.env', import.meta.url)),
+  ];
+  for (const candidate of candidates) {
+    try {
+      process.loadEnvFile(candidate);
+      break;
+    } catch {
+      // Continue searching
+    }
+  }
+}
 
 function optional(name: string, fallback: string): string {
   const v = process.env[name];

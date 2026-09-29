@@ -141,7 +141,7 @@ export default function MarketplacePage() {
       <PageHeader
         eyebrow="Discover"
         title="Ad Format Marketplace"
-        desc="Explore the full TelyAd carrier-advertising capability portfolio. Demonstration environment — figures are illustrative."
+        desc="Explore the full TelyAd carrier-advertising capability portfolio. Demonstration environment figures are illustrative."
       />
       <div
         style={{

@@ -102,7 +102,7 @@ export default function AiPage() {
       <PageHeader
         eyebrow="Delivery · AI Tools"
         title="AI Tools"
-        desc="Deterministic, rule-based intelligence across the campaign lifecycle. Demonstration intelligence — not production ML."
+        desc="Deterministic, rule-based intelligence across the campaign lifecycle. Demonstration intelligence not production ML."
       />
       <div
         style={{
@@ -124,7 +124,7 @@ export default function AiPage() {
           { name: 'Media Planner', desc: 'Allocate budget across the 48-capability portfolio.', active: true },
           { name: 'Audience Opportunity', desc: 'Surface high-intent segments and reach upside.', active: true },
           { name: 'Creative Intelligence', desc: 'Format-fit guidance and creative previews.', active: false },
-          { name: 'Multilingual Intelligence', desc: 'Pidgin / Yoruba / Hausa / Igbo variants — human review required.', active: true },
+          { name: 'Multilingual Intelligence', desc: 'Pidgin / Yoruba / Hausa / Igbo variants human review required.', active: true },
           { name: 'Budget Optimisation', desc: 'Shift spend toward best-performing channels.', active: false },
           { name: 'Forecasting', desc: 'Project reach, frequency and cost before launch.', active: true },
         ].map((m) => (

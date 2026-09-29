@@ -8,6 +8,10 @@ const nextConfig = {
     '@telyad/audience',
     '@telyad/campaign-engine',
   ],
+  devIndicators: {
+    buildActivity: false,
+    appIsrStatus: false,
+  },
 };
 
 export default nextConfig;

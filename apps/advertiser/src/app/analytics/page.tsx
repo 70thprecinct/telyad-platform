@@ -20,7 +20,7 @@ export default function AnalyticsPage() {
       <PageHeader
         eyebrow="OVERVIEW · PERFORMANCE"
         title="Analytics"
-        desc="Campaign performance across MTN network surfaces — STK Push, SMS, USSD, WAP Push and OBD Voice. These are demonstration analytics, not live MTN production statistics."
+        desc="Campaign performance across MTN network surfaces STK Push, SMS, USSD, WAP Push and OBD Voice. These are demonstration analytics, not live MTN production statistics."
       />
       <DemoNote />
 
@@ -53,7 +53,7 @@ export default function AnalyticsPage() {
 
       <div className="tly-grid-2">
         <Card>
-          <CardHead title="Daily spend — last 14 days" sub="Media spend, WAT" />
+          <CardHead title="Daily spend last 14 days" sub="Media spend, WAT" />
           <LineChart data={SPEND_TREND.data} labels={SPEND_TREND.labels} />
           <DemoNote />
         </Card>

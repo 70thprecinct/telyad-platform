@@ -1,0 +1,798 @@
+/* ============================================================================
+   Platform Admin — Login Page Styles
+   Executive control plane palette: deep obsidian teal with cyan portal accents.
+   ============================================================================ */
+
+.pageContainer {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background-color: #f5f7f8;
+  position: relative;
+  overflow: hidden;
+  font-family: var(--tly-font-body, 'Inter', sans-serif);
+}
+
+/* ── Ambient Background Confetti & Shapes ─────────────────────────────────── */
+.bgDecoPill1 {
+  position: absolute;
+  top: 6%;
+  left: 8%;
+  width: 16px;
+  height: 28px;
+  border-radius: 14px;
+  background: #06b6d4;
+  transform: rotate(35deg);
+  opacity: 0.5;
+  pointer-events: none;
+}
+.bgDecoDot1 {
+  position: absolute;
+  top: 14%;
+  left: 14%;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ee5d2b;
+  opacity: 0.35;
+  pointer-events: none;
+}
+.bgDecoPill2 {
+  position: absolute;
+  top: 5%;
+  right: 12%;
+  width: 32px;
+  height: 18px;
+  border-radius: 16px;
+  background: #0891b2;
+  transform: rotate(-25deg);
+  opacity: 0.55;
+  pointer-events: none;
+}
+.bgDecoDot2 {
+  position: absolute;
+  top: 7%;
+  right: 18%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #10b981;
+  opacity: 0.5;
+  pointer-events: none;
+}
+.bgDecoDot3 {
+  position: absolute;
+  bottom: 8%;
+  left: 5%;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #0ea5e9;
+  opacity: 0.55;
+  pointer-events: none;
+}
+.bgDecoPill3 {
+  position: absolute;
+  bottom: 5%;
+  right: 8%;
+  width: 22px;
+  height: 38px;
+  border-radius: 19px;
+  background: #6366f1;
+  transform: rotate(-35deg);
+  opacity: 0.5;
+  pointer-events: none;
+}
+.bgDecoBlob {
+  position: absolute;
+  width: 550px;
+  height: 550px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(8, 145, 178, 0.08) 0%, rgba(245, 247, 248, 0) 70%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* ── Central Modal Card ───────────────────────────────────────────────────── */
+.modalCard {
+  width: 100%;
+  max-width: 1040px;
+  min-height: 640px;
+  background: #ffffff;
+  border-radius: 28px;
+  box-shadow:
+    0 25px 60px -15px rgba(16, 24, 40, 0.12),
+    0 4px 20px -2px rgba(16, 24, 40, 0.05),
+    0 0 0 1px rgba(227, 232, 238, 0.6);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+  position: relative;
+  z-index: 2;
+}
+
+/* ── Left Hero Side (Platform Control Visual) ─────────────────────────────── */
+.heroSide {
+  background: linear-gradient(150deg, #0c2433 0%, #071720 45%, #030d12 100%);
+  padding: 44px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  color: #ffffff;
+}
+
+/* Hero Background Circles & Floating Accents */
+.heroGlow1 {
+  position: absolute;
+  top: -80px;
+  left: -80px;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.22) 0%, rgba(6, 182, 212, 0) 70%);
+  pointer-events: none;
+}
+.heroGlow2 {
+  position: absolute;
+  bottom: -60px;
+  right: -60px;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(238, 93, 43, 0.12) 0%, rgba(0, 0, 0, 0) 70%);
+  pointer-events: none;
+}
+.heroShape1 {
+  position: absolute;
+  top: 12%;
+  left: 12%;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #22d3ee;
+  opacity: 0.9;
+  pointer-events: none;
+}
+.heroShape2 {
+  position: absolute;
+  top: 10%;
+  right: 18%;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #34d399;
+  opacity: 0.8;
+  pointer-events: none;
+}
+.heroShape3 {
+  position: absolute;
+  top: 45%;
+  right: 6%;
+  width: 28px;
+  height: 14px;
+  border-radius: 14px;
+  background: #0ea5e9;
+  transform: rotate(-25deg);
+  opacity: 0.85;
+  pointer-events: none;
+}
+.heroShape4 {
+  position: absolute;
+  top: 38%;
+  left: 8%;
+  width: 16px;
+  height: 28px;
+  border-radius: 14px;
+  background: #38bdf8;
+  transform: rotate(30deg);
+  opacity: 0.85;
+  pointer-events: none;
+}
+.heroWaveArc {
+  position: absolute;
+  bottom: 22%;
+  left: 8%;
+  width: 44px;
+  height: 20px;
+  border: 4px solid #22d3ee;
+  border-top: none;
+  border-radius: 0 0 44px 44px;
+  opacity: 0.6;
+  transform: rotate(-15deg);
+  pointer-events: none;
+}
+
+/* ── Hero Graphics / Floating Cards Composition ───────────────────────────── */
+.cardShowcase {
+  position: relative;
+  width: 100%;
+  height: 380px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+/* Main Card (Tilted) */
+.mainCard {
+  position: absolute;
+  width: 260px;
+  min-height: 325px;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow:
+    0 22px 50px rgba(0, 0, 0, 0.35),
+    0 4px 14px rgba(0, 0, 0, 0.15);
+  transform: rotate(-4deg);
+  z-index: 2;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  color: #10192a;
+}
+.mainCard:hover {
+  transform: rotate(-2deg) translateY(-4px);
+}
+
+/* Placeholder for the creative image */
+.creativePlaceholder {
+  width: 100%;
+  height: 110px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #e0f2fe 0%, #cffafe 50%, #bae6fd 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  border: 1.5px dashed rgba(8, 145, 178, 0.4);
+  margin-bottom: 12px;
+}
+.placeholderPattern {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(8, 145, 178, 0.18) 1.5px, transparent 1.5px);
+  background-size: 10px 10px;
+  pointer-events: none;
+}
+.placeholderTag {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(4px);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  color: #0e7490;
+  text-transform: uppercase;
+}
+.placeholderIconBox {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  color: #0891b2;
+  margin-bottom: 4px;
+}
+.placeholderLabel {
+  font-size: 10px;
+  font-weight: 600;
+  color: #0e7490;
+}
+
+.mainCardContent {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.mainCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.mainCardTag {
+  font-size: 9px;
+  font-weight: 700;
+  color: #0891b2;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.mainCardStatus {
+  background: #ecfeff;
+  color: #0e7490;
+  font-size: 9px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  border: 1px solid #cffafe;
+}
+.mainCardStatusDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #06b6d4;
+}
+.mainCardTitle {
+  font-family: var(--tly-font-display, 'Space Grotesk', sans-serif);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #10192a;
+  line-height: 1.25;
+  margin: 0;
+}
+.mainCardList {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 4px;
+  border-top: 1px solid #f1f4f9;
+  padding-top: 8px;
+  max-width: 145px;
+}
+.mainCardListItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10px;
+  color: #475467;
+}
+.itemKey {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #667085;
+  font-size: 9.5px;
+}
+.itemVal {
+  font-weight: 600;
+  color: #10192a;
+  font-size: 9.5px;
+  white-space: nowrap;
+}
+
+/* Secondary Floating Card (Overlapping Bottom Right) */
+.subCard {
+  position: absolute;
+  right: 6px;
+  bottom: 12px;
+  width: 178px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 12px 14px;
+  box-shadow:
+    0 18px 38px rgba(0, 0, 0, 0.25),
+    0 4px 10px rgba(0, 0, 0, 0.1);
+  transform: rotate(3.5deg);
+  z-index: 3;
+  color: #10192a;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.subCard:hover {
+  transform: rotate(1.5deg) translateY(-3px);
+}
+.subCardItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+.subCardItem:not(:last-child) {
+  border-bottom: 1px solid #f3f5f8;
+}
+.subCardBadge {
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+}
+.subCardItemText {
+  display: flex;
+  flex-direction: column;
+}
+.subCardItemTitle {
+  font-size: 10px;
+  font-weight: 600;
+  color: #10192a;
+}
+.subCardItemDesc {
+  font-size: 8.5px;
+  color: #8c97a8;
+}
+
+/* Floating Squircle Platform Badge (Top Right) */
+.floatingBadge {
+  position: absolute;
+  top: 32px;
+  right: 28px;
+  width: 48px;
+  height: 48px;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(8deg);
+  z-index: 4;
+  color: #0891b2;
+  transition: transform 0.3s ease;
+}
+.floatingBadge:hover {
+  transform: rotate(0deg) scale(1.06);
+}
+
+/* Floating Pill Tag (Bottom Left) */
+.floatingPill {
+  position: absolute;
+  bottom: 44px;
+  left: 14px;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+  transform: rotate(-3deg);
+  z-index: 4;
+  font-size: 10px;
+  font-weight: 600;
+  color: #10192a;
+  transition: transform 0.3s ease;
+}
+.floatingPill:hover {
+  transform: rotate(0deg) translateY(-2px);
+}
+.pillPlayIcon {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #cffafe;
+  color: #0891b2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+}
+
+/* ── Hero Carousel Footer ─────────────────────────────────────────────────── */
+.heroFooter {
+  position: relative;
+  z-index: 2;
+  margin-top: 14px;
+  text-align: center;
+  padding: 0 10px;
+}
+.heroHeadline {
+  font-family: var(--tly-font-display, 'Space Grotesk', sans-serif);
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0 0 8px;
+  letter-spacing: -0.3px;
+  min-height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.heroSubtext {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.82);
+  margin: 0 auto 16px;
+  max-width: 380px;
+  min-height: 38px;
+}
+.carouselDots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.dotActive {
+  width: 22px;
+  border-radius: 10px;
+  background: #22d3ee;
+}
+
+/* ── Right Form Side ──────────────────────────────────────────────────────── */
+.formSide {
+  background: #ffffff;
+  padding: 48px 46px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+
+.formHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.logoBadge {
+  width: 82px;
+  height: 54px;
+  border-radius: 16px;
+  background: #ecfeff;
+  border: 1px solid #cffafe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+  padding: 6px 12px;
+  box-shadow: 0 4px 14px rgba(8, 145, 178, 0.1);
+}
+
+.welcomeTitle {
+  font-family: var(--tly-font-display, 'Space Grotesk', sans-serif);
+  font-size: 30px;
+  font-weight: 700;
+  color: #101928;
+  margin: 0 0 8px;
+  letter-spacing: -0.6px;
+}
+
+.welcomeDesc {
+  font-size: 13.5px;
+  color: #667085;
+  margin: 0;
+  line-height: 1.45;
+  max-width: 340px;
+}
+
+/* ── Form Inputs ──────────────────────────────────────────────────────────── */
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.inputGroup {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputField {
+  width: 100%;
+  height: 48px;
+  border: 1.5px solid #e4e7ec;
+  border-radius: 12px;
+  background: #fcfcfd;
+  padding: 0 44px 0 16px;
+  font-size: 14px;
+  color: #101928;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  outline: none;
+}
+.inputField::placeholder {
+  color: #98a2b3;
+}
+.inputField:hover {
+  border-color: #d0d5dd;
+  background: #ffffff;
+}
+.inputField:focus {
+  border-color: #0891b2;
+  background: #ffffff;
+  box-shadow: 0 0 0 3.5px rgba(8, 145, 178, 0.15);
+}
+
+.inputIconRight {
+  position: absolute;
+  right: 14px;
+  color: #98a2b3;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.passwordToggle {
+  position: absolute;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: #98a2b3;
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: color 0.2s ease;
+}
+.passwordToggle:hover {
+  color: #344054;
+}
+
+/* ── Options Row (Remember Me) ────────────────────────────────────────────── */
+.optionsRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-top: -2px;
+  margin-bottom: 4px;
+}
+
+.rememberMeLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  color: #667085;
+  user-select: none;
+}
+.checkbox {
+  appearance: none;
+  width: 17px;
+  height: 17px;
+  border: 1.5px solid #d0d5dd;
+  border-radius: 5px;
+  outline: none;
+  cursor: pointer;
+  display: inline-grid;
+  place-content: center;
+  margin: 0;
+  background: #ffffff;
+  transition: all 0.2s ease;
+}
+.checkbox:checked {
+  background: #0891b2;
+  border-color: #0891b2;
+}
+.checkbox:checked::before {
+  content: '';
+  width: 9px;
+  height: 5px;
+  border-left: 2px solid #ffffff;
+  border-bottom: 2px solid #ffffff;
+  transform: rotate(-45deg) translate(1px, -1px);
+}
+.checkbox:focus-visible {
+  box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.2);
+}
+
+/* ── Error Banner ─────────────────────────────────────────────────────────── */
+.errorAlert {
+  padding: 10px 14px;
+  background: #fef2f2;
+  border: 1px solid #fee2e2;
+  border-radius: 10px;
+  color: #b91c1c;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+/* ── Primary Submit Button ────────────────────────────────────────────────── */
+.submitBtn {
+  width: 100%;
+  height: 48px;
+  border: none;
+  border-radius: 12px;
+  background: #0891b2;
+  color: #ffffff;
+  font-size: 14.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(8, 145, 178, 0.28);
+  transition: all 0.2s ease;
+}
+.submitBtn:hover:not(:disabled) {
+  background: #0e7490;
+  box-shadow: 0 6px 16px rgba(8, 145, 178, 0.35);
+  transform: translateY(-1px);
+}
+.submitBtn:active:not(:disabled) {
+  transform: translateY(0);
+}
+.submitBtn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.spinnerIcon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── Demo Quick Fill Helper ──────────────────────────────────────────────── */
+.demoHelperBox {
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.demoHelperText {
+  font-size: 11.5px;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.demoFillBtn {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 4px 9px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #0891b2;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.demoFillBtn:hover {
+  background: #ecfeff;
+  border-color: #a5f3fc;
+}
+
+/* ── Responsive Behavior ──────────────────────────────────────────────────── */
+@media (max-width: 880px) {
+  .modalCard {
+    grid-template-columns: 1fr;
+    max-width: 480px;
+    border-radius: 20px;
+  }
+  .heroSide {
+    display: none;
+  }
+  .formSide {
+    padding: 36px 24px;
+  }
+}

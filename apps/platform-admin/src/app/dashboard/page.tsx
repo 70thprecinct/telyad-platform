@@ -34,7 +34,7 @@ export default function DashboardPage() {
       <PageHeader
         eyebrow="All telcos · aggregated"
         title="Global Dashboard"
-        desc="Cross-telco control plane for Tely staff. No individual subscriber data ever appears here — aggregates only. Each telco operates a fully isolated environment."
+        desc="Cross-telco control plane for Tely staff. No individual subscriber data ever appears here aggregates only. Each telco operates a fully isolated environment."
       />
 
       <KpiGrid>

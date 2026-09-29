@@ -45,23 +45,24 @@ export function AppShell(props: AppShellProps) {
               src={props.brandLogo}
               alt="TelyAd"
               className="tly-brand-logo"
-              // Fixed height, width auto → the official proportions are preserved.
-              style={{ height: 26, width: 'auto', display: 'block' }}
             />
           ) : (
             <div className="tly-brand-mark">{props.brandMark}</div>
           )}
-          <div className="tly-brand-name">{props.brandName}</div>
+          <span className="tly-brand-pill">{props.brandName}</span>
         </div>
         {props.netBadge && (
           <div className="tly-net-badge">
-            <div className="l">{props.netBadge.label}</div>
-            <div>{props.netBadge.value}</div>
+            <span className="tly-net-pulse" aria-hidden="true" />
+            <div className="tly-net-meta">
+              <div className="l">{props.netBadge.label}</div>
+              <div className="v">{props.netBadge.value}</div>
+            </div>
           </div>
         )}
-        <nav style={{ overflowY: 'auto', flex: 1 }}>
+        <nav className="tly-sb-nav" style={{ overflowY: 'auto', flex: 1 }}>
           {props.nav.map((g) => (
-            <div key={g.group}>
+            <div key={g.group} className="tly-sb-section">
               <div className="tly-sb-group">{g.group}</div>
               {g.items.map((it) => (
                 <button
@@ -73,7 +74,7 @@ export function AppShell(props: AppShellProps) {
                   }}
                 >
                   {it.icon && <span className="ic">{it.icon}</span>}
-                  <span>{it.label}</span>
+                  <span className="tly-sb-label">{it.label}</span>
                   {it.badge && <span className="tly-sb-badge">{it.badge}</span>}
                 </button>
               ))}

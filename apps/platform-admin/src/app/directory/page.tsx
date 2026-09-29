@@ -26,7 +26,7 @@ export default function DirectoryPage() {
           }}
         >
           <span style={{ fontSize: 12.5 }}>
-            🔒 Viewing <strong>{scoped.name}</strong> scoped environment — this is exactly what {scoped.name}&apos;s own
+            🔒 Viewing <strong>{scoped.name}</strong> scoped environment this is exactly what {scoped.name}&apos;s own
             Telco Console shows. No other telco&apos;s data is visible here.
           </span>
           <Button size="sm" variant="ghost" onClick={() => setScoped(null)} data-testid="exit-scoped">

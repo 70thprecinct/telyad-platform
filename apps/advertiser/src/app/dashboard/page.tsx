@@ -50,7 +50,7 @@ export default function DashboardPage() {
       <PageHeader
         eyebrow="Overview"
         title="Advertiser dashboard"
-        desc="Your campaigns on MTN Nigeria. Audience figures are aggregate estimates — never individual subscriber data. Performance figures below are demonstration data, not live MTN statistics."
+        desc="Your campaigns on MTN Nigeria. Audience figures are aggregate estimates never individual subscriber data. Performance figures below are demonstration data, not live MTN statistics."
       />
 
       {/* Portfolio KPIs — REAL application data (your persisted campaigns). */}

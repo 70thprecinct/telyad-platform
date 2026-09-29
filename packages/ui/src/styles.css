@@ -51,7 +51,7 @@
   --tly-font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
   --tly-font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --tly-font-mono: 'JetBrains Mono', ui-monospace, monospace;
-  --tly-sidebar-w: 240px;
+  --tly-sidebar-w: 256px;
 }
 
 /* Handset preview surfaces keep a realistic dark device context even though the
@@ -89,6 +89,10 @@
   overflow-x: hidden;
 }
 
+nextjs-portal {
+  display: none !important;
+}
+
 .tly-mono {
   font-family: var(--tly-font-mono);
 }
@@ -102,19 +106,32 @@
 /* ── Sidebar ───────────────────────────────────────────────────────────────── */
 .tly-sidebar {
   width: var(--tly-sidebar-w);
+  height: 100vh;
+  position: sticky;
+  top: 0;
   flex-shrink: 0;
   background: var(--tly-card);
   border-right: 1px solid var(--tly-border);
   display: flex;
   flex-direction: column;
-  padding: 14px 10px;
-  gap: 2px;
+  padding: 16px 12px 14px;
+  gap: 0;
+  z-index: 30;
 }
 .tly-sb-brand {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 10px;
-  padding: 6px 8px 14px;
+  padding: 4px 6px 14px;
+  border-bottom: 1px solid var(--tly-border-soft);
+}
+.tly-brand-logo {
+  height: 32px;
+  width: auto;
+  max-width: 135px;
+  object-fit: contain;
+  display: block;
 }
 .tly-brand-mark {
   width: 34px;
@@ -129,32 +146,98 @@
   font-weight: 700;
   font-size: 16px;
 }
-.tly-brand-name {
+.tly-brand-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 9999px;
+  background: var(--tly-portal-accent-dim);
+  color: var(--tly-portal-accent-ink);
   font-family: var(--tly-font-display);
-  font-weight: 600;
-  font-size: 15px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  border: 1px solid color-mix(in srgb, var(--tly-portal-accent) 22%, transparent);
 }
 .tly-net-badge {
-  margin: 4px 8px 12px;
-  padding: 7px 10px;
+  margin: 12px 4px 14px;
+  padding: 8px 12px;
   border-radius: var(--tly-radius-sm);
-  background: var(--tly-portal-accent-dim);
-  box-shadow: inset 2px 0 0 var(--tly-portal-accent);
-  font-size: 10.5px;
-  line-height: 1.4;
+  background: linear-gradient(180deg, #fbfcfe 0%, #f4f6fa 100%);
+  border: 1px solid var(--tly-border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.03);
 }
-.tly-net-badge .l {
+.tly-net-pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  position: relative;
+  flex-shrink: 0;
+  animation: tly-pulse-dot 2.2s infinite ease-in-out;
+}
+@keyframes tly-pulse-dot {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.45);
+  }
+  50% {
+    transform: scale(1.15);
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0);
+  }
+}
+.tly-net-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.tly-net-meta .l {
   color: var(--tly-text-faint);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-size: 8.5px;
-}
-.tly-sb-group {
-  font-size: 9.5px;
   text-transform: uppercase;
   letter-spacing: 0.6px;
+  font-size: 8.5px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.tly-net-meta .v {
+  color: var(--tly-text);
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tly-sb-nav {
+  overflow-y: auto;
+  flex: 1;
+  padding: 0 2px;
+  margin-right: -4px;
+  padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.08) transparent;
+}
+.tly-sb-nav::-webkit-scrollbar {
+  width: 4px;
+}
+.tly-sb-nav::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 4px;
+}
+.tly-sb-section {
+  margin-bottom: 12px;
+}
+.tly-sb-group {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
   color: var(--tly-text-faint);
-  padding: 12px 10px 4px;
+  padding: 6px 10px 4px;
   font-weight: 700;
 }
 .tly-sb-item {
@@ -162,47 +245,147 @@
   align-items: center;
   gap: 10px;
   padding: 8px 10px;
-  border-radius: var(--tly-radius-sm);
+  margin: 1.5px 0;
+  border-radius: 8px;
   color: var(--tly-text-dim);
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  border: none;
-  background: none;
+  border: 1px solid transparent;
+  background: transparent;
   width: 100%;
   text-align: left;
+  transition: all 0.15s ease-out;
 }
 .tly-sb-item:hover {
-  background: var(--tly-card-2);
+  background: #f4f6fa;
   color: var(--tly-text);
 }
 .tly-sb-item.active {
   background: var(--tly-portal-accent-dim);
   color: var(--tly-portal-accent-ink);
   font-weight: 600;
-  box-shadow: inset 3px 0 0 var(--tly-portal-accent);
+  border-color: color-mix(in srgb, var(--tly-portal-accent) 25%, transparent);
 }
 .tly-sb-item .ic {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
+  opacity: 0.75;
+  transition: all 0.15s ease;
+}
+.tly-sb-item:hover .ic {
+  opacity: 1;
+  color: var(--tly-text);
+}
+.tly-sb-item.active .ic {
+  opacity: 1;
+  color: var(--tly-portal-accent-ink);
+}
+.tly-sb-label {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .tly-sb-badge {
   margin-left: auto;
-  font-size: 9.5px;
+  font-size: 10px;
+  font-weight: 600;
   background: var(--tly-card-3);
   color: var(--tly-text-dim);
   border-radius: 20px;
   padding: 1px 7px;
+  letter-spacing: 0.2px;
+}
+.tly-sb-item.active .tly-sb-badge {
+  background: var(--tly-portal-accent);
+  color: #ffffff;
 }
 .tly-sb-footer {
   margin-top: auto;
   border-top: 1px solid var(--tly-border);
-  padding-top: 10px;
+  padding-top: 12px;
+}
+.tly-sb-user-card {
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 10px;
+  padding: 8px;
+  border-radius: 10px;
+  background: #fafbfc;
+  border: 1px solid var(--tly-border-soft);
+  transition: all 0.15s ease;
+}
+.tly-sb-user-card:hover {
+  background: #f4f6fa;
+  border-color: var(--tly-border);
+}
+.tly-sb-user-avatar {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #10192a 0%, #2a384e 100%);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.tly-sb-user-avatar .online-dot {
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #10b981;
+  border: 2px solid #ffffff;
+}
+.tly-sb-user-details {
+  flex: 1;
+  min-width: 0;
+}
+.tly-sb-user-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--tly-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+.tly-sb-user-org {
+  font-size: 10.5px;
+  color: var(--tly-text-faint);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+.tly-sb-logout-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--tly-text-faint);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+.tly-sb-logout-btn:hover {
+  background: #fee2e2;
+  color: #ef4444;
 }
 
 /* ── Main / topbar ─────────────────────────────────────────────────────────── */
