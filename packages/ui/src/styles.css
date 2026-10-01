@@ -2,13 +2,12 @@
    TelyAd shared design system.
    Ported from the approved prototypes. Components consume CSS custom properties
    (the --tly-* token contract); each app sets these tokens for its own brand
-   (advertiser=orange, telco=MTN-yellow, admin=cyan, telydial=violet).
+   (TelyAd orange/gold master palette across advertiser, telco, admin and TelyDial).
    ============================================================================ */
 
 :root {
   /* Premium light enterprise system (advertiser defaults). Apps override the
-     brand tokens (--tly-primary / --tly-accent-ink / --tly-secondary) and the
-     canvas in their globals.css; neutrals are shared. Handset previews re-declare
+     master brand tokens and canvas in their globals.css; neutrals are shared. Handset previews re-declare
      dark tokens locally (see `.tly-phone` below) so device mockups stay realistic
      while the surrounding application is light. */
   --tly-bg: #f4f6f9;
@@ -25,10 +24,9 @@
   --tly-primary-contrast: #ffffff;
   --tly-primary-hover: #d64c1e;
   --tly-accent-ink: #cf4c1c; /* brand colour legible as text/border on light */
-  --tly-secondary: #3b5bdb;
-  /* ── Portal accent — ONE controlled secondary per portal, used only on
-     portal-identity surfaces (network badge, active-nav indicator). Each app's
-     globals.css overrides these; the default is the master brand itself. ── */
+  --tly-secondary: #f59e0b;
+  /* ── Portal accent — unified TelyAd master orange. Portal identity comes from
+     naming, iconography and context rather than competing colour brands. ── */
   --tly-portal-accent: var(--tly-primary);
   --tly-portal-accent-dim: var(--tly-primary-dim);
   --tly-portal-accent-ink: var(--tly-accent-ink);
@@ -40,7 +38,7 @@
   --tly-warning-dim: rgba(178, 106, 0, 0.13);
   --tly-danger: #d64141;
   --tly-danger-dim: rgba(214, 65, 65, 0.12);
-  --tly-info-dim: rgba(59, 91, 219, 0.1);
+  --tly-info-dim: rgba(238, 93, 43, 0.09);
   --tly-text: #10192a;
   --tly-text-dim: #586271;
   --tly-text-faint: #8a94a3;
