@@ -33,7 +33,7 @@ export default function LoginPage() {
         <div className="tly-login-story-copy">
           <div className="tly-login-eyebrow">Master Admin</div>
           <h1>Control the carrier ecosystem,<br/><span>from one command plane.</span></h1>
-          <p>Operate telcos, platform health, governance and access from TelyAd's cross-network control plane.</p>
+          <p>Operate telcos, platform health, governance and access from the TelyAd cross-network control plane.</p>
           <div className="tly-login-signals"><div><strong>✦</strong><span>Cross-telco control</span></div><div><strong>◎</strong><span>Platform health</span></div><div><strong>↗</strong><span>Governance & access</span></div></div>
         </div>
         <div className="tly-login-orbit" aria-hidden="true"><i/><i/><i/><b>TA</b></div>
