@@ -5,6 +5,7 @@ import {
   CardHead,
   Kpi,
   KpiGrid,
+  IntelligenceStrip,
   PageHeader,
   Table,
 } from '@telyad/ui';
@@ -45,6 +46,16 @@ export default function AnalyticsPage() {
         eyebrow="Intelligence"
         title="Analytics"
         desc="STK push, opt-in, spend and CPA analytics across your acquisition campaigns."
+      />
+
+      <IntelligenceStrip
+        title="Acquisition Performance"
+        metrics={[
+          { label: 'Delivery funnel', value: 'STK → opt-in', note: 'subscriber journey · DEMO' },
+          { label: 'Conversion signal', value: ANALYTICS_KPIS[2]?.value ?? '—', note: 'campaign performance · DEMO' },
+          { label: 'Cost signal', value: ANALYTICS_KPIS[3]?.value ?? '—', note: 'acquisition efficiency · DEMO' },
+          { label: 'Carrier delivery', value: 'External', note: 'live gateway integration required' },
+        ]}
       />
 
       <KpiGrid>
