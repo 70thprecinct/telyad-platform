@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import type { Telco, TelcoStatus } from '@telyad/types';
-import { Badge, Card, CardHead, Kpi, KpiGrid, PageHeader, Table } from '@telyad/ui';
+import { Badge, Card, CardHead, IntelligenceStrip, Kpi, KpiGrid, PageHeader, Table } from '@telyad/ui';
 import { AdminShell } from '@/components/AdminShell';
 import { api } from '@/lib/api';
 import { TELCOS, DEMO_NOTE } from '@/lib/demo';
@@ -40,6 +40,16 @@ export default function TermsPage() {
         eyebrow="Partnerships · commercial"
         title="Commercial Terms"
         desc="Revenue-share terms, settlement cadence and contract status per telco. Aggregated commercial data only — no subscriber data."
+      />
+
+      <IntelligenceStrip
+        title="Commercial Network Intelligence"
+        metrics={[
+          { label: 'Signed operators', value: signed, note: 'commercially active · DEMO detail' },
+          { label: 'Pipeline', value: TELCOS.length - signed, note: 'negotiation / LOI · DEMO' },
+          { label: 'Default telco share', value: '80%', note: 'commercial model · DEMO' },
+          { label: 'Settlement', value: 'Monthly', note: 'NGN · DEMO' },
+        ]}
       />
 
       <KpiGrid>
