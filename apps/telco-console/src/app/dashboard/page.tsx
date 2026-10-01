@@ -7,7 +7,7 @@ import {
   type Campaign,
   type RevenueIntelligenceReport,
 } from '@telyad/types';
-import { Badge, Button, Card, CardHead, Kpi, KpiGrid, PageHeader, StatusBadge, Table } from '@telyad/ui';
+import { Badge, Button, Card, CardHead, IntelligenceStrip, Kpi, KpiGrid, PageHeader, StatusBadge, Table } from '@telyad/ui';
 import { ConsoleShell } from '@/components/ConsoleShell';
 import { SliceTable, fmtMinor } from '@/components/commercial';
 import { useAuth } from '@/lib/auth';
@@ -55,6 +55,16 @@ export default function DashboardPage() {
           eyebrow="MTN Nigeria Network"
           title="Executive Overview"
           desc="Commercial and operational health of advertiser activity on MTN Nigeria's network. Aggregated metrics only — no subscriber PII. Demonstration data."
+        />
+
+        <IntelligenceStrip
+          title="MTN Commercial Pulse"
+          metrics={[
+            { label: 'Network audience', value: '78.4M', note: 'aggregate reachable subscribers · DEMO' },
+            { label: 'Campaign pressure', value: pending > 0 ? `${pending} awaiting approval` : 'Clear', note: 'operator action queue · REAL' },
+            { label: 'Inventory signal', value: 'Healthy', note: 'cross-channel capacity · DEMO' },
+            { label: 'Revenue outlook', value: showRevenue && report ? fmtMinor(report.projectedMonthlyRevenueMinor, report.currency, true) : 'Restricted', note: showRevenue ? 'projected monthly · DEMO' : 'permission controlled' },
+          ]}
         />
 
         <KpiGrid>
