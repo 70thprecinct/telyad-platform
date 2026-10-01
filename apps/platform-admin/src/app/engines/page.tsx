@@ -1,6 +1,6 @@
 'use client';
 import { useRouter } from 'next/navigation';
-import { Badge, Button, Card, PageHeader } from '@telyad/ui';
+import { Badge, Button, Card, IntelligenceStrip, PageHeader } from '@telyad/ui';
 import { AdminShell } from '@/components/AdminShell';
 import { ENGINES, DEMO_NOTE } from '@/lib/demo';
 
@@ -17,6 +17,16 @@ export default function EnginesOverviewPage() {
         eyebrow="INTERNAL ONLY"
         title="Engine Dashboards"
         desc="Full technical depth for each underlying engine across the entire infrastructure — not scoped to any one telco. Visible only inside Tely Master Admin."
+      />
+
+      <IntelligenceStrip
+        title="Engine Intelligence"
+        metrics={[
+          { label: 'Platform engines', value: ENGINES.length, note: 'cross-network services' },
+          { label: 'Operational state', value: 'Healthy', note: 'demonstration engine status' },
+          { label: 'Scope', value: 'All telcos', note: 'Master Admin only' },
+          { label: 'Data boundary', value: 'Aggregate', note: 'no subscriber-level exposure' },
+        ]}
       />
 
       <div
@@ -40,8 +50,8 @@ export default function EnginesOverviewPage() {
                   fontSize: 12,
                   fontWeight: 700,
                   letterSpacing: 0.5,
-                  background: `${e.color}22`,
-                  color: e.color,
+                  background: 'var(--tly-primary-dim)',
+                  color: 'var(--tly-accent-ink)',
                 }}
               >
                 {initials(e.name)}
