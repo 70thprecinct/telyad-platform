@@ -16,7 +16,7 @@ export default function EnginesOverviewPage() {
       <PageHeader
         eyebrow="INTERNAL ONLY"
         title="Engine Dashboards"
-        desc="Full technical depth for each underlying engine across the entire infrastructure — not scoped to any one telco. Visible only inside Tely Master Admin."
+        desc="Full technical depth for each underlying engine across the entire infrastructure — not scoped to any one telco. Visible only inside TelyAd Master Admin."
       />
 
       <IntelligenceStrip
