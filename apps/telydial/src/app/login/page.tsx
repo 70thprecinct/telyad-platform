@@ -36,7 +36,7 @@ export default function LoginPage() {
           <p>Build device-aware MVAS acquisition campaigns with live creative previews, audience forecasting and operator approval.</p>
           <div className="tly-login-signals"><div><strong>✦</strong><span>Device-aware creative</span></div><div><strong>◎</strong><span>Audience forecasting</span></div><div><strong>↗</strong><span>Operator approval</span></div></div>
         </div>
-        <div className="tly-login-orbit" aria-hidden="true"><i/><i/><i/><b>TA</b></div>
+        <div className="tly-login-orbit" aria-hidden="true"><i/><i/><i/><b /></div>
         <div className="tly-login-trust">Secure access · Role based · Demonstration environment</div>
       </section>
       <section className="tly-login-access"><form onSubmit={onSubmit} className="tly-login-form">
