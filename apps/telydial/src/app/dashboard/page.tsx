@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { Campaign } from '@telyad/types';
-import { Badge, Button, Card, CardHead, Kpi, KpiGrid, PageHeader, Table } from '@telyad/ui';
+import { Badge, Button, Card, CardHead, IntelligenceStrip, Kpi, KpiGrid, PageHeader, Table } from '@telyad/ui';
 import { PortalShell } from '@/components/PortalShell';
 import { DoughnutChart, LineChart } from '@/components/Charts';
 import { api } from '@/lib/api';
@@ -29,6 +29,16 @@ export default function DashboardPage() {
         eyebrow="MVAS acquisition · MTN Nigeria"
         title="Dashboard"
         desc="STK-led MVAS subscriber acquisition on MTN Nigeria. Audience and delivery figures are aggregate — never individual subscriber data."
+      />
+
+      <IntelligenceStrip
+        title="Acquisition Intelligence"
+        metrics={[
+          { label: 'Live / approved', value: liveCount, note: 'persisted campaigns · REAL' },
+          { label: 'Delivery mode', value: 'STK + fallback', note: 'carrier integration dependent' },
+          { label: 'Audience model', value: 'Aggregate', note: 'privacy-safe targeting' },
+          { label: 'Optimisation', value: 'CPA-led', note: 'forecast layer · DEMO' },
+        ]}
       />
 
       <KpiGrid>
