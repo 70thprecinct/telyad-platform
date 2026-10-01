@@ -15,6 +15,7 @@ import {
   Card,
   CardHead,
   Field,
+  IntelligenceStrip,
   Modal,
   PageHeader,
   ExperiencePreview,
@@ -196,7 +197,20 @@ function CampaignReview({
         action={<Badge tone="warning">Pending approval</Badge>}
       />
 
-      {snapshot && <AudiencePlan c={c} snapshot={snapshot} />}
+      {snapshot && (
+        <>
+          <IntelligenceStrip
+            title="Approval Intelligence"
+            metrics={[
+              { label: 'Eligible audience', value: compactNumber(snapshot.eligibleAudience), note: 'aggregate estimate · DEMO' },
+              { label: 'Selected target', value: compactNumber(snapshot.selectedTarget), note: 'immutable submission snapshot · REAL' },
+              { label: 'Compliance', value: `${c.complianceScore}/100`, note: 'submission control score' },
+              { label: 'Risk', value: `${c.riskScore}/100`, note: c.riskScore < 20 ? 'low risk signal' : 'review recommended' },
+            ]}
+          />
+          <AudiencePlan c={c} snapshot={snapshot} />
+        </>
+      )}
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 260px', gap: 18, alignItems: 'start' }}>
         <div>
