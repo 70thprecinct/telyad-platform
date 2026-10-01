@@ -8,7 +8,7 @@ import {
   type CampaignStatus,
   type CurrencyCode,
 } from '@telyad/types';
-import { Badge, Button, Card, CardHead, Kpi, KpiGrid, PageHeader, StatusBadge, Table } from '@telyad/ui';
+import { Badge, Button, Card, CardHead, InsightCard, IntelligenceStrip, Kpi, KpiGrid, PageHeader, StatusBadge, Table } from '@telyad/ui';
 import { PortalShell } from '@/components/PortalShell';
 import { api } from '@/lib/api';
 import { LineChart, DoughnutChart } from '@/components/Charts';
@@ -51,6 +51,16 @@ export default function DashboardPage() {
         eyebrow="Overview"
         title="Advertiser dashboard"
         desc="Your campaigns on MTN Nigeria. Audience figures are aggregate estimates — never individual subscriber data. Performance figures below are demonstration data, not live MTN statistics."
+      />
+
+      <IntelligenceStrip
+        title="Campaign Portfolio Intelligence"
+        metrics={[
+          { label: 'Portfolio reach', value: compactNumber(totalReach), note: 'aggregate estimate · REAL campaign data' },
+          { label: 'Live campaigns', value: live, note: 'currently active · REAL' },
+          { label: 'Approval queue', value: pending, note: pending ? 'waiting for MTN decision' : 'all clear' },
+          { label: 'Interaction signal', value: `${HEADLINE.interactionRate}%`, note: 'portfolio performance · DEMO' },
+        ]}
       />
 
       {/* Portfolio KPIs — REAL application data (your persisted campaigns). */}
@@ -117,12 +127,20 @@ export default function DashboardPage() {
 
         <div>
           <Card>
-            <CardHead title="Quick actions" />
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
-              <Button block onClick={() => router.push('/campaigns/new')}>🚀 Launch new campaign</Button>
-              <Button variant="ghost" block onClick={() => router.push('/audience')}>Build new audience</Button>
-              <Button variant="ghost" block onClick={() => router.push('/ai')}>AI campaign generator</Button>
-              <Button variant="ghost" block onClick={() => router.push('/analytics')}>View full analytics</Button>
+            <CardHead title="What do you want to achieve?" sub="Start with the business outcome — TelyAd will guide the media plan." />
+            <div className="tly-objective-launcher">
+              {[
+                ['Reach', 'Build broad awareness across eligible carrier audiences.'],
+                ['Engagement', 'Create an interactive subscriber experience.'],
+                ['Acquisition', 'Drive qualified subscriber actions and sign-ups.'],
+                ['Conversion', 'Optimise media toward a measurable response.'],
+                ['Retention', 'Re-engage and reward existing audiences.'],
+                ['Reactivation', 'Reconnect with dormant or lapsed audiences.'],
+              ].map(([objectiveLabel, detail]) => (
+                <button key={objectiveLabel} type="button" onClick={() => router.push('/campaigns/new')} className="tly-objective-card">
+                  <strong>{objectiveLabel}</strong><span>{detail}</span><b>→</b>
+                </button>
+              ))}
             </div>
           </Card>
           <Card>
