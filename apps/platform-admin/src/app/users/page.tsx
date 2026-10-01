@@ -1,5 +1,5 @@
 'use client';
-import { Badge, Card, CardHead, Kpi, KpiGrid, PageHeader, Table } from '@telyad/ui';
+import { Badge, Card, CardHead, IntelligenceStrip, Kpi, KpiGrid, PageHeader, Table } from '@telyad/ui';
 import { AdminShell } from '@/components/AdminShell';
 import { ADMIN_USERS, ADMIN_ROLE_MATRIX, DEMO_NOTE } from '@/lib/demo';
 
@@ -22,6 +22,16 @@ export default function UsersPage() {
         eyebrow="Platform · access control"
         title="Master Admin Users"
         desc="Tely staff with access to this cross-telco console, and the role permission matrix that governs them. Time-limited demo accounts are managed by the Demo Access engine — server-side expiry, not a client toggle."
+      />
+
+      <IntelligenceStrip
+        title="Access Governance"
+        metrics={[
+          { label: 'Admin identities', value: ADMIN_USERS.length, note: 'platform staff · DEMO directory' },
+          { label: 'Demo access', value: demoCount, note: 'time-limited accounts' },
+          { label: 'Roles', value: ADMIN_ROLE_MATRIX.length, note: 'authoritative RBAC catalogue' },
+          { label: 'Enforcement', value: 'Server-side', note: 'API-controlled access' },
+        ]}
       />
 
       <KpiGrid>
