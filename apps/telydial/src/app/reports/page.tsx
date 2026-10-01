@@ -1,5 +1,5 @@
 'use client';
-import { Button, Card, PageHeader } from '@telyad/ui';
+import { Button, Card, IntelligenceStrip, PageHeader } from '@telyad/ui';
 import { PortalShell } from '@/components/PortalShell';
 import { REPORTS, DEMO_CAMPAIGNS, DEMO_NOTE } from '@/lib/demo';
 
@@ -34,6 +34,16 @@ export default function ReportsPage() {
         eyebrow="Operations"
         title="Reports"
         desc="Generate and export acquisition, spend and performance reports."
+      />
+
+      <IntelligenceStrip
+        title="Reporting Intelligence"
+        metrics={[
+          { label: 'Campaign performance', value: 'CSV ready', note: 'working local export' },
+          { label: 'Delivery reporting', value: 'Carrier dependent', note: 'live gateway integration required' },
+          { label: 'Acquisition view', value: 'Campaign + product', note: 'aggregate reporting' },
+          { label: 'Subscriber privacy', value: 'Protected', note: 'no individual subscriber data' },
+        ]}
       />
 
       <div
