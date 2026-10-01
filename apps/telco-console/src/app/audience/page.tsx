@@ -1,5 +1,5 @@
 'use client';
-import { Badge, Card, CardHead, Kpi, KpiGrid, PageHeader } from '@telyad/ui';
+import { Badge, Card, CardHead, IntelligenceStrip, Kpi, KpiGrid, PageHeader } from '@telyad/ui';
 import { ConsoleShell } from '@/components/ConsoleShell';
 import { AUDIENCE_MON, DEMO_NOTE } from '@/lib/demo';
 
@@ -45,6 +45,16 @@ export default function AudiencePage() {
   return (
     <ConsoleShell active="audience">
       <PageHeader eyebrow="AUDIENCE & TRAFFIC" title="Audience Monitoring" />
+
+      <IntelligenceStrip
+        title="Audience Intelligence"
+        metrics={[
+          { label: 'Eligible network audience', value: `${AUDIENCE_MON.eligibleM}M`, note: 'aggregate estimate · DEMO' },
+          { label: 'Currently targeted', value: `${AUDIENCE_MON.targetedM}M`, note: 'selected across active audiences · DEMO' },
+          { label: 'Audience overlap', value: `${AUDIENCE_MON.overlapPct}%`, note: 'cross-campaign pressure · DEMO' },
+          { label: 'Privacy floor', value: '50K', note: 'segments below threshold masked' },
+        ]}
+      />
 
       <KpiGrid>
         <Kpi label="Eligible audience" value={`${AUDIENCE_MON.eligibleM}M`} />
