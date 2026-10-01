@@ -36,7 +36,7 @@ export default function LoginPage() {
           <p>Operate telcos, platform health, governance and access from the TelyAd cross-network control plane.</p>
           <div className="tly-login-signals"><div><strong>✦</strong><span>Cross-telco control</span></div><div><strong>◎</strong><span>Platform health</span></div><div><strong>↗</strong><span>Governance & access</span></div></div>
         </div>
-        <div className="tly-login-orbit" aria-hidden="true"><i/><i/><i/><b>TA</b></div>
+        <div className="tly-login-orbit" aria-hidden="true"><i/><i/><i/><b /></div>
         <div className="tly-login-trust">Secure access · Role based · Demonstration environment</div>
       </section>
       <section className="tly-login-access"><form onSubmit={onSubmit} className="tly-login-form">
