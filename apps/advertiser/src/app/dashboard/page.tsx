@@ -8,7 +8,7 @@ import {
   type CampaignStatus,
   type CurrencyCode,
 } from '@telyad/types';
-import { Badge, Button, Card, CardHead, InsightCard, IntelligenceStrip, Kpi, KpiGrid, PageHeader, StatusBadge, Table } from '@telyad/ui';
+import { Badge, Button, Card, CardHead, IntelligenceStrip, Kpi, KpiGrid, PageHeader, StatusBadge, Table } from '@telyad/ui';
 import { PortalShell } from '@/components/PortalShell';
 import { api } from '@/lib/api';
 import { LineChart, DoughnutChart } from '@/components/Charts';
