@@ -13,9 +13,9 @@ import { AdminShell } from '@/components/AdminShell';
 import { api, type DemoCredentials } from '@/lib/api';
 
 const PORTAL_LABEL: Record<Portal, string> = {
-  advertiser: 'Tely Advertiser',
+  advertiser: 'TelyAd Advertiser',
   telco: 'MTN / Operator Console',
-  admin: 'Tely Master Admin',
+  admin: 'TelyAd Master Admin',
   telydial: 'TelyDial',
 };
 
@@ -100,6 +100,7 @@ export default function DemoAccessPage() {
         ) : users.length === 0 ? (
           <div className="tly-empty">No demo accounts yet. Create one to invite a demonstration user.</div>
         ) : (
+          <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
           <Table head={['User', 'Organisation', 'Portal', 'Role', 'Valid From', 'Expires', 'Status', 'Last Login', 'Actions']}>
             {users.map((u) => (
               <tr key={u.id} data-testid="demo-user-row">
@@ -135,6 +136,7 @@ export default function DemoAccessPage() {
               </tr>
             ))}
           </Table>
+          </div>
         )}
       </Card>
 
