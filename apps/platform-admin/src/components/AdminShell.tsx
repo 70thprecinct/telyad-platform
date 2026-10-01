@@ -27,7 +27,7 @@ export function AdminShell({ active, children }: { active: string; children: Rea
       nav={NAV}
       activeId={active}
       onNavigate={(id) => router.push(`/${id}`)}
-      title="Tely Master Admin"
+      title="TelyAd Master Admin"
       user={{ name: user.name, role: user.role, initials }}
       envLabel="Tely cross-telco console — Tely staff only. No telco can see this console. Demonstration data."
       topbarRight={
