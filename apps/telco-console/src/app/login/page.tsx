@@ -17,7 +17,7 @@ export default function LoginPage() {
         <p>Operate advertising revenue, audience governance and delivery intelligence across the MTN network.</p>
         <div className="tly-login-signals"><div><strong>✦</strong><span>Commercial command</span></div><div><strong>◎</strong><span>Network governance</span></div><div><strong>↗</strong><span>Audience intelligence</span></div></div>
       </div>
-      <div className="tly-login-orbit" aria-hidden="true"><i/><i/><i/><b>TA</b></div>
+      <div className="tly-login-orbit" aria-hidden="true"><i/><i/><i/><b /></div>
       <div className="tly-login-trust">Secure access · Role based · Demonstration environment</div>
     </section>
     <section className="tly-login-access"><form onSubmit={onSubmit} className="tly-login-form">
