@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Badge, Card, CardHead, Kpi, KpiGrid, PageHeader, Table } from '@telyad/ui';
+import { Badge, Card, CardHead, IntelligenceStrip, Kpi, KpiGrid, PageHeader, Table } from '@telyad/ui';
 import { AdminShell } from '@/components/AdminShell';
 import { LineChart } from '@/components/Charts';
 import { api } from '@/lib/api';
@@ -34,6 +34,16 @@ export default function PlatformHealthPage() {
         eyebrow="Platform · cross-telco"
         title="Platform Health"
         desc="Live status of the platform's own services plus per-app, per-telco and per-engine health. API probes are REAL; app/telco/engine rows are demonstration; carrier gateways require external integration."
+      />
+
+      <IntelligenceStrip
+        title="Operational Intelligence"
+        metrics={[
+          { label: 'API health', value: health.ok === null ? 'Probing' : health.ok ? 'Operational' : 'Down', note: 'live probe · REAL' },
+          { label: 'Readiness', value: ready.ok === null ? 'Probing' : ready.ok ? 'Ready' : 'Not ready', note: 'database + store · REAL' },
+          { label: 'Active environments', value: activeTelcos.length, note: 'isolated telco environments' },
+          { label: 'Carrier gateways', value: 'External', note: 'integration boundary' },
+        ]}
       />
 
       <KpiGrid>
