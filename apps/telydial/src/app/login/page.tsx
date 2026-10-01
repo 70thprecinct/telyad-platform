@@ -27,49 +27,27 @@ export default function LoginPage() {
   }
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background:
-          'radial-gradient(ellipse at top, rgba(124,108,240,0.12), transparent 55%), var(--tly-bg)',
-      }}
-    >
-      <form
-        onSubmit={onSubmit}
-        className="tly-card"
-        style={{ width: 400, marginBottom: 0 }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-          <Brand src="/images/logo.png" height={34} />
-          <div className="tly-brand-name tly-faint" style={{ fontSize: 13 }}>
-            TelyDial — MVAS
-          </div>
+    <main className="tly-login">
+      <section className="tly-login-story">
+        <Brand src="/images/logo.png" height={38} />
+        <div className="tly-login-story-copy">
+          <div className="tly-login-eyebrow">TelyDial · MVAS</div>
+          <h1>Turn device moments<br/><span>into acquisition journeys.</span></h1>
+          <p>Build device-aware MVAS acquisition campaigns with live creative previews, audience forecasting and operator approval.</p>
+          <div className="tly-login-signals"><div><strong>✦</strong><span>Device-aware creative</span></div><div><strong>◎</strong><span>Audience forecasting</span></div><div><strong>↗</strong><span>Operator approval</span></div></div>
         </div>
-        <p className="tly-page-desc" style={{ marginBottom: 20 }}>
-          Sign in to launch MVAS acquisition campaigns on MTN Nigeria.
-        </p>
-        <Field label="Work email">
-          <Input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required />
-        </Field>
-        <Field label="Password" error={error || undefined}>
-          <Input
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            type="password"
-            required
-            placeholder="Enter your password"
-          />
-        </Field>
-        <Button type="submit" block disabled={busy}>
-          {busy ? 'Signing in…' : 'Sign in'}
-        </Button>
-        <p className="tly-faint" style={{ fontSize: 10.5, textAlign: 'center', marginTop: 14 }}>
-          Demonstration Environment · TelyDial
-        </p>
-      </form>
-    </div>
+        <div className="tly-login-orbit" aria-hidden="true"><i/><i/><i/><b>TA</b></div>
+        <div className="tly-login-trust">Secure access · Role based · Demonstration environment</div>
+      </section>
+      <section className="tly-login-access"><form onSubmit={onSubmit} className="tly-login-form">
+        <div className="tly-login-mobile-brand"><Brand src="/images/logo.png" height={32} /></div>
+        <div className="tly-login-eyebrow">TelyDial · MVAS</div><h2>Welcome back</h2>
+        <p className="tly-login-form-desc">Sign in to TelyDial.</p>
+        <Field label="Work email"><Input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required /></Field>
+        <Field label="Password" error={error || undefined}><Input value={password} onChange={(e) => setPassword(e.target.value)} type="password" required placeholder="Enter your password" /></Field>
+        <Button type="submit" block disabled={busy}>{busy ? 'Signing in…' : 'Sign in securely'}</Button>
+        <div className="tly-login-foot">TelyAd · Protected TelyDial access</div>
+      </form></section>
+    </main>
   );
 }
