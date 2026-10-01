@@ -1,21 +1,17 @@
 @import '@telyad/ui/styles.css';
 
-/* TelyAd Master Admin — master TelyAd orange brand, with a deep teal/cyan portal
-   accent (subordinate to the master identity) marking the cross-telco control
-   plane on portal-identity surfaces. Teal stays legible on white. */
+/* TelyAd master brand — consistent across every portal and control surface. */
 :root {
-  --tly-bg: #f5f7f8;
-  /* Master brand (shared) */
+  --tly-bg: #f5f6f9;
   --tly-primary: #ee5d2b;
   --tly-primary-dim: rgba(238, 93, 43, 0.12);
   --tly-primary-contrast: #ffffff;
   --tly-primary-hover: #d64c1e;
   --tly-accent-ink: #cf4c1c;
-  --tly-secondary: #4f46e5;
-  /* Portal accent — deep teal/cyan (control plane) */
-  --tly-portal-accent: #0891b2;
-  --tly-portal-accent-dim: rgba(8, 145, 178, 0.12);
-  --tly-portal-accent-ink: #0e7490;
+  --tly-secondary: #f59e0b;
+  --tly-portal-accent: #ee5d2b;
+  --tly-portal-accent-dim: rgba(238, 93, 43, 0.12);
+  --tly-portal-accent-ink: #cf4c1c;
   --tly-radius: 12px;
 }
 
