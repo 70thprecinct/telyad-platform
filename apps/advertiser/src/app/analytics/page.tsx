@@ -28,7 +28,7 @@ export default function AnalyticsPage() {
         title="Performance Intelligence"
         metrics={[
           { label: 'Media spend', value: formatMoney({ minor: HEADLINE.spendMinor, currency: 'NGN' }, { compact: true }), note: 'month to date · DEMO' },
-          { label: 'Audience interactions', value: compactNumber(HEADLINE.impressions), note: 'impressions · DEMO' },
+          { label: 'Impressions', value: compactNumber(HEADLINE.impressions), note: 'delivered impressions · DEMO' },
           { label: 'Interaction rate', value: `${HEADLINE.interactionRate}%`, note: 'cross-channel · DEMO' },
           { label: 'Cost efficiency', value: formatMoney({ minor: HEADLINE.avgCpaMinor, currency: 'NGN' }), note: 'average CPA · DEMO' },
         ]}
