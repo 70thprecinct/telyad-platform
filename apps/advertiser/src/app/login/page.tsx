@@ -36,7 +36,7 @@ export default function LoginPage() {
           <p>Plan, forecast and operate campaigns across carrier media with audience intelligence before launch.</p>
           <div className="tly-login-signals"><div><strong>✦</strong><span>Audience Match</span></div><div><strong>◎</strong><span>48 capabilities</span></div><div><strong>↗</strong><span>Forecast before launch</span></div></div>
         </div>
-        <div className="tly-login-orbit" aria-hidden="true"><i/><i/><i/><b>TA</b></div>
+        <div className="tly-login-orbit" aria-hidden="true"><i/><i/><i/><b /></div>
         <div className="tly-login-trust">Secure access · Role based · Demonstration environment</div>
       </section>
       <section className="tly-login-access">
