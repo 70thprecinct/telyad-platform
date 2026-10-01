@@ -78,8 +78,8 @@ export default function AudiencePage() {
       <IntelligenceStrip
         title="Audience Opportunity"
         metrics={[
-          { label: 'Eligible subscribers', value: '73.1M', note: 'aggregate demonstration estimate' },
-          { label: 'Reachable base', value: '18.4M', note: 'current reachable audience · DEMO' },
+          { label: 'Eligible subscribers', value: '73.1M', note: 'network eligibility universe · DEMO' },
+          { label: 'Reachable base', value: '18.4M', note: 'reachable under current demo conditions' },
           { label: 'Active audience pool', value: '4.2M', note: 'currently addressable · DEMO' },
           { label: 'Privacy threshold', value: '50K', note: 'smaller cohorts are masked' },
         ]}
