@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { type RevenueIntelligenceReport } from '@telyad/types';
-import { Button, Card, CardHead, Kpi, KpiGrid, PageHeader, Table } from '@telyad/ui';
+import { Button, Card, CardHead, InsightCard, IntelligenceStrip, Kpi, KpiGrid, PageHeader, Table } from '@telyad/ui';
 import { ConsoleShell } from '@/components/ConsoleShell';
 import { ShareBar, SliceTable, fmtMinor } from '@/components/commercial';
 import { useAuth } from '@/lib/auth';
@@ -64,6 +64,16 @@ export default function RevenuePage() {
         </Card>
       ) : (
         <div data-testid="revenue-report">
+          <IntelligenceStrip
+            title="Commercial Intelligence"
+            metrics={[
+              { label: 'Revenue now', value: fmtMinor(report.totalRevenueMinor, report.currency, true), note: 'attributed · DEMO' },
+              { label: 'Monthly outlook', value: fmtMinor(report.projectedMonthlyRevenueMinor, report.currency, true), note: 'deterministic projection · DEMO' },
+              { label: 'Monetised families', value: report.byFamily.length, note: 'capability families' },
+              { label: 'Growth signals', value: report.opportunities.length, note: 'commercial opportunities · DEMO' },
+            ]}
+          />
+
           <KpiGrid>
             <Kpi
               label="Total ad revenue"
@@ -134,25 +144,13 @@ export default function RevenuePage() {
               }}
             >
               {report.opportunities.map((o, i) => (
-                <div
+                <InsightCard
                   key={i}
-                  style={{
-                    border: '1px solid var(--tly-border)',
-                    borderRadius: 8,
-                    padding: 14,
-                  }}
-                >
-                  <div style={{ fontWeight: 600, marginBottom: 6 }}>{o.title}</div>
-                  <div className="tly-faint" style={{ fontSize: 12, lineHeight: 1.55, marginBottom: 10 }}>
-                    {o.detail}
-                  </div>
-                  <div
-                    className="tly-mono"
-                    style={{ fontSize: 13, color: 'var(--tly-primary)', fontWeight: 600 }}
-                  >
-                    +{fmtMinor(o.estimatedUpsideMinor, report.currency, true)} est. upside
-                  </div>
-                </div>
+                  title={o.title}
+                  detail={o.detail}
+                  value={`+${fmtMinor(o.estimatedUpsideMinor, report.currency, true)} estimated upside`}
+                  tone="success"
+                />
               ))}
             </div>
           </Card>
