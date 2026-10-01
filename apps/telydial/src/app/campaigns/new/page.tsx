@@ -8,7 +8,7 @@ import {
   type PricingModel,
 } from '@telyad/types';
 import { estimateAudience } from '@telyad/audience';
-import { Button, Card, CardHead, Field, Input, PageHeader, Select, Stepper, useToast } from '@telyad/ui';
+import { Button, Card, CardHead, Field, Input, IntelligenceStrip, PageHeader, Select, Stepper, useToast } from '@telyad/ui';
 import { PortalShell } from '@/components/PortalShell';
 import { EmojiField } from '@/components/EmojiField';
 import { useAuth } from '@/lib/auth';
@@ -180,6 +180,16 @@ export default function NewCampaignPage() {
         eyebrow="Create · STK acquisition"
         title="New MVAS campaign"
         desc="Acquire subscribers for an MTN VAS product through a network-controlled STK experience. Reach and forecast figures are aggregate estimates."
+      />
+      <IntelligenceStrip
+        title="TelyDial Campaign Intelligence"
+        metrics={[
+          { label: 'Product', value: product?.name ?? 'Verify', note: product ? 'registry verified · DEMO seam' : 'MTN Product ID required' },
+          { label: 'Eligible reach', value: compactNumber(estimate.estimatedReach), note: 'aggregate audience estimate' },
+          { label: 'Expected opt-ins', value: compactNumber(forecastOptIns), note: 'deterministic forecast · DEMO' },
+          { label: 'Forecast CPA', value: `₦${Math.round(forecastCpa)}`, note: 'updates with audience' },
+          { label: 'Device experience', value: device === 'android' ? 'Android' : 'iOS', note: 'live configured preview' },
+        ]}
       />
       <Stepper steps={STEPS} current={step} />
 
