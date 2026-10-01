@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import type { Telco, TelcoStatus } from '@telyad/types';
-import { Badge, Card, CardHead, Kpi, KpiGrid, PageHeader, Table } from '@telyad/ui';
+import { Badge, Card, CardHead, IntelligenceStrip, Kpi, KpiGrid, PageHeader, Table } from '@telyad/ui';
 import { AdminShell } from '@/components/AdminShell';
 import { BarChart, LineChart } from '@/components/Charts';
 import { api } from '@/lib/api';
@@ -35,6 +35,16 @@ export default function DashboardPage() {
         eyebrow="All telcos · aggregated"
         title="Global Dashboard"
         desc="Cross-telco control plane for Tely staff. No individual subscriber data ever appears here — aggregates only. Each telco operates a fully isolated environment."
+      />
+
+      <IntelligenceStrip
+        title="TelyAd Network Intelligence"
+        metrics={[
+          { label: 'Active telcos', value: loaded ? (activeReal || 1) : '—', note: 'persisted operator environments · REAL' },
+          { label: 'Aggregate reach', value: `${GLOBAL.subscriberReachM}M`, note: 'cross-network estimate · DEMO' },
+          { label: 'Platform revenue', value: `₦${GLOBAL.platformRevenueMinorM}M`, note: 'month to date · DEMO' },
+          { label: 'Isolation', value: 'Enforced', note: 'tenant boundaries · REAL control' },
+        ]}
       />
 
       <KpiGrid>
