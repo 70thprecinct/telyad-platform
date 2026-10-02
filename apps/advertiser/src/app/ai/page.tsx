@@ -21,6 +21,7 @@ import {
   ChipWrap,
   Field,
   Input,
+  IntelligenceStrip,
   PageHeader,
   Select,
 } from '@telyad/ui';
@@ -104,6 +105,13 @@ export default function AiPage() {
         title="AI Tools"
         desc="Deterministic, rule-based intelligence across the campaign lifecycle. Demonstration intelligence — not production ML."
       />
+      <IntelligenceStrip title="TelyAd Intelligence Copilot" metrics={[
+        { label: 'Planning engine', value: 'Deterministic', note: 'rule-based recommendations · DEMO' },
+        { label: 'Capability universe', value: '48', note: 'registry-aware media planning' },
+        { label: 'Audience boundary', value: 'Aggregate', note: 'no subscriber identity exposure' },
+        { label: 'Production AI', value: 'Future integration', note: 'LLM / ML not represented as live' },
+      ]} />
+
       <div
         style={{
           fontSize: 11.5,
