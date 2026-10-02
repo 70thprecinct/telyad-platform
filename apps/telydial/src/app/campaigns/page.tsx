@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { compactNumber, formatMoney, type Campaign } from '@telyad/types';
-import { Badge, Button, Card, CardHead, EmptyState, Input, PageHeader, StatusBadge, Table } from '@telyad/ui';
+import { Badge, Button, Card, CardHead, EmptyState, Input, IntelligenceStrip, PageHeader, StatusBadge, Table } from '@telyad/ui';
 import { PortalShell } from '@/components/PortalShell';
 import { api } from '@/lib/api';
 import { DEMO_CAMPAIGNS, DEMO_NOTE, type DemoCampaign } from '@/lib/demo';
@@ -58,6 +58,13 @@ export default function CampaignsPage() {
         title="Campaigns"
         desc="Every MVAS acquisition campaign on MTN Nigeria. Existing subscribers are always suppressed by Product ID."
       />
+
+      <IntelligenceStrip title="Acquisition Journey Operations" metrics={[
+        { label: 'Persisted campaigns', value: campaigns.length, note: 'platform campaign records · REAL' },
+        { label: 'Journey mode', value: 'Multi-step ready', note: 'push → response → fallback · DEMO' },
+        { label: 'Experimentation', value: 'Variant ready', note: 'creative / audience testing · DEMO' },
+        { label: 'Subscriber suppression', value: 'Product ID', note: 'existing subscriber control' },
+      ]} />
 
       {/* ── Section A — REAL persisted platform data ─────────────────────── */}
       <Card>
