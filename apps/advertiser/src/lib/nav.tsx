@@ -27,6 +27,7 @@ export const NAV: NavGroup[] = [
       { id: 'channels', label: 'Channels' },
       { id: 'creatives', label: 'Creatives' },
       { id: 'ai', label: 'AI Tools' },
+      { id: 'intelligence', label: 'Intelligence Suite' },
     ],
   },
   {
