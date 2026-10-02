@@ -71,6 +71,7 @@ export default function RevenuePage() {
               { label: 'Monthly outlook', value: fmtMinor(report.projectedMonthlyRevenueMinor, report.currency, true), note: 'deterministic projection · DEMO' },
               { label: 'Monetised families', value: report.byFamily.length, note: 'capability families' },
               { label: 'Growth signals', value: report.opportunities.length, note: 'commercial opportunities · DEMO' },
+              { label: 'Opportunity model', value: 'Inventory → revenue', note: 'unused capacity scenarios · DEMO' },
             ]}
           />
 
