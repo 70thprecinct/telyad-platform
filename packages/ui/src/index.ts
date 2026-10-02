@@ -9,3 +9,5 @@ export * from './toast';
 export * from './table';
 export * from './brand';
 export * from './intelligence';
+
+export * from './platform-suite';
