@@ -8,6 +8,7 @@ import {
   EmptyState,
   Kpi,
   KpiGrid,
+  IntelligenceStrip,
   Modal,
   PageHeader,
   Select,
@@ -56,6 +57,13 @@ export default function ModerationPage() {
         title="Content Moderation"
         desc="Automated scanning of every campaign for spam, fraud, and policy violations."
       />
+
+      <IntelligenceStrip title="Creative Intelligence & Compliance" metrics={[
+        { label: 'Pending review', value: pending, note: 'moderation queue · DEMO' },
+        { label: 'Flagged', value: flagged, note: 'policy signals · DEMO' },
+        { label: 'High risk', value: highRisk, note: 'requires operator review' },
+        { label: 'Decision authority', value: 'Operator', note: 'approval remains human-controlled' },
+      ]} />
 
       <KpiGrid>
         <Kpi label="Pending" value={pending} />
