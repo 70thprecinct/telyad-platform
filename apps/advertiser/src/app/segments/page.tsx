@@ -8,6 +8,7 @@ import {
   CardHead,
   Field,
   Input,
+  IntelligenceStrip,
   Kpi,
   KpiGrid,
   Modal,
@@ -55,6 +56,13 @@ export default function SegmentsPage() {
         title="Segments"
         desc="Reusable, privacy-safe audience segments — aggregate only, no subscriber identities."
       />
+
+      <IntelligenceStrip title="Audience Discovery & Expansion" metrics={[
+        { label: 'Eligible universe', value: '73.1M', note: 'network eligibility universe · DEMO' },
+        { label: 'Saved segment reach', value: compactNumber(combinedSize), note: 'aggregate segment sizes · DEMO' },
+        { label: 'Expansion signal', value: '+18%', note: 'lookalike opportunity · DEMO' },
+        { label: 'Privacy floor', value: '50K', note: 'smaller cohorts remain masked' },
+      ]} />
 
       <KpiGrid>
         <Kpi label="Saved segments" value={SEGMENTS.length} />
