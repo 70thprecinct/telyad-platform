@@ -1,5 +1,5 @@
 'use client';
-import { Badge, Button, Card, CardHead, Kpi, KpiGrid, PageHeader, Progress, Table } from '@telyad/ui';
+import { Badge, Button, Card, CardHead, IntelligenceStrip, Kpi, KpiGrid, PageHeader, Progress, Table } from '@telyad/ui';
 import { formatMoney } from '@telyad/types';
 import { PortalShell } from '@/components/PortalShell';
 import { BILLING, DEMO_NOTE } from '@/lib/demo';
@@ -31,6 +31,16 @@ export default function BillingPage() {
       <div className="tly-faint" style={{ marginBottom: 16, fontSize: 12.5 }}>
         {DEMO_NOTE} All figures on this page are illustrative — no funds move and no payment method is charged.
       </div>
+
+      <IntelligenceStrip
+        title="Budget Optimisation & Forecasting"
+        metrics={[
+          { label: 'Utilisation', value: String(utilisation) + '%', note: 'demonstration ledger' },
+          { label: 'Pacing signal', value: utilisation > 75 ? 'Watch' : 'Healthy', note: 'deterministic threshold · DEMO' },
+          { label: 'Committed spend', value: formatMoney({ minor: BILLING.committedMinor, currency: 'NGN' }, { compact: true }), note: 'active allocations · DEMO' },
+          { label: 'Settlement', value: 'Simulation only', note: 'no real payment processing' },
+        ]}
+      />
 
       <KpiGrid>
         <Kpi label="Available budget" value={formatMoney({ minor: BILLING.availableMinor, currency: 'NGN' }, { compact: true })} />
