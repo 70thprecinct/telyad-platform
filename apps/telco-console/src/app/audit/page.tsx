@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import type { AuditEvent } from '@telyad/types';
-import { Card, CardHead, PageHeader, Table } from '@telyad/ui';
+import { Card, CardHead, IntelligenceStrip, PageHeader, Table } from '@telyad/ui';
 import { ConsoleShell } from '@/components/ConsoleShell';
 import { api } from '@/lib/api';
 
@@ -24,6 +24,13 @@ export default function AuditPage() {
         title="Audit Logs"
         desc="Every sensitive action on MTN Nigeria's environment, with before/after state and actor."
       />
+      <IntelligenceStrip title="Audit, Governance & Privacy Centre" metrics={[
+        { label: 'Recorded events', value: events.length, note: 'tenant-scoped audit trail · REAL' },
+        { label: 'Actor attribution', value: 'Enabled', note: 'user and role recorded · REAL' },
+        { label: 'State history', value: 'Before → after', note: 'sensitive changes · REAL' },
+        { label: 'Subscriber privacy', value: 'Aggregate only', note: 'no subscriber identity in console' },
+      ]} />
+
       <Card>
         <CardHead title={`${events.length} events`} sub="Most recent first" />
         {!loaded ? (
