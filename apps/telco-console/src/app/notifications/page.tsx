@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useMemo, useState } from 'react';
-import { Badge, Button, Card, CardHead, EmptyState, PageHeader, Select } from '@telyad/ui';
+import { Badge, Button, Card, CardHead, EmptyState, IntelligenceStrip, PageHeader, Select } from '@telyad/ui';
 import { ConsoleShell } from '@/components/ConsoleShell';
 import { api } from '@/lib/api';
 import { DEMO_NOTE } from '@/lib/demo';
@@ -120,6 +120,13 @@ export default function NotificationsPage() {
         title="Notifications"
         desc="Operational alerts and platform notices for MTN Nigeria operators."
       />
+
+      <IntelligenceStrip title="Operator Exception Centre" metrics={[
+        { label: 'Unread exceptions', value: unreadCount, note: isDemo ? 'demonstration fallback' : 'API-backed alerts' },
+        { label: 'Critical', value: notifs.filter((n) => n.severity === 'danger' && !isRead(n)).length, note: 'requires operator attention' },
+        { label: 'Approval queue', value: notifs.filter((n) => n.title.toLowerCase().includes('approval') && !isRead(n)).length, note: 'campaign decisions' },
+        { label: 'Anomaly watch', value: 'Rule-based', note: 'deterministic thresholds · DEMO' },
+      ]} />
 
       <Card>
         <CardHead
