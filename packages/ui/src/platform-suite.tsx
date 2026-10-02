@@ -32,6 +32,7 @@ const GROUPS=['All','Intelligence','Monetisation','Audience','Planning','Optimis
 export function PlatformSuite({realm}:{realm:SuiteRealm}){
  const [group,setGroup]=useState('All'),[budget,setBudget]=useState(120),[target,setTarget]=useState(20),[frequency,setFrequency]=useState(3);
  const eligible=73.1,uniqueReach=Math.min(target*.93,eligible),impressions=uniqueReach*frequency,forecastCost=impressions*2.35;
+ const budgetFit=forecastCost<=budget,frequencyRisk=frequency>=6?'High':frequency>=4?'Watch':'Healthy';
  const features=useMemo(()=>PLATFORM_SUITE_FEATURES.filter(f=>f.realms.includes(realm)&&(group==='All'||f.group===group)),[realm,group]);
  const realmTotal=PLATFORM_SUITE_FEATURES.filter(f=>f.realms.includes(realm)).length;
  return <div>
@@ -47,7 +48,7 @@ export function PlatformSuite({realm}:{realm:SuiteRealm}){
     <label>Frequency <strong>{frequency}×</strong><input aria-label="Frequency" type="range" min="1" max="8" value={frequency} onChange={e=>setFrequency(Number(e.target.value))}/></label>
    </div>
    <div className="tly-suite-forecast"><div><span>Eligible</span><strong>{eligible.toFixed(1)}M</strong></div><div><span>Selected</span><strong>{target.toFixed(1)}M</strong></div><div><span>Unique reach</span><strong>{uniqueReach.toFixed(1)}M</strong></div><div><span>Impressions</span><strong>{impressions.toFixed(1)}M</strong></div><div><span>Modelled media</span><strong>₦{forecastCost.toFixed(1)}M</strong></div></div>
-   <Progress value={Math.min(100,(forecastCost/budget)*100)}/><div className="tly-faint" style={{fontSize:11,marginTop:8}}>Illustrative deterministic scenario only. Production forecasting requires approved carrier inventory, pricing and delivery inputs.</div>
+   <div className="tly-suite-forecast"><div><span>Budget fit</span><strong>{budgetFit?'Within budget':'Over budget'}</strong></div><div><span>Frequency pressure</span><strong>{frequencyRisk}</strong></div><div><span>Headroom</span><strong>₦{Math.abs(budget-forecastCost).toFixed(1)}M {budgetFit?'left':'gap'}</strong></div></div><Progress value={Math.min(100,(forecastCost/budget)*100)}/><div className="tly-faint" style={{fontSize:11,marginTop:8}}>Illustrative deterministic scenario only. Production forecasting requires approved carrier inventory, pricing and delivery inputs.</div>
   </Card>
   <div className="tly-suite-toolbar" role="group" aria-label="Capability categories">{GROUPS.map(g=><Button key={g} size="sm" variant={group===g?'primary':'ghost'} onClick={()=>setGroup(g)}>{g}</Button>)}</div>
   <div className="tly-suite-grid">{features.map(f=><Card key={f.id} className="tly-suite-card"><div className="tly-suite-number">{String(f.id).padStart(2,'0')}</div><div className="tly-suite-card-body"><CardHead title={f.name} action={<Badge tone={f.mode==='REAL'?'success':f.mode==='EXT'?'warning':'info'}>{f.mode}</Badge>}/><p>{f.description}</p><div className="tly-suite-meta"><span>{f.group}</span><span>{f.realms.map(x=>x==='telco'?'Operator':x==='admin'?'Master Admin':x==='telydial'?'TelyDial':'Advertiser').join(' · ')}</span></div></div></Card>)}</div>
