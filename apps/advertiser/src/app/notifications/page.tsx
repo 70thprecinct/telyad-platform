@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Badge, Button, Card, CardHead, EmptyState, Field, PageHeader, Select } from '@telyad/ui';
+import { Badge, Button, Card, CardHead, EmptyState, Field, IntelligenceStrip, PageHeader, Select } from '@telyad/ui';
 import { PortalShell } from '@/components/PortalShell';
 import { api } from '@/lib/api';
 import { DEMO_NOTE } from '@/lib/demo';
@@ -120,6 +120,13 @@ export default function NotificationsPage() {
         title="Notifications"
         desc="Campaign, budget and account alerts."
       />
+
+      <IntelligenceStrip title="Notification & Exception Centre" metrics={[
+        { label: 'Unread', value: unreadCount, note: isDemo ? 'demonstration fallback' : 'API-backed alerts' },
+        { label: 'Budget signals', value: items.filter((n) => n.title.toLowerCase().includes('budget')).length, note: 'campaign pacing exceptions' },
+        { label: 'Approval signals', value: items.filter((n) => n.title.toLowerCase().includes('approved')).length, note: 'operator decisions' },
+        { label: 'Delivery', value: 'Exception-led', note: 'surface action before routine status' },
+      ]} />
 
       <Card>
         <CardHead

@@ -18,6 +18,7 @@ import {
   PageHeader,
   Select,
   Table,
+  IntelligenceStrip,
   useToast,
 } from '@telyad/ui';
 import { ConsoleShell } from '@/components/ConsoleShell';
@@ -107,6 +108,13 @@ export default function InventoryPage() {
         title="Inventory & Ad Formats"
         desc="The full carrier-advertising capability portfolio and its availability on MTN Nigeria. Availability and delivery are subject to participating network capabilities, technical integration, regulatory requirements and network approval."
       />
+
+      <IntelligenceStrip title="Carrier Inventory & Yield" metrics={[
+        { label: 'Capability inventory', value: items.length || 48, note: 'registered carrier surfaces' },
+        { label: 'Available now', value: items.filter((x) => x.effectiveStatus === 'LIVE').length, note: 'REAL registry status' },
+        { label: 'Modelled utilisation', value: '64%', note: 'capacity utilisation · DEMO' },
+        { label: 'Unmonetised opportunity', value: '₦186M', note: 'illustrative monthly yield · DEMO' },
+      ]} />
 
       {!canManage && (
         <Card>

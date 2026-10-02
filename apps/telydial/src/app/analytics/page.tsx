@@ -58,6 +58,13 @@ export default function AnalyticsPage() {
         ]}
       />
 
+      <IntelligenceStrip title="Experimentation & Attribution" metrics={[
+        { label: 'Experiment mode', value: 'A/B ready', note: 'creative / audience variants · DEMO' },
+        { label: 'Attribution', value: 'Postback seam', note: 'external conversion source · EXT' },
+        { label: 'Funnel', value: 'Push → opt-in', note: 'aggregate acquisition path' },
+        { label: 'Anomaly watch', value: 'Enabled', note: 'deterministic thresholds · DEMO' },
+      ]} />
+
       <KpiGrid>
         {ANALYTICS_KPIS.map((k) => (
           <Kpi

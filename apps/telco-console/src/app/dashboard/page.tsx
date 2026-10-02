@@ -64,6 +64,8 @@ export default function DashboardPage() {
             { label: 'Campaign pressure', value: pending > 0 ? `${pending} awaiting approval` : 'Clear', note: 'operator action queue · REAL' },
             { label: 'Inventory signal', value: 'Healthy', note: 'cross-channel capacity · DEMO' },
             { label: 'Revenue outlook', value: showRevenue && report ? fmtMinor(report.projectedMonthlyRevenueMinor, report.currency, true) : 'Restricted', note: showRevenue ? 'projected monthly · DEMO' : 'permission controlled' },
+            { label: 'Unmonetised opportunity', value: '₦186M', note: 'illustrative available inventory · DEMO' },
+            { label: 'Executive exceptions', value: pending, note: 'items requiring operator attention · REAL' },
           ]}
         />
 

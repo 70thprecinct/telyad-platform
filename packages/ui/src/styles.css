@@ -2230,3 +2230,16 @@
 .tly-objective-card b { position:absolute; right:13px; top:13px; color:var(--tly-accent-ink); font-size:16px; }
 .tly-objective-card:hover { transform:translateY(-1px); border-color:color-mix(in srgb,var(--tly-primary) 36%,var(--tly-border)); box-shadow:var(--tly-shadow-sm); }
 @media(max-width:560px){.tly-objective-launcher{grid-template-columns:1fr}}
+
+/* ── TelyAd Intelligence Suite V3 ─────────────────────────────────────────── */
+.tly-suite-simulator{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:8px 0 18px}
+.tly-suite-simulator label{display:grid;grid-template-columns:1fr auto;gap:8px;font-size:12px;color:var(--tly-text-dim)}
+.tly-suite-simulator input{grid-column:1/-1;width:100%;accent-color:var(--tly-primary)}
+.tly-suite-forecast{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border:1px solid var(--tly-border);border-radius:12px;overflow:hidden;margin-bottom:12px}
+.tly-suite-forecast>div{padding:12px 14px;border-right:1px solid var(--tly-border);background:var(--tly-card-2)}
+.tly-suite-forecast>div:last-child{border-right:0}.tly-suite-forecast span{display:block;font-size:10px;color:var(--tly-text-faint);text-transform:uppercase;letter-spacing:.04em}.tly-suite-forecast strong{display:block;margin-top:4px;font:700 17px var(--tly-font-display)}
+.tly-suite-toolbar{display:flex;gap:6px;flex-wrap:wrap;margin:18px 0 14px}
+.tly-suite-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.tly-suite-card{display:flex;gap:14px;min-height:154px}.tly-suite-number{font:700 12px var(--tly-font-mono);color:var(--tly-accent-ink);background:var(--tly-primary-dim);border-radius:9px;padding:6px 8px;height:max-content}.tly-suite-card-body{min-width:0;flex:1}.tly-suite-card p{font-size:12.5px;line-height:1.55;color:var(--tly-text-dim);margin:4px 0 14px}.tly-suite-meta{display:flex;justify-content:space-between;gap:10px;padding-top:10px;border-top:1px solid var(--tly-border-soft);font-size:10.5px;color:var(--tly-text-faint)}
+@media(max-width:900px){.tly-suite-grid{grid-template-columns:1fr}.tly-suite-forecast{grid-template-columns:repeat(2,minmax(0,1fr))}.tly-suite-forecast>div{border-bottom:1px solid var(--tly-border)}}
+@media(max-width:620px){.tly-suite-simulator{grid-template-columns:1fr}.tly-suite-forecast{grid-template-columns:1fr}.tly-suite-meta{flex-direction:column}}

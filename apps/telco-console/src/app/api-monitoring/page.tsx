@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Badge, Card, CardHead, Kpi, KpiGrid, PageHeader, Table } from '@telyad/ui';
+import { Badge, Card, CardHead, IntelligenceStrip, Kpi, KpiGrid, PageHeader, Table } from '@telyad/ui';
 import { compactNumber } from '@telyad/types';
 import { ConsoleShell } from '@/components/ConsoleShell';
 import { LineChart } from '@/components/Charts';
@@ -49,6 +49,13 @@ export default function ApiMonitoringPage() {
         title="API Monitoring"
         desc="Live platform API status and demonstration request telemetry."
       />
+
+      <IntelligenceStrip title="API, Partner & Developer Centre" metrics={[
+        { label: 'Platform API', value: health?.ok ? 'Healthy' : loading ? 'Probing' : 'Unavailable', note: 'live health probe · REAL' },
+        { label: 'Readiness', value: ready?.ready ? 'Ready' : loading ? 'Probing' : 'Unavailable', note: 'store + database · REAL' },
+        { label: 'Partner callbacks', value: 'Integration seam', note: 'external carrier systems · EXT' },
+        { label: 'Telemetry', value: compactNumber(totalCalls), note: '24h request volume · DEMO' },
+      ]} />
 
       <Card>
         <CardHead

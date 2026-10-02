@@ -43,6 +43,8 @@ export default function PlatformHealthPage() {
           { label: 'Readiness', value: ready.ok === null ? 'Probing' : ready.ok ? 'Ready' : 'Not ready', note: 'database + store · REAL' },
           { label: 'Active environments', value: activeTelcos.length, note: 'isolated telco environments' },
           { label: 'Carrier gateways', value: 'External', note: 'integration boundary' },
+          { label: 'Developer surface', value: 'API + callbacks', note: 'partner integration contracts · EXT' },
+          { label: 'Anomaly watch', value: health.ok === false || ready.ok === false ? 'Exception' : 'Normal', note: 'live platform probes · REAL signal' },
         ]}
       />
 

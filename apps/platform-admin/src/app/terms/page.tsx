@@ -49,6 +49,7 @@ export default function TermsPage() {
           { label: 'Pipeline', value: TELCOS.length - signed, note: 'negotiation / LOI · DEMO' },
           { label: 'Default telco share', value: '80%', note: 'commercial model · DEMO' },
           { label: 'Settlement', value: 'Monthly', note: 'NGN · DEMO' },
+          { label: 'Rate-card governance', value: 'Enabled', note: 'operator terms · REAL control' },
         ]}
       />
 

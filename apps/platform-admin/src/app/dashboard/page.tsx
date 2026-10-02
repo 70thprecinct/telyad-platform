@@ -44,6 +44,8 @@ export default function DashboardPage() {
           { label: 'Aggregate reach', value: `${GLOBAL.subscriberReachM}M`, note: 'cross-network estimate · DEMO' },
           { label: 'Platform revenue', value: `₦${GLOBAL.platformRevenueMinorM}M`, note: 'month to date · DEMO' },
           { label: 'Isolation', value: 'Enforced', note: 'tenant boundaries · REAL control' },
+          { label: 'Operator control plane', value: 'Multi-tenant', note: 'operator-scoped configuration · REAL architecture' },
+          { label: 'Commercial opportunity', value: 'Portfolio view', note: 'cross-network aggregate · DEMO' },
         ]}
       />
 
