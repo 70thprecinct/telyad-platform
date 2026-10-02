@@ -1,7 +1,7 @@
 'use client';
 import type { ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { AppShell, Button } from '@telyad/ui';
+import { AppShell, Button, CommandBar } from '@telyad/ui';
 import { useAuth, useRequireAuth } from '@/lib/auth';
 import { NAV } from '@/lib/nav';
 
@@ -36,6 +36,7 @@ export function PortalShell({ active, children }: { active: string; children: Re
       envLabel="Demonstration Environment — figures are illustrative, not live MTN data."
       topbarRight={
         <>
+          <CommandBar placeholder="Search campaigns, audiences, capabilities, reports…" />
           <span className="tly-hide-mobile">
             <Button size="sm" onClick={() => router.push('/campaigns/new')}>
               + New Campaign

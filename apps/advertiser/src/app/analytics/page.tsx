@@ -1,7 +1,7 @@
 'use client';
 
 import { compactNumber, formatMoney } from '@telyad/types';
-import { Badge, Card, CardHead, Kpi, KpiGrid, PageHeader, Table } from '@telyad/ui';
+import { Badge, Card, CardHead, IntelligenceStrip, Kpi, KpiGrid, PageHeader, Table } from '@telyad/ui';
 import { PortalShell } from '@/components/PortalShell';
 import { BarChart, DoughnutChart, LineChart } from '@/components/Charts';
 import { CHANNEL_PERF, DEMO_NOTE, HEADLINE, SPEND_TREND } from '@/lib/demo';
@@ -23,6 +23,16 @@ export default function AnalyticsPage() {
         desc="Campaign performance across MTN network surfaces — STK Push, SMS, USSD, WAP Push and OBD Voice. These are demonstration analytics, not live MTN production statistics."
       />
       <DemoNote />
+
+      <IntelligenceStrip
+        title="Performance Intelligence"
+        metrics={[
+          { label: 'Media spend', value: formatMoney({ minor: HEADLINE.spendMinor, currency: 'NGN' }, { compact: true }), note: 'month to date · DEMO' },
+          { label: 'Impressions', value: compactNumber(HEADLINE.impressions), note: 'delivered impressions · DEMO' },
+          { label: 'Interaction rate', value: `${HEADLINE.interactionRate}%`, note: 'cross-channel · DEMO' },
+          { label: 'Cost efficiency', value: formatMoney({ minor: HEADLINE.avgCpaMinor, currency: 'NGN' }), note: 'average CPA · DEMO' },
+        ]}
+      />
 
       <KpiGrid>
         <Kpi

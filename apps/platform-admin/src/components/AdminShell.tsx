@@ -1,7 +1,7 @@
 'use client';
 import type { ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { AppShell, Button } from '@telyad/ui';
+import { AppShell, Button, CommandBar } from '@telyad/ui';
 import { useAuth, useRequireAuth } from '@/lib/auth';
 import { NAV } from '@/lib/nav';
 
@@ -27,13 +27,16 @@ export function AdminShell({ active, children }: { active: string; children: Rea
       nav={NAV}
       activeId={active}
       onNavigate={(id) => router.push(`/${id}`)}
-      title="Tely Master Admin"
+      title="TelyAd Master Admin"
       user={{ name: user.name, role: user.role, initials }}
       envLabel="Tely cross-telco console — Tely staff only. No telco can see this console. Demonstration data."
       topbarRight={
+        <>
+        <CommandBar placeholder="Search telcos, engines, users, reports…" />
         <Button size="sm" variant="ghost" onClick={() => { logout(); router.replace('/login'); }}>
           Sign out
         </Button>
+        </>
       }
     >
       {children}

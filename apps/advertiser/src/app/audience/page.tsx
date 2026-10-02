@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { compactNumber } from '@telyad/types';
-import { Badge, Button, Card, CardHead, Kpi, KpiGrid, PageHeader, Table } from '@telyad/ui';
+import { Badge, Button, Card, CardHead, IntelligenceStrip, Kpi, KpiGrid, PageHeader, Table } from '@telyad/ui';
 import { PortalShell } from '@/components/PortalShell';
 import { DEMO_NOTE, SEGMENTS } from '@/lib/demo';
 
@@ -73,6 +73,16 @@ export default function AudiencePage() {
         eyebrow="TARGETING · AUDIENCE"
         title="Audience"
         desc="Aggregate, privacy-safe audience intelligence for MTN Nigeria — never individual subscriber data. Extends Audience Match beyond the campaign wizard."
+      />
+
+      <IntelligenceStrip
+        title="Audience Opportunity"
+        metrics={[
+          { label: 'Eligible subscribers', value: '73.1M', note: 'network eligibility universe · DEMO' },
+          { label: 'Reachable base', value: '18.4M', note: 'reachable under current demo conditions' },
+          { label: 'Active audience pool', value: '4.2M', note: 'currently addressable · DEMO' },
+          { label: 'Privacy threshold', value: '50K', note: 'smaller cohorts are masked' },
+        ]}
       />
 
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 14 }}>

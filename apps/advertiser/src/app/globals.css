@@ -8,6 +8,10 @@
   --tly-primary-dim: rgba(238, 93, 43, 0.12);
   --tly-primary-contrast: #ffffff;
   --tly-accent-ink: #cf4c1c;
+  --tly-secondary: #f59e0b;
+  --tly-portal-accent: #ee5d2b;
+  --tly-portal-accent-dim: rgba(238, 93, 43, 0.12);
+  --tly-portal-accent-ink: #cf4c1c;
 }
 
 html,

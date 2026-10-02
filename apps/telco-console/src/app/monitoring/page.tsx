@@ -6,6 +6,7 @@ import {
   CardHead,
   Kpi,
   KpiGrid,
+  IntelligenceStrip,
   PageHeader,
   Progress,
   Select,
@@ -48,6 +49,16 @@ export default function MonitoringPage() {
         eyebrow="ADVERTISERS & CAMPAIGNS"
         title="Campaign Monitoring"
         desc="Live performance of every active campaign on MTN Nigeria's network."
+      />
+
+      <IntelligenceStrip
+        title="Delivery Intelligence"
+        metrics={[
+          { label: 'Live campaigns', value: liveCount, note: 'network activity · DEMO' },
+          { label: 'Delivered', value: compactNumber(totalDelivered), note: 'aggregate delivery · DEMO' },
+          { label: 'Anomaly signals', value: warnings, note: warnings ? 'requires operator review' : 'no active warnings' },
+          { label: 'Approval pressure', value: pendingCount, note: 'campaigns waiting · DEMO' },
+        ]}
       />
 
       <KpiGrid>

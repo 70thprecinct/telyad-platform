@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { Badge, Button, Card, CardHead, Field, Input, Modal, PageHeader, Select } from '@telyad/ui';
+import { Badge, Button, Card, CardHead, Field, Input, IntelligenceStrip, Modal, PageHeader, Select } from '@telyad/ui';
 import { AdminShell } from '@/components/AdminShell';
 import { TELCOS, type DemoTelco, DEMO_NOTE, EXT_NOTE } from '@/lib/demo';
 
@@ -72,6 +72,16 @@ export default function DirectoryPage() {
         title="Telco Directory"
         desc="Every telco partnership, its status, and a fully isolated environment per telco. Aggregate metrics only — no subscriber data."
       />
+      <IntelligenceStrip
+        title="Operator Portfolio"
+        metrics={[
+          { label: 'Operators', value: TELCOS.length, note: 'portfolio view' },
+          { label: 'Active', value: TELCOS.filter((t) => t.status === 'Active').length, note: 'provisioned environments' },
+          { label: 'Pipeline', value: TELCOS.filter((t) => t.status === 'Pipeline').length, note: 'commercial progression' },
+          { label: 'Isolation', value: 'Per telco', note: 'operator data boundaries enforced' },
+        ]}
+      />
+
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, marginBottom: 14, flexWrap: 'wrap' }}>
         <div style={{ minWidth: 180 }}>
           <Select

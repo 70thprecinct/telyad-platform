@@ -1,7 +1,7 @@
 'use client';
 import type { ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { AppShell, Button } from '@telyad/ui';
+import { AppShell, Button, CommandBar } from '@telyad/ui';
 import { useAuth, useRequireAuth } from '@/lib/auth';
 import { NAV } from '@/lib/nav';
 
@@ -31,9 +31,12 @@ export function ConsoleShell({ active, children }: { active: string; children: R
       user={{ name: user.name, role: user.role, initials }}
       envLabel="You are viewing MTN Nigeria's isolated environment only. Demonstration data. Powered by Tely."
       topbarRight={
-        <Button size="sm" variant="ghost" onClick={() => { logout(); router.replace('/login'); }}>
-          Sign out
-        </Button>
+        <>
+          <CommandBar />
+          <Button size="sm" variant="ghost" onClick={() => { logout(); router.replace('/login'); }}>
+            Sign out
+          </Button>
+        </>
       }
     >
       {children}

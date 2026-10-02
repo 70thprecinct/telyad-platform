@@ -1,22 +1,17 @@
 @import '@telyad/ui/styles.css';
 
-/* TelyAd for Telco Operations — master TelyAd orange brand, with a restrained MTN
-   operator-gold portal accent on portal-identity surfaces (network badge, active
-   nav). Operator yellow is a fill/indicator; `--tly-portal-accent-ink` is a dark
-   gold so operator-context *text* stays legible on white. Never a yellow wash. */
+/* TelyAd master brand — consistent across every portal. Operator context is communicated by labels and data, not a competing colour system. */
 :root {
-  --tly-bg: #f7f6f3;
-  /* Master brand (shared) */
+  --tly-bg: #f5f6f9;
   --tly-primary: #ee5d2b;
   --tly-primary-dim: rgba(238, 93, 43, 0.12);
   --tly-primary-contrast: #ffffff;
   --tly-primary-hover: #d64c1e;
   --tly-accent-ink: #cf4c1c;
-  --tly-secondary: #3b5bdb;
-  /* Portal accent — restrained MTN operator gold */
-  --tly-portal-accent: #ffcc08;
-  --tly-portal-accent-dim: rgba(255, 204, 8, 0.2);
-  --tly-portal-accent-ink: #8a6a00;
+  --tly-secondary: #f59e0b;
+  --tly-portal-accent: #ee5d2b;
+  --tly-portal-accent-dim: rgba(238, 93, 43, 0.12);
+  --tly-portal-accent-ink: #cf4c1c;
   --tly-radius: 12px;
 }
 

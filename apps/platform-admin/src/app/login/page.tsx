@@ -27,44 +27,27 @@ export default function LoginPage() {
   }
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'radial-gradient(ellipse at top, rgba(34,211,238,0.10), transparent 55%), var(--tly-bg)',
-      }}
-    >
-      <form onSubmit={onSubmit} className="tly-card" style={{ width: 400, marginBottom: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-          <Brand src="/images/logo.png" height={34} />
-          <div className="tly-brand-name tly-faint" style={{ fontSize: 13 }}>
-            Master Admin
-          </div>
+    <main className="tly-login">
+      <section className="tly-login-story">
+        <Brand src="/images/logo.png" height={38} />
+        <div className="tly-login-story-copy">
+          <div className="tly-login-eyebrow">Master Admin</div>
+          <h1>Control the carrier ecosystem,<br/><span>from one command plane.</span></h1>
+          <p>Operate telcos, platform health, governance and access from the TelyAd cross-network control plane.</p>
+          <div className="tly-login-signals"><div><strong>✦</strong><span>Cross-telco control</span></div><div><strong>◎</strong><span>Platform health</span></div><div><strong>↗</strong><span>Governance & access</span></div></div>
         </div>
-        <p className="tly-page-desc" style={{ marginBottom: 8 }}>
-          Tely cross-telco console — Tely staff only.
-        </p>
-        <div className="tly-badge tly-badge-info" style={{ marginBottom: 18 }}>
-          <span className="d" /> Aggregated data only · No telco can see this console
-        </div>
-        <Field label="Work email">
-          <Input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required />
-        </Field>
-        <Field label="Password" error={error || undefined}>
-          <Input
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            type="password"
-            required
-            placeholder="Enter your password"
-          />
-        </Field>
-        <Button type="submit" block disabled={busy}>
-          {busy ? 'Signing in…' : 'Sign in'}
-        </Button>
-      </form>
-    </div>
+        <div className="tly-login-orbit" aria-hidden="true"><i/><i/><i/><b /></div>
+        <div className="tly-login-trust">Secure access · Role based · Demonstration environment</div>
+      </section>
+      <section className="tly-login-access"><form onSubmit={onSubmit} className="tly-login-form">
+        <div className="tly-login-mobile-brand"><Brand src="/images/logo.png" height={32} /></div>
+        <div className="tly-login-eyebrow">Master Admin</div><h2>Welcome back</h2>
+        <p className="tly-login-form-desc">Sign in to Master Admin.</p>
+        <Field label="Work email"><Input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required /></Field>
+        <Field label="Password" error={error || undefined}><Input value={password} onChange={(e) => setPassword(e.target.value)} type="password" required placeholder="Enter your password" /></Field>
+        <Button type="submit" block disabled={busy}>{busy ? 'Signing in…' : 'Sign in securely'}</Button>
+        <div className="tly-login-foot">TelyAd · Protected platform access</div>
+      </form></section>
+    </main>
   );
 }

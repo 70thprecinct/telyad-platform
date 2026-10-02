@@ -35,6 +35,7 @@ import {
   ExperiencePreview,
   Field,
   Input,
+  IntelligenceStrip,
   PageHeader,
   Select,
   Stepper,
@@ -525,6 +526,16 @@ export default function NewCampaignPage() {
         eyebrow="Create"
         title="New campaign"
         desc="Compose a multi-capability campaign on MTN Nigeria. Audience figures are aggregate demonstration estimates."
+      />
+      <IntelligenceStrip
+        title="Media Planner"
+        metrics={[
+          { label: 'Objective', value: objective, note: 'campaign outcome' },
+          { label: 'Capabilities', value: selectedIds.length || '—', note: selectedIds.length ? 'selected from 48' : 'choose carrier media' },
+          { label: 'Eligible audience', value: eligible ? compactNumber(eligible) : 'Estimate', note: 'aggregate Audience Match' },
+          { label: 'Selected target', value: displayTarget ? compactNumber(displayTarget) : 'Choose', note: 'advertiser-controlled subset' },
+          { label: 'Forecast cost', value: match ? formatMoney({ minor: match.estimatedCostMinor, currency: 'NGN' }, { compact: true }) : '—', note: 'updates with target · DEMO' },
+        ]}
       />
       <Stepper steps={STEPS} current={step} />
 
