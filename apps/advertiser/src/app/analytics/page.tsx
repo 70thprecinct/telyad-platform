@@ -31,6 +31,8 @@ export default function AnalyticsPage() {
           { label: 'Impressions', value: compactNumber(HEADLINE.impressions), note: 'delivered impressions · DEMO' },
           { label: 'Interaction rate', value: `${HEADLINE.interactionRate}%`, note: 'cross-channel · DEMO' },
           { label: 'Cost efficiency', value: formatMoney({ minor: HEADLINE.avgCpaMinor, currency: 'NGN' }), note: 'average CPA · DEMO' },
+          { label: 'Attribution', value: 'Aggregate funnel', note: 'external conversion postback required for production · EXT' },
+          { label: 'Experiment signal', value: 'Variant ready', note: 'A/B measurement seam · DEMO' },
         ]}
       />
 
