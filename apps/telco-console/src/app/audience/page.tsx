@@ -53,6 +53,8 @@ export default function AudiencePage() {
           { label: 'Currently targeted', value: `${AUDIENCE_MON.targetedM}M`, note: 'selected across active audiences · DEMO' },
           { label: 'Audience overlap', value: `${AUDIENCE_MON.overlapPct}%`, note: 'cross-campaign pressure · DEMO' },
           { label: 'Privacy floor', value: '50K', note: 'segments below threshold masked' },
+          { label: 'Frequency pressure', value: AUDIENCE_MON.overlapPct > 20 ? 'Watch' : 'Healthy', note: 'overlap-derived saturation signal · DEMO' },
+          { label: 'Expansion', value: 'Aggregate only', note: 'privacy-safe opportunity modelling · DEMO' },
         ]}
       />
 
