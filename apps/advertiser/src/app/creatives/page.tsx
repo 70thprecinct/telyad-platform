@@ -9,6 +9,7 @@ import {
   ExperiencePreview,
   Kpi,
   KpiGrid,
+  IntelligenceStrip,
   Modal,
   PageHeader,
   Table,
@@ -62,6 +63,13 @@ export default function CreativesPage() {
         title="Creative Library"
         desc="All creatives across formats and languages, with live subscriber previews."
       />
+
+      <IntelligenceStrip title="Creative Intelligence & Compliance" metrics={[
+        { label: 'Approved', value: approved, note: 'creative library · DEMO' },
+        { label: 'In review', value: inReview, note: 'human approval queue' },
+        { label: 'Format preview', value: 'Device-aware', note: 'capability-specific experience' },
+        { label: 'Pre-flight', value: 'Rule-based', note: 'format and compliance checks · DEMO' },
+      ]} />
 
       <KpiGrid>
         <Kpi label="Total creatives" value={CREATIVES.length} />
