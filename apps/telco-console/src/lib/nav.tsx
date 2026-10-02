@@ -45,6 +45,7 @@ export const NAV: NavGroup[] = [
     items: [
       { id: 'reports', label: 'Reports' },
       { id: 'analytics', label: 'Analytics' },
+      { id: 'intelligence', label: 'Intelligence Suite' },
     ],
   },
   {
