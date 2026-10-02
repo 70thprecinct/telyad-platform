@@ -12,7 +12,7 @@ export const NAV: NavGroup[] = [
     ],
   },
   { group: 'Product', items: [{ id: 'products', label: 'Products' }] },
-  { group: 'Intelligence', items: [{ id: 'analytics', label: 'Analytics' }] },
+  { group: 'Intelligence', items: [{ id: 'analytics', label: 'Analytics' }, { id: 'intelligence', label: 'Intelligence Suite' }] },
   { group: 'Finance', items: [{ id: 'wallet', label: 'Wallet' }] },
   {
     group: 'Operations',
