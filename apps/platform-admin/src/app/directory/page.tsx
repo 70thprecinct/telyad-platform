@@ -79,6 +79,7 @@ export default function DirectoryPage() {
           { label: 'Active', value: TELCOS.filter((t) => t.status === 'Active').length, note: 'provisioned environments' },
           { label: 'Pipeline', value: TELCOS.filter((t) => t.status === 'Pipeline').length, note: 'commercial progression' },
           { label: 'Isolation', value: 'Per telco', note: 'operator data boundaries enforced' },
+          { label: 'Control plane', value: 'Multi-operator', note: 'operator-specific governance · REAL architecture' },
         ]}
       />
 
