@@ -535,6 +535,9 @@ export default function NewCampaignPage() {
           { label: 'Eligible audience', value: eligible ? compactNumber(eligible) : 'Estimate', note: 'aggregate Audience Match' },
           { label: 'Selected target', value: displayTarget ? compactNumber(displayTarget) : 'Choose', note: 'advertiser-controlled subset' },
           { label: 'Forecast cost', value: match ? formatMoney({ minor: match.estimatedCostMinor, currency: 'NGN' }, { compact: true }) : '—', note: 'updates with target · DEMO' },
+          { label: 'Recommended frequency', value: '3×', note: 'saturation-aware · DEMO' },
+          { label: 'Journey', value: selectedIds.length > 1 ? 'Multi-step' : 'Single-step', note: 'orchestration signal · DEMO' },
+          { label: 'Pre-flight', value: creative.body.trim() ? 'Ready to check' : 'Creative needed', note: 'creative compliance · DEMO' },
         ]}
       />
       <Stepper steps={STEPS} current={step} />
